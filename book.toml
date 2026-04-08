@@ -1,5 +1,6 @@
 [book]
 authors = ["cui"]
-language = "en"
+language = "zh-CN"
 multilingual = false
 src = "src"
+title = "游戏开发系统化知识地图"
