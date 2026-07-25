@@ -6,7 +6,7 @@ hero:
   text: "围绕真实问题组织的知识体系"
   tagline: 从方法论到落地实践，覆盖游戏项目从立项到上线的全链路技术知识
   image:
-    src: /hero-illustration.svg
+    src: /hero-gamepad.svg
     alt: 游戏开发知识地图
   actions:
     - theme: brand
