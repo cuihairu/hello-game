@@ -334,7 +334,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/cui/hello-game' }
+      { icon: 'github', link: 'https://github.com/cuihairu/hello-game' }
     ],
 
     footer: {
