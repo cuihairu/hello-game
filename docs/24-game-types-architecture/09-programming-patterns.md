@@ -867,6 +867,1006 @@ func SpawnMonster(mt *MonsterType, level int) *Monster {
 
 ---
 
+## 21. 服务器工程化实践
+
+游戏服务器不只是跑通逻辑，更重要的是**可维护、可扩展、可运维**。本节总结服务端开发中常见的工程化模式。
+
+### 21.1 模块化设计
+
+将系统拆分为独立模块，每个模块有明确的职责边界，降低耦合度。
+
+```go
+// module/manager.go — 模块管理器
+type Module interface {
+    Name() string
+    Init(cfg *AppConfig) error
+    Start() error
+    Stop() error
+}
+
+type ModuleManager struct {
+    modules []Module
+    mu      sync.Mutex
+}
+
+func NewModuleManager() *ModuleManager {
+    return &ModuleManager{}
+}
+
+func (m *ModuleManager) Register(mod Module) {
+    m.mu.Lock()
+    defer m.mu.Unlock()
+    m.modules = append(m.modules, mod)
+}
+
+func (m *ModuleManager) InitAll(cfg *AppConfig) error {
+    for _, mod := range m.modules {
+        if err := mod.Init(cfg); err != nil {
+            return fmt.Errorf("module %s init failed: %w", mod.Name(), err)
+        }
+    }
+    return nil
+}
+
+func (m *ModuleManager) StartAll() error {
+    for _, mod := range m.modules {
+        if err := mod.Start(); err != nil {
+            return fmt.Errorf("module %s start failed: %w", mod.Name(), err)
+        }
+    }
+    return nil
+}
+
+func (m *ModuleManager) StopAll() {
+    for i := len(m.modules) - 1; i >= 0; i-- {
+        if err := m.modules[i].Stop(); err != nil {
+            log.Errorf("module %s stop error: %v", m.modules[i].Name(), err)
+        }
+    }
+}
+
+// 各模块实现独立文件
+type NetworkModule struct{ server *TCPServer }
+func (n *NetworkModule) Name() string       { return "network" }
+func (n *NetworkModule) Init(cfg *AppConfig) error { /* ... */ return nil }
+func (n *NetworkModule) Start() error       { return n.server.Listen() }
+func (n *NetworkModule) Stop() error        { return n.server.Close() }
+```
+
+### 21.2 配置中心
+
+集中管理配置，支持热加载，避免硬编码。
+
+```go
+// config/config.go
+type AppConfig struct {
+    Server   ServerConfig   `yaml:"server"`
+    Database DatabaseConfig `yaml:"database"`
+    Redis    RedisConfig    `yaml:"redis"`
+}
+
+type ServerConfig struct {
+    ListenPort int    `yaml:"listen_port"`
+    MaxPlayers int    `yaml:"max_players"`
+    TickRate   int    `yaml:"tick_rate"`
+    Version    string `yaml:"version"`
+}
+
+type ConfigCenter struct {
+    current atomic.Value // *AppConfig
+    watchers []func(*AppConfig)
+    mu       sync.Mutex
+}
+
+func NewConfigCenter(path string) (*ConfigCenter, error) {
+    cc := &ConfigCenter{}
+    if err := cc.load(path); err != nil {
+        return nil, err
+    }
+    go cc.watch(path)
+    return cc, nil
+}
+
+func (cc *ConfigCenter) load(path string) error {
+    data, err := os.ReadFile(path)
+    if err != nil {
+        return err
+    }
+    var cfg AppConfig
+    if err := yaml.Unmarshal(data, &cfg); err != nil {
+        return err
+    }
+    cc.current.Store(&cfg)
+    cc.notify(&cfg)
+    return nil
+}
+
+func (cc *ConfigCenter) Get() *AppConfig {
+    return cc.current.Load().(*AppConfig)
+}
+
+func (cc *ConfigCenter) OnChange(fn func(*AppConfig)) {
+    cc.mu.Lock()
+    defer cc.mu.Unlock()
+    cc.watchers = append(cc.watchers, fn)
+}
+
+func (cc *ConfigCenter) notify(cfg *AppConfig) {
+    cc.mu.Lock()
+    defer cc.mu.Unlock()
+    for _, fn := range cc.watchers {
+        fn(cfg)
+    }
+}
+
+// 文件监听实现热加载
+func (cc *ConfigCenter) watch(path string) {
+    var lastMod time.Time
+    info, _ := os.Stat(path)
+    if info != nil {
+        lastMod = info.ModTime()
+    }
+    ticker := time.NewTicker(5 * time.Second)
+    for range ticker.C {
+        info, _ := os.Stat(path)
+        if info != nil && info.ModTime().After(lastMod) {
+            lastMod = info.ModTime()
+            if err := cc.load(path); err != nil {
+                log.Errorf("config reload failed: %v", err)
+            } else {
+                log.Info("config reloaded successfully")
+            }
+        }
+    }
+}
+```
+
+### 21.3 热更新
+
+不停服更新逻辑，支持运行时替换模块。
+
+```go
+// hotfix/hotfix.go
+type HotFixManager struct {
+    plugins  map[string]Plugin
+    mu       sync.RWMutex
+}
+
+type Plugin interface {
+    Name() string
+    Version() string
+    Execute(ctx context.Context, args map[string]interface{}) (interface{}, error)
+}
+
+func (h *HotFixManager) LoadPlugin(path string) (Plugin, error) {
+    plug, err := plugin.Open(path)
+    if err != nil {
+        return nil, fmt.Errorf("load plugin failed: %w", err)
+    }
+
+    sym, err := plug.Lookup("Plugin")
+    if err != nil {
+        return nil, err
+    }
+
+    p, ok := sym.(Plugin)
+    if !ok {
+        return nil, fmt.Errorf("plugin does not implement Plugin interface")
+    }
+
+    h.mu.Lock()
+    h.plugins[p.Name()] = p
+    h.mu.Unlock()
+
+    log.Infof("hotfix plugin loaded: %s v%s", p.Name(), p.Version())
+    return p, nil
+}
+
+func (h *HotFixManager) Execute(name string, ctx context.Context, args map[string]interface{}) (interface{}, error) {
+    h.mu.RLock()
+    p, ok := h.plugins[name]
+    h.mu.RUnlock()
+    if !ok {
+        return nil, fmt.Errorf("plugin %s not found", name)
+    }
+    return p.Execute(ctx, args)
+}
+```
+
+### 21.4 日志规范
+
+统一日志格式，支持分级、分文件、结构化输出。
+
+```go
+// logger/logger.go
+type GameLogger struct {
+    inner    *zap.Logger
+    filename string
+}
+
+func NewGameLogger(name string, level string, logDir string) (*GameLogger, error) {
+    logPath := filepath.Join(logDir, name+".log")
+    cfg := zap.NewProductionConfig()
+    cfg.OutputPaths = []string{"stdout", logPath}
+    cfg.ErrorOutputPaths = []string{"stderr", logPath}
+
+    switch level {
+    case "debug":
+        cfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
+    case "info":
+        cfg.Level = zap.NewAtomicLevelAt(zap.InfoLevel)
+    case "warn":
+        cfg.Level = zap.NewAtomicLevelAt(zap.WarnLevel)
+    case "error":
+        cfg.Level = zap.NewAtomicLevelAt(zap.ErrorLevel)
+    }
+
+    logger, err := cfg.Build()
+    if err != nil {
+        return nil, err
+    }
+
+    return &GameLogger{inner: logger, filename: logPath}, nil
+}
+
+// 带上下文的结构化日志
+func (l *GameLogger) PlayerInfo(playerID uint64, msg string, fields ...zap.Field) {
+    base := []zap.Field{zap.Uint64("player_id", playerID)}
+    l.inner.Info(msg, append(base, fields...)...)
+}
+
+func (l *GameLogger) BattleInfo(battleID string, msg string, fields ...zap.Field) {
+    base := []zap.Field{zap.String("battle_id", battleID)}
+    l.inner.Info(msg, append(base, fields...)...)
+}
+
+// 使用
+logger, _ := NewGameLogger("game", "info", "./logs")
+logger.PlayerInfo(12345, "玩家登录", zap.String("ip", "192.168.1.1"))
+```
+
+### 21.5 异常处理
+
+游戏服务器不能轻易崩溃，需要兜底机制。
+
+```go
+// recovery/recovery.go
+
+// PanicHandler 全局 panic 恢复
+func PanicHandler(next http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        defer func() {
+            if err := recover(); err != nil {
+                buf := make([]byte, 4096)
+                n := runtime.Stack(buf, false)
+                log.Errorf("panic recovered: %v\nstack:\n%s", err, buf[:n])
+                http.Error(w, "internal server error", 500)
+            }
+        }()
+        next(w, r)
+    }
+}
+
+// SafeGo 安全的 goroutine 启动
+func SafeGo(name string, fn func()) {
+    go func() {
+        defer func() {
+            if err := recover(); err != nil {
+                buf := make([]byte, 4096)
+                n := runtime.Stack(buf, false)
+                log.Errorf("goroutine %s panic: %v\nstack:\n%s", name, err, buf[:n])
+            }
+        }()
+        fn()
+    }()
+}
+
+// 会话级异常隔离 —— 一个玩家崩溃不影响其他玩家
+type SessionGuard struct {
+    playerID uint64
+}
+
+func (sg *SessionGuard) Execute(fn func()) (err error) {
+    defer func() {
+        if r := recover(); r != nil {
+            buf := make([]byte, 4096)
+            n := runtime.Stack(buf, false)
+            log.Errorf("player %d session panic: %v\n%s", sg.playerID, r, buf[:n])
+            err = fmt.Errorf("session panic: %v", r)
+        }
+    }()
+    fn()
+    return nil
+}
+
+// 使用示例
+guard := &SessionGuard{playerID: 12345}
+guard.Execute(func() {
+    // 玩家的任何操作都包在 guard 里
+    processPlayerInput(player)
+})
+```
+
+### 21.6 补偿任务
+
+当主要流程失败时，通过补偿任务进行回滚。
+
+```go
+// compensator/compensator.go
+type Compensator struct {
+    steps []CompensateStep
+    mu    sync.Mutex
+}
+
+type CompensateStep struct {
+    Name       string
+    Execute    func(ctx context.Context) error
+    Compensate func(ctx context.Context) error
+}
+
+func NewCompensator() *Compensator {
+    return &Compensator{}
+}
+
+func (c *Compensator) AddStep(name string, exec, comp func(ctx context.Context) error) {
+    c.mu.Lock()
+    defer c.mu.Unlock()
+    c.steps = append(c.steps, CompensateStep{
+        Name:       name,
+        Execute:    exec,
+        Compensate: comp,
+    })
+}
+
+// ExecuteAll 按顺序执行，失败时反向补偿
+func (c *Compensator) ExecuteAll(ctx context.Context) error {
+    c.mu.Lock()
+    steps := c.steps
+    c.mu.Unlock()
+
+    executed := make([]int, 0, len(steps))
+    for i, step := range steps {
+        if err := step.Execute(ctx); err != nil {
+            log.Errorf("step %s failed: %v, starting compensation", step.Name, err)
+            // 反向补偿已执行的步骤
+            for j := len(executed) - 1; j >= 0; j-- {
+                idx := executed[j]
+                if compErr := steps[idx].Compensate(ctx); compErr != nil {
+                    log.Errorf("compensate step %s failed: %v", steps[idx].Name, compErr)
+                }
+            }
+            return fmt.Errorf("compensated after step %s: %w", step.Name, err)
+        }
+        executed = append(executed, i)
+    }
+    return nil
+}
+
+// 使用示例：玩家购买物品
+comp := NewCompensator()
+comp.AddStep("扣款",
+    func(ctx context.Context) error { return deductCurrency(ctx, 100) },
+    func(ctx context.Context) error { return refundCurrency(ctx, 100) },
+)
+comp.AddStep("发放物品",
+    func(ctx context.Context) error { return addItem(ctx, itemID) },
+    func(ctx context.Context) error { return removeItem(ctx, itemID) },
+)
+comp.AddStep("记录日志",
+    func(ctx context.Context) error { return logPurchase(ctx) },
+    func(ctx context.Context) error { return nil }, // 日志无需补偿
+)
+
+if err := comp.ExecuteAll(ctx); err != nil {
+    // 购买失败，所有步骤已回滚
+}
+```
+
+### 21.7 定时任务与异步任务
+
+管理周期性任务和延迟任务。
+
+```go
+// scheduler/scheduler.go
+type TaskScheduler struct {
+    tasks    map[string]*ScheduledTask
+    mu       sync.RWMutex
+    stopCh   chan struct{}
+}
+
+type ScheduledTask struct {
+    ID       string
+    Interval time.Duration
+    Fn       func()
+    ticker   *time.Ticker
+    stopCh   chan struct{}
+}
+
+func NewTaskScheduler() *TaskScheduler {
+    return &TaskScheduler{
+        tasks:  make(map[string]*ScheduledTask),
+        stopCh: make(chan struct{}),
+    }
+}
+
+// AddInterval 添加周期任务
+func (s *TaskScheduler) AddInterval(id string, interval time.Duration, fn func()) {
+    s.mu.Lock()
+    defer s.mu.Unlock()
+
+    task := &ScheduledTask{
+        ID:       id,
+        Interval: interval,
+        Fn:       fn,
+        ticker:   time.NewTicker(interval),
+        stopCh:   make(chan struct{}),
+    }
+    s.tasks[id] = task
+
+    go func() {
+        for {
+            select {
+            case <-task.ticker.C:
+                SafeGo(id, task.Fn)
+            case <-task.stopCh:
+                task.ticker.Stop()
+                return
+            }
+        }
+    }()
+}
+
+// AddOnce 添加延迟执行的单次任务
+func (s *TaskScheduler) AddOnce(id string, delay time.Duration, fn func()) {
+    go func() {
+        time.AfterFunc(delay, func() {
+            SafeGo(id, fn)
+        })
+    }()
+}
+
+func (s *TaskScheduler) Remove(id string) {
+    s.mu.Lock()
+    defer s.mu.Unlock()
+    if task, ok := s.tasks[id]; ok {
+        close(task.stopCh)
+        delete(s.tasks, id)
+    }
+}
+
+// 使用示例
+scheduler := NewTaskScheduler()
+
+// 每 5 分钟清理离线玩家
+scheduler.AddInterval("cleanup", 5*time.Minute, func() {
+    cleanupOfflinePlayers()
+})
+
+// 每天凌晨重置排行榜
+scheduler.AddInterval("reset_ranking", 24*time.Hour, func() {
+    resetDailyRanking()
+})
+
+// 30 秒后发送首充奖励
+scheduler.AddOnce("first_charge_123", 30*time.Second, func() {
+    sendFirstChargeReward(123)
+})
+```
+
+### 21.8 脚本化与工具化
+
+将运营、测试常用操作封装为脚本或命令行工具。
+
+```go
+// cmd/tool/main.go
+func main() {
+    app := &cli.App{
+        Name:  "game-tool",
+        Usage: "游戏服务器运维工具",
+        Commands: []*cli.Command{
+            {
+                Name:  "kick",
+                Usage: "踢出玩家",
+                Action: func(c *cli.Context) error {
+                    playerID := c.Args().First()
+                    return kickPlayer(playerID)
+                },
+            },
+            {
+                Name:  "reload-config",
+                Usage: "热加载配置",
+                Action: func(c *cli.Context) error {
+                    return reloadConfig()
+                },
+            },
+            {
+                Name:  "broadcast",
+                Usage: "发送全服公告",
+                Flags: []cli.Flag{
+                    &cli.StringFlag{Name: "msg", Required: true},
+                },
+                Action: func(c *cli.Context) error {
+                    return sendBroadcast(c.String("msg"))
+                },
+            },
+            {
+                Name:  "check-db",
+                Usage: "数据库健康检查",
+                Action: func(c *cli.Context) error {
+                    return checkDatabase()
+                },
+            },
+        },
+    }
+    if err := app.Run(os.Args); err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
+---
+
+## 22. 代码质量与可维护性
+
+代码写出来只是开始，**能读懂、能修改、能测试**才是长久之道。
+
+### 22.1 接口边界
+
+明确定义模块间的接口契约，避免实现泄漏。
+
+```go
+// 接口定义在消费者一侧（Go 惯例）
+// storage/storage.go
+type PlayerStorage interface {
+    GetByID(ctx context.Context, id uint64) (*Player, error)
+    Save(ctx context.Context, player *Player) error
+    Delete(ctx context.Context, id uint64) error
+}
+
+// 实现放在独立文件中
+// storage/mysql.go
+type MySQLPlayerStorage struct {
+    db *sql.DB
+}
+
+func (s *MySQLPlayerStorage) GetByID(ctx context.Context, id uint64) (*Player, error) {
+    row := s.db.QueryRowContext(ctx, "SELECT id, name, level FROM players WHERE id = ?", id)
+    var p Player
+    if err := row.Scan(&p.ID, &p.Name, &p.Level); err != nil {
+        return nil, err
+    }
+    return &p, nil
+}
+
+func (s *MySQLPlayerStorage) Save(ctx context.Context, player *Player) error {
+    _, err := s.db.ExecContext(ctx,
+        "INSERT INTO players (id, name, level) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE name=?, level=?",
+        player.ID, player.Name, player.Level, player.Name, player.Level,
+    )
+    return err
+}
+
+func (s *MySQLPlayerStorage) Delete(ctx context.Context, id uint64) error {
+    _, err := s.db.ExecContext(ctx, "DELETE FROM players WHERE id = ?", id)
+    return err
+}
+
+// 业务层只依赖接口，不依赖具体实现
+type PlayerService struct {
+    storage PlayerStorage  // 接口依赖
+}
+
+func NewPlayerService(storage PlayerStorage) *PlayerService {
+    return &PlayerService{storage: storage}
+}
+```
+
+### 22.2 统一协议层
+
+客户端与服务端的通信协议统一管理，避免散落在各处。
+
+```go
+// protocol/protocol.go
+type MessageHeader struct {
+    MsgID   uint16 `json:"msg_id"`
+    Length  uint32 `json:"length"`
+    Seq     uint32 `json:"seq"`
+}
+
+type Request struct {
+    Header MessageHeader
+    Body   []byte
+}
+
+type Response struct {
+    Header MessageHeader
+    Code   uint32      `json:"code"`
+    Msg    string      `json:"msg"`
+    Data   interface{} `json:"data"`
+}
+
+// 消息注册表
+type MessageRegistry struct {
+    handlers map[uint16]MessageHandler
+    mu       sync.RWMutex
+}
+
+type MessageHandler func(playerID uint64, body []byte) (interface{}, error)
+
+func NewMessageRegistry() *MessageRegistry {
+    return &MessageRegistry{
+        handlers: make(map[uint16]MessageHandler),
+    }
+}
+
+func (r *MessageRegistry) Register(msgID uint16, handler MessageHandler) {
+    r.mu.Lock()
+    defer r.mu.Unlock()
+    r.handlers[msgID] = handler
+}
+
+func (r *MessageRegistry) Handle(playerID uint64, req Request) Response {
+    r.mu.RLock()
+    handler, ok := r.handlers[req.Header.MsgID]
+    r.mu.RUnlock()
+
+    if !ok {
+        return Response{
+            Header: req.Header,
+            Code:   404,
+            Msg:    "unknown message",
+        }
+    }
+
+    data, err := handler(playerID, req.Body)
+    if err != nil {
+        return Response{
+            Header: req.Header,
+            Code:   500,
+            Msg:    err.Error(),
+        }
+    }
+
+    return Response{
+        Header: req.Header,
+        Code:   0,
+        Msg:    "ok",
+        Data:   data,
+    }
+}
+
+// 协议 ID 常量统一管理
+const (
+    MsgLogin        uint16 = 1001
+    MsgLogout       uint16 = 1002
+    MsgMove         uint16 = 2001
+    MsgAttack       uint16 = 2002
+    MsgChat         uint16 = 3001
+    MsgBuyItem      uint16 = 4001
+)
+```
+
+### 22.3 统一错误码
+
+规范化的错误码体系，便于排查问题和国际化。
+
+```go
+// errors/errors.go
+type GameError struct {
+    Code    int    `json:"code"`
+    Message string `json:"message"`
+    Detail  string `json:"detail,omitempty"` // 开发调试用
+}
+
+func (e *GameError) Error() string {
+    return fmt.Sprintf("[%d] %s: %s", e.Code, e.Message, e.Detail)
+}
+
+// 错误码定义（按模块分段）
+const (
+    // 通用错误 1xxx
+    ErrUnknown        = 1001
+    ErrInvalidParam   = 1002
+    ErrUnauthorized   = 1003
+    ErrRateLimited    = 1004
+
+    // 玩家错误 2xxx
+    ErrPlayerNotFound = 2001
+    ErrPlayerBusy     = 2002
+    ErrPlayerBanned   = 2003
+
+    // 背包错误 3xxx
+    ErrInventoryFull  = 3001
+    ErrItemNotFound   = 3002
+    ErrItemNotEnough  = 3003
+
+    // 战斗错误 4xxx
+    ErrBattleNotFound = 4001
+    ErrBattleTimeout  = 4002
+    ErrAlreadyInBattle = 4003
+)
+
+// 错误消息映射
+var errorMessages = map[int]string{
+    ErrUnknown:        "未知错误",
+    ErrInvalidParam:   "参数无效",
+    ErrUnauthorized:   "未授权",
+    ErrRateLimited:    "请求过于频繁",
+    ErrPlayerNotFound: "玩家不存在",
+    ErrPlayerBusy:     "玩家正忙",
+    ErrInventoryFull:  "背包已满",
+    ErrItemNotFound:   "物品不存在",
+    ErrItemNotEnough:  "物品不足",
+}
+
+func NewGameError(code int, detail string) *GameError {
+    msg := errorMessages[code]
+    if msg == "" {
+        msg = "未知错误"
+    }
+    return &GameError{Code: code, Message: msg, Detail: detail}
+}
+
+// 工厂方法 —— 常用错误快速创建
+func ErrParam(detail string) *GameError {
+    return NewGameError(ErrInvalidParam, detail)
+}
+func ErrNotFound(detail string) *GameError {
+    return NewGameError(ErrPlayerNotFound, detail)
+}
+```
+
+### 22.4 可测试性设计
+
+编写易于单元测试和集成测试的代码。
+
+```go
+// interface-based 设计天然支持 mock
+// player/player.go
+type Player struct {
+    ID      uint64
+    Name    string
+    Level   int
+    storage PlayerStorage
+}
+
+// 依赖注入，便于测试时替换
+func NewPlayer(id uint64, name string, storage PlayerStorage) *Player {
+    return &Player{
+        ID:      id,
+        Name:    name,
+        storage: storage,
+    }
+}
+
+func (p *Player) LevelUp() error {
+    p.Level++
+    return p.storage.Save(context.Background(), p)
+}
+
+// —— 测试代码 ——
+// player/player_test.go
+type mockStorage struct {
+    saved *Player
+}
+
+func (m *mockStorage) GetByID(ctx context.Context, id uint64) (*Player, error) {
+    return nil, nil
+}
+func (m *mockStorage) Save(ctx context.Context, p *Player) error {
+    m.saved = p
+    return nil
+}
+func (m *mockStorage) Delete(ctx context.Context, id uint64) error {
+    return nil
+}
+
+func TestPlayerLevelUp(t *testing.T) {
+    mock := &mockStorage{}
+    player := NewPlayer(1, "test", mock)
+    player.Level = 5
+
+    err := player.LevelUp()
+    if err != nil {
+        t.Fatalf("unexpected error: %v", err)
+    }
+    if player.Level != 6 {
+        t.Errorf("expected level 6, got %d", player.Level)
+    }
+    if mock.saved == nil {
+        t.Error("expected save to be called")
+    }
+}
+
+// 使用接口抽象外部依赖
+type NetworkClient interface {
+    Send(playerID uint64, data []byte) error
+}
+
+type MockNetworkClient struct {
+    Sent [][]byte
+}
+
+func (m *MockNetworkClient) Send(playerID uint64, data []byte) error {
+    m.Sent = append(m.Sent, data)
+    return nil
+}
+```
+
+### 22.5 可观测性设计
+
+监控、追踪、告警三位一体。
+
+```go
+// metrics/metrics.go
+import "github.com/prometheus/client_golang/prometheus"
+
+var (
+    // 请求指标
+    RequestTotal = prometheus.NewCounterVec(
+        prometheus.CounterOpts{
+            Name: "game_request_total",
+            Help: "Total number of requests",
+        },
+        []string{"msg_id", "code"},
+    )
+
+    // 延迟指标
+    RequestLatency = prometheus.NewHistogramVec(
+        prometheus.HistogramOpts{
+            Name:    "game_request_latency_seconds",
+            Help:    "Request latency in seconds",
+            Buckets: []float64{0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1},
+        },
+        []string{"msg_id"},
+    )
+
+    // 在线人数
+    OnlinePlayers = prometheus.NewGauge(
+        prometheus.GaugeOpts{
+            Name: "game_online_players",
+            Help: "Current online players",
+        },
+    )
+
+    // 战斗房间数
+    BattleRooms = prometheus.NewGauge(
+        prometheus.GaugeOpts{
+            Name: "game_battle_rooms",
+            Help: "Current active battle rooms",
+        },
+    )
+)
+
+func init() {
+    prometheus.MustRegister(RequestTotal, RequestLatency, OnlinePlayers, BattleRooms)
+}
+
+// 中间件：自动采集指标
+func MetricsMiddleware(handler MessageHandler, msgID uint16) MessageHandler {
+    return func(playerID uint64, body []byte) (interface{}, error) {
+        start := time.Now()
+        data, err := handler(playerID, body)
+        duration := time.Since(start).Seconds()
+
+        code := "0"
+        if err != nil {
+            code = "error"
+        }
+
+        RequestTotal.WithLabelValues(fmt.Sprintf("%d", msgID), code).Inc()
+        RequestLatency.WithLabelValues(fmt.Sprintf("%d", msgID)).Observe(duration)
+
+        return data, err
+    }
+}
+
+// 链路追踪
+type TraceContext struct {
+    TraceID string
+    SpanID  string
+    Parent  *TraceContext
+}
+
+func StartTrace(ctx context.Context) (*TraceContext, context.Context) {
+    traceID := generateTraceID()
+    spanID := generateSpanID()
+    tc := &TraceContext{TraceID: traceID, SpanID: spanID}
+    return tc, context.WithValue(ctx, "trace", tc)
+}
+```
+
+### 22.6 可回滚性设计
+
+任何变更都应能安全回滚。
+
+```go
+// rollback/rollback.go
+type RollbackManager struct {
+    steps []RollbackStep
+    mu    sync.Mutex
+}
+
+type RollbackStep struct {
+    Name       string
+    Execute    func() error
+    Rollback   func() error
+}
+
+func NewRollbackManager() *RollbackManager {
+    return &RollbackManager{}
+}
+
+func (r *RollbackManager) AddStep(name string, exec, rollback func() error) {
+    r.mu.Lock()
+    defer r.mu.Unlock()
+    r.steps = append(r.steps, RollbackStep{
+        Name:     name,
+        Execute:  exec,
+        Rollback: rollback,
+    })
+}
+
+func (r *RollbackManager) Execute() error {
+    r.mu.Lock()
+    steps := r.steps
+    r.mu.Unlock()
+
+    executed := make([]RollbackStep, 0, len(steps))
+    for _, step := range steps {
+        if err := step.Execute(); err != nil {
+            log.Errorf("step %s failed: %v", step.Name, err)
+            // 反向回滚
+            for i := len(executed) - 1; i >= 0; i-- {
+                if rbErr := executed[i].Rollback(); rbErr != nil {
+                    log.Errorf("rollback %s failed: %v", executed[i].Name, rbErr)
+                }
+            }
+            return fmt.Errorf("rolled back after %s: %w", step.Name, err)
+        }
+        executed = append(executed, step)
+    }
+    return nil
+}
+
+// 数据库版本管理
+type Migration struct {
+    Version  int
+    UpSQL    string
+    DownSQL  string
+}
+
+type MigrationManager struct {
+    db         *sql.DB
+    migrations []Migration
+}
+
+func (m *MigrationManager) MigrateUp() error {
+    for _, mig := range m.migrations {
+        if _, err := m.db.Exec(mig.UpSQL); err != nil {
+            return fmt.Errorf("migration v%d failed: %w", mig.Version, err)
+        }
+        log.Infof("migration v%d applied", mig.Version)
+    }
+    return nil
+}
+
+func (m *MigrationManager) MigrateDown(targetVersion int) error {
+    for i := len(m.migrations) - 1; i >= 0; i-- {
+        if m.migrations[i].Version <= targetVersion {
+            break
+        }
+        if _, err := m.db.Exec(m.migrations[i].DownSQL); err != nil {
+            return fmt.Errorf("rollback v%d failed: %w", m.migrations[i].Version, err)
+        }
+        log.Infof("migration v%d rolled back", m.migrations[i].Version)
+    }
+    return nil
+}
+```
+
+---
+
 ## 下一步
 
 1. 从状态模式和观察者模式开始实践

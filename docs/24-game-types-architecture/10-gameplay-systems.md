@@ -751,10 +751,117 @@ func (m *MailManager) ClaimMail(playerID int64, mailID int64) error {
 
 ## 下一步
 
-根据你的项目经验，建议优先补充：
+### 7.9 交易与拍卖系统
+
+#### 7.9.1 玩家间交易
+
+```go
+type Trade struct {
+    ID          uint64
+    SellerID    uint64
+    BuyerID     uint64
+    ItemID      int
+    ItemCount   int
+    Price       int        // 游戏币价格
+    Status      TradeStatus
+    CreateTime  time.Time
+    ExpireTime  time.Time
+}
+
+type TradeStatus int
+const (
+    TradeStatusPending   TradeStatus = 0  // 待确认
+    TradeStatusConfirmed TradeStatus = 1  // 已确认
+    TradeStatusCompleted TradeStatus = 2  // 已完成
+    TradeStatusCancelled TradeStatus = 3  // 已取消
+    TradeStatusExpired   TradeStatus = 4  // 已过期
+)
+```
+
+#### 7.9.2 拍卖行
+
+```go
+type AuctionItem struct {
+    ID          uint64
+    SellerID    uint64
+    ItemID      int
+    ItemCount   int
+    StartPrice  int        // 起拍价
+    BuyNowPrice int        // 一口价
+    CurrentBid  int        // 当前最高价
+    HighestBidder uint64   // 最高出价者
+    StartTime   time.Time
+    EndTime     time.Time
+    Status      AuctionStatus
+}
+
+type AuctionStatus int
+const (
+    AuctionStatusActive   AuctionStatus = 0  // 拍卖中
+    AuctionStatusSold     AuctionStatus = 1  // 已成交
+    AuctionStatusExpired  AuctionStatus = 2  // 已过期
+    AuctionStatusCancelled AuctionStatus = 3  // 已取消
+)
+```
+
+#### 7.9.3 交易安全
+
+```go
+// 防刷保护
+func (t *TradeManager) ValidateTrade(seller, buyer uint64, itemID, count, price int) error {
+    // 1. 检查交易双方是否在线
+    if !t.isOnline(seller) || !t.isOnline(buyer) {
+        return ErrPlayerOffline
+    }
+    
+    // 2. 检查交易双方是否为同一人
+    if seller == buyer {
+        return ErrSelfTrade
+    }
+    
+    // 3. 检查价格合理性（防洗钱）
+    avgPrice := t.getAveragePrice(itemID)
+    if price < avgPrice*0.1 || price > avgPrice*10 {
+        return ErrPriceAbnormal
+    }
+    
+    // 4. 检查频率限制
+    if t.getTradeCount(seller, time.Now().Add(-time.Hour)) > 50 {
+        return ErrTradeFrequencyLimit
+    }
+    
+    // 5. 检查物品是否可交易
+    if !t.isTradeable(itemID) {
+        return ErrItemNotTradeable
+    }
+    
+    return nil
+}
+
+// 手续费
+func CalculateTax(price int, taxRate float64) int {
+    return int(float64(price) * taxRate)
+}
+```
+
+#### 7.9.4 交易系统设计要点
+
+| 要点 | 说明 |
+|------|------|
+| 原子性 | 转账和物品转移必须在同一事务中 |
+| 幂等性 | 同一交易不重复处理 |
+| 防刷 | 价格区间限制、频率限制、同人交易限制 |
+| 手续费 | 防止经济膨胀、回收游戏币 |
+| 搜索 | 物品分类、价格排序、筛选条件 |
+| 通知 | 交易成功通知、拍卖结束通知 |
+
+---
+
+## 下一步
 
 1. **挂机系统** → 离线收益、自动战斗
 2. **活动系统** → 活动配置、奖励发放
 3. **跨服系统** → 匹配、排行榜、公会战
 4. **合服系统** → 数据迁移、冲突处理
+5. **交易系统** → 玩家交易、拍卖行、安全防护
 5. **战斗系统** → PVE/PVP、回合制/实时制
