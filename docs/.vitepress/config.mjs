@@ -325,7 +325,8 @@ export default defineConfig({
           { text: '开发体制与团队管理', link: '/24-game-types-architecture/09-dev-organization' },
           { text: '游戏数据分析', link: '/24-game-types-architecture/10-data-analytics' },
           { text: '游戏概念与设计基础', link: '/24-game-types-architecture/11-game-concepts' },
-          { text: '游戏编程模式', link: '/24-game-types-architecture/12-programming-patterns' }
+          { text: '游戏编程模式', link: '/24-game-types-architecture/12-programming-patterns' },
+          { text: '游戏发展史与技术演进', link: '/24-game-types-architecture/13-game-history' }
         ]
       }
     ],
