@@ -326,7 +326,8 @@ export default defineConfig({
           { text: '辅助系统设计', link: '/24-game-types-architecture/10-auxiliary-systems' },
           { text: '技术运维与基础设施', link: '/24-game-types-architecture/11-tech-ops' },
           { text: '游戏数据分析', link: '/24-game-types-architecture/12-data-analytics' },
-          { text: '开发体制与团队管理', link: '/24-game-types-architecture/13-dev-organization' }
+          { text: '开发体制与团队管理', link: '/24-game-types-architecture/13-dev-organization' },
+          { text: '前端技术与游戏引擎', link: '/24-game-types-architecture/14-frontend-engines' }
         ]
       }
     ],
