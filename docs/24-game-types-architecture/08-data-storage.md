@@ -17,7 +17,6 @@
 | **DuckDB** | 本地分析 | 开发调试、临时报表、小规模分析 | 嵌入式、无需服务 |
 
 ### 1.2 一句话定位
-
 ```
 Redis     → 快（热数据、缓存、计数器）
 MySQL     → 稳（核心业务、事务保证）
@@ -26,6 +25,17 @@ ClickHouse → 算（分析聚合、报表）
 DuckDB    → 轻（本地分析、开发调试）
 MongoDB   → 灵（Schema自由、文档存储）
 ```
+
+### 1.3 各组件性能基准
+
+| 组件 | 单实例QPS | 延迟 | 数据量级 | 成本 |
+|------|----------|------|---------|------|
+| MySQL | 10K-50K | 1-10ms | TB级 | 中 |
+| Redis | 100K-500K | <1ms | GB级 | 中 |
+| Kafka | 100万+/s | 5-20ms | PB级 | 低 |
+| ClickHouse | 10M行/s | 100ms | PB级 | 中 |
+| DuckDB | 10K-100K | 1-10ms | GB级 | 极低 |
+| MongoDB | 10K-100K | 1-10ms | TB级 | 中 |
 
 ---
 
@@ -59,6 +69,42 @@ MongoDB   → 灵（Schema自由、文档存储）
 | 热数据 | Redis | 分钟~小时 | 极高（每次请求） |
 | 温数据 | MySQL | 天~月 | 中等（每次登录） |
 | 冷数据 | ClickHouse/归档 | 月~年 | 低（按需查询） |
+
+### 2.2 数据流向架构
+
+```
+                    ┌──────────────────────────────────────────────┐
+                    │                数据流向全景图                   │
+                    └──────────────────────────────────────────────┘
+
+  玩家请求                                                      告警
+    │                                                            ▲
+    ▼                                                            │
+┌────────┐    ┌────────┐    ┌────────┐    ┌────────────────────┐
+│ 网关层 │───▶│ 业务层 │───▶│  缓存  │───▶│   MySQL 主从集群    │
+│(负载均衡)│   │(Go/C++)│    │(Redis) │    │   (读写分离)        │
+└────────┘    └───┬────┘    └────────┘    └────────┬───────────┘
+                  │                                 │
+                  │ 发送事件                        │ 同步Binlog
+                  ▼                                 ▼
+            ┌──────────┐                    ┌──────────────┐
+            │  Kafka   │                    │    Canala     │
+            │ (事件流)  │                    │ (数据同步)     │
+            └────┬─────┘                    └──────┬───────┘
+                 │                                 │
+        ┌────────┼────────┐                       │
+        ▼        ▼        ▼                       ▼
+  ┌──────────┐ ┌─────┐ ┌──────┐          ┌──────────────┐
+  │ClickHouse│ │Flink│ │告警  │          │ ClickHouse   │
+  │(分析存储) │ │(实时)│ │系统  │          │ (业务数据)    │
+  └────┬─────┘ └─────┘ └──────┘          └──────────────┘
+       │
+       ▼
+  ┌──────────┐
+  │  BI系统   │
+  │ 仪表盘    │
+  └──────────┘
+```
 
 ---
 
@@ -135,7 +181,37 @@ CREATE TABLE economy_log (
 );
 ```
 
-### 3.2 数据模型分类
+### 3.2 高级表设计：分库分表
+
+当单表数据超过2000万行时，需要考虑分库分表：
+
+```sql
+-- 玩家数据按server_id分库
+-- db_game_1.player, db_game_2.player, ...
+
+-- 经济流水按月分表（冷热分离）
+CREATE TABLE economy_log_202401 (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    player_id BIGINT NOT NULL,
+    currency_type VARCHAR(32) NOT NULL,
+    change_amount BIGINT NOT NULL,
+    reason VARCHAR(64) NOT NULL,
+    reason_id BIGINT DEFAULT 0,
+    balance_after BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_player_time (player_id, created_at)
+) PARTITION BY RANGE (UNIX_TIMESTAMP(created_at)) (
+    PARTITION p202401 VALUES LESS THAN (UNIX_TIMESTAMP('2024-02-01')),
+    PARTITION p202402 VALUES LESS THAN (UNIX_TIMESTAMP('2024-03-01')),
+    PARTITION pmax VALUES LESS THAN MAXVALUE
+);
+
+-- 订单表按月分表
+CREATE TABLE payment_order_202401 LIKE payment_order;
+-- 每月自动创建新分表 + 迁移旧表到冷存储
+```
+
+### 3.3 数据模型分类
 
 | 数据类型 | 示例 | 存储位置 | 一致性要求 |
 |---------|------|---------|-----------|
@@ -209,7 +285,62 @@ func UpdatePlayer(player *Player) error {
 }
 ```
 
-### 4.3 幂等与对账
+### 4.3 缓存穿透/击穿/雪崩防护
+
+```go
+// 1. 缓存穿透：查询不存在的数据，每次都打到DB
+// 方案：布隆过滤器 + 空值缓存
+func GetPlayerSafe(playerID uint64) (*Player, error) {
+    // 布隆过滤器检查
+    if !bloomFilter.Test([]byte(fmt.Sprintf("%d", playerID))) {
+        return nil, ErrPlayerNotFound // 直接返回，不查DB
+    }
+    
+    cacheKey := fmt.Sprintf("player:%d", playerID)
+    data, err := redis.Get(ctx, cacheKey).Bytes()
+    
+    // 空值缓存（防穿透）
+    if string(data) == "NULL" {
+        return nil, ErrPlayerNotFound
+    }
+    
+    if err == nil {
+        var player Player
+        json.Unmarshal(data, &player)
+        return &player, nil
+    }
+    
+    // 2. 缓存击穿：热点key过期，大量请求同时查DB
+    // 方案：分布式锁，只放一个请求查DB
+    lockKey := fmt.Sprintf("lock:player:%d", playerID)
+    if acquired, _ := redis.SetNX(ctx, lockKey, 1, 10*time.Second).Result(); !acquired {
+        // 等待其他线程写入缓存
+        time.Sleep(100 * time.Millisecond)
+        return GetPlayerSafe(playerID) // 重试
+    }
+    defer redis.Del(ctx, lockKey)
+    
+    // 查DB并写缓存
+    var player Player
+    db.Where("id = ?", playerID).First(&player)
+    
+    if player.ID == 0 {
+        // 玩家不存在，缓存空值
+        redis.Set(ctx, cacheKey, "NULL", 5*time.Minute)
+        return nil, ErrPlayerNotFound
+    }
+    
+    data, _ = json.Marshal(player)
+    // 3. 缓存雪崩：大量key同时过期
+    // 方案：过期时间加随机值
+    ttl := 30*time.Minute + time.Duration(rand.Intn(600))*time.Second
+    redis.Set(ctx, cacheKey, data, ttl)
+    
+    return &player, nil
+}
+```
+
+### 4.4 幂等与对账
 
 ```go
 // 幂等处理：同一订单不重复发货
@@ -243,6 +374,31 @@ func ProcessPayment(orderNo string, amount float64) error {
     
     // 6. 提交事务
     return tx.Commit().Error
+}
+
+// 对账脚本：每日凌晨跑
+func DailyReconciliation(date string) {
+    // 1. 查MySQL订单总额
+    var mysqlTotal float64
+    db.Model(&PaymentOrder{}).
+        Where("DATE(pay_time) = ? AND status = 2", date).
+        Select("COALESCE(SUM(amount), 0)").Scan(&mysqlTotal)
+    
+    // 2. 查Kafka经济流水总额
+    var kafkaTotal int64
+    // 从ClickHouse查
+    clickhouse.Query(`
+        SELECT COALESCE(SUM(amount), 0) 
+        FROM economy流水 
+        WHERE reason = 'payment' AND DATE(time) = ?
+    `, date).Scan(&kafkaTotal)
+    
+    // 3. 对账
+    diff := math.Abs(mysqlTotal - float64(kafkaTotal))
+    if diff > 0.01 {
+        log.Warn("对账差异", "date", date, "mysql", mysqlTotal, "kafka", kafkaTotal)
+        // 触发告警 + 生成补数任务
+    }
 }
 ```
 
@@ -338,6 +494,364 @@ func GetTopN(rankType string, n int64) []RankEntry {
 }
 ```
 
+### 6.3 Redis 实战模式详解
+
+#### 6.3.1 在线状态管理
+
+```go
+// 使用 Set 管理在线玩家
+type OnlineManager struct {
+    redis *redis.Client
+}
+
+// 玩家上线
+func (m *OnlineManager) PlayerOnline(playerID, serverID uint64) error {
+    pipe := m.redis.Pipeline()
+    
+    // 1. 添加到在线集合
+    pipe.SAdd(ctx, "online:players", fmt.Sprintf("%d", playerID))
+    
+    // 2. 记录所在服务器
+    pipe.Set(ctx, fmt.Sprintf("online:server:%d", playerID), serverID, 24*time.Hour)
+    
+    // 3. 更新最后心跳时间
+    pipe.Set(ctx, fmt.Sprintf("online:heartbeat:%d", playerID), time.Now().Unix(), 5*time.Minute)
+    
+    // 4. 服务器在线计数
+    pipe.HIncrBy(ctx, "online:server:count", fmt.Sprintf("%d", serverID), 1)
+    
+    _, err := pipe.Exec(ctx)
+    return err
+}
+
+// 玩家下线
+func (m *OnlineManager) PlayerOffline(playerID, serverID uint64) error {
+    pipe := m.redis.Pipeline()
+    
+    pipe.SRem(ctx, "online:players", fmt.Sprintf("%d", playerID))
+    pipe.Del(ctx, fmt.Sprintf("online:server:%d", playerID))
+    pipe.Del(ctx, fmt.Sprintf("online:heartbeat:%d", playerID))
+    pipe.HIncrBy(ctx, "online:server:count", fmt.Sprintf("%d", serverID), -1)
+    
+    _, err := pipe.Exec(ctx)
+    return err
+}
+
+// 获取在线玩家数
+func (m *OnlineManager) GetOnlineCount() (int64, error) {
+    return m.redis.SCard(ctx, "online:players").Result()
+}
+
+// 检查玩家是否在线
+func (m *OnlineManager) IsOnline(playerID uint64) bool {
+    return m.redis.SIsMember(ctx, "online:players", fmt.Sprintf("%d", playerID)).Val()
+}
+
+// 心跳续约（防断线未检测）
+func (m *OnlineManager) Heartbeat(playerID uint64) error {
+    key := fmt.Sprintf("online:heartbeat:%d", playerID)
+    return m.redis.Set(ctx, key, time.Now().Unix(), 5*time.Minute).Err()
+}
+
+// 定期清理过期心跳（由定时任务调用）
+func (m *OnlineManager) CleanupStaleConnections() {
+    // 扫描所有心跳key，过期的视为掉线
+    var cursor uint64
+    for {
+        keys, nextCursor, _ := m.redis.Scan(ctx, cursor, "online:heartbeat:*", 100).Result()
+        cursor = nextCursor
+        
+        for _, key := range keys {
+            ttl, _ := m.redis.TTL(ctx, key).Result()
+            if ttl == -2 { // key已过期
+                playerID := extractPlayerID(key)
+                serverID, _ := m.redis.Get(ctx, fmt.Sprintf("online:server:%d", playerID)).Uint64()
+                m.PlayerOffline(playerID, serverID)
+            }
+        }
+        
+        if cursor == 0 {
+            break
+        }
+    }
+}
+```
+
+#### 6.3.2 限流器实现
+
+```go
+// 滑动窗口限流器
+type RateLimiter struct {
+    redis *redis.Client
+}
+
+// 检查是否超过频率限制
+// 参数：key=限流键, window=时间窗口(秒), maxCount=最大次数
+func (r *RateLimiter) IsAllowed(key string, window int64, maxCount int) (bool, error) {
+    now := time.Now().UnixMilli()
+    windowStart := now - window*1000
+    
+    pipe := r.redis.Pipeline()
+    
+    // 1. 移除窗口外的记录
+    pipe.ZRemRangeByScore(ctx, key, "0", fmt.Sprintf("%d", windowStart))
+    
+    // 2. 添加当前请求
+    pipe.ZAdd(ctx, key, &redis.Z{Score: float64(now), Member: fmt.Sprintf("%d", now)})
+    
+    // 3. 统计窗口内请求数
+    countCmd := pipe.ZCard(ctx, key)
+    
+    // 4. 设置key过期时间
+    pipe.Expire(ctx, key, time.Duration(window)*time.Second)
+    
+    _, err := pipe.Exec(ctx)
+    if err != nil {
+        return false, err
+    }
+    
+    count := countCmd.Val()
+    return count <= int64(maxCount), nil
+}
+
+// 使用示例
+func (s *Server) HandleChat(playerID uint64, content string) error {
+    limiter := &RateLimiter{redis: s.redis}
+    
+    // 限制：每分钟最多发20条消息
+    allowed, _ := limiter.IsAllowed(
+        fmt.Sprintf("rate:chat:%d", playerID),
+        60,  // 1分钟窗口
+        20,  // 最多20条
+    )
+    if !allowed {
+        return ErrRateLimited
+    }
+    
+    // 处理聊天消息...
+    return nil
+}
+```
+
+#### 6.3.3 延迟队列（ZSet实现）
+
+```go
+// 使用ZSet实现延迟任务队列
+type DelayQueue struct {
+    redis *redis.Client
+}
+
+// 添加延迟任务
+func (d *DelayQueue) AddTask(queue string, taskID string, payload []byte, delay time.Duration) error {
+    executeAt := time.Now().Add(delay).Unix()
+    
+    task := map[string]interface{}{
+        "id":      taskID,
+        "payload": string(payload),
+        "retries": 0,
+    }
+    data, _ := json.Marshal(task)
+    
+    return d.redis.ZAdd(ctx, queue, &redis.Z{
+        Score:  float64(executeAt),
+        Member: data,
+    }).Err()
+}
+
+// 消费延迟任务（定时轮询）
+func (d *DelayQueue) Consume(queue string, handler func(payload []byte) error) {
+    ticker := time.NewTicker(1 * time.Second)
+    defer ticker.Stop()
+    
+    for range ticker.C {
+        now := time.Now().Unix()
+        
+        // 获取到期任务（原子操作：获取+删除）
+        results, err := d.redis.ZRangeByScore(ctx, queue, &redis.ZRangeBy{
+            Min:   "0",
+            Max:   fmt.Sprintf("%d", now),
+            Count: 10, // 每次最多处理10个
+        }).Result()
+        
+        if err != nil || len(results) == 0 {
+            continue
+        }
+        
+        for _, result := range results {
+            // 尝试获取任务（防止重复消费）
+            removed, _ := d.redis.ZRem(ctx, queue, result).Result()
+            if removed == 0 {
+                continue // 其他消费者已处理
+            }
+            
+            var task map[string]interface{}
+            json.Unmarshal([]byte(result), &task)
+            
+            payload := []byte(task["payload"].(string))
+            if err := handler(payload); err != nil {
+                // 重新入队，增加重试次数
+                retries := int(task["retries"].(float64))
+                if retries < 3 {
+                    task["retries"] = retries + 1
+                    d.AddTask(queue, task["id"].(string), payload, time.Duration(retries+1)*time.Minute)
+                }
+            }
+        }
+    }
+}
+
+// 使用示例：邮件延迟发送
+func (s *Server) SendDelayedMail(playerID uint64, mail Mail, delay time.Duration) {
+    payload, _ := json.Marshal(mail)
+    s.delayQueue.AddTask("queue:mail", fmt.Sprintf("mail:%d", playerID), payload, delay)
+}
+```
+
+#### 6.3.4 签到系统（Bitmap）
+
+```go
+// 使用Bitmap实现签到系统
+type SignManager struct {
+    redis *redis.Client
+}
+
+// 玩家签到
+func (m *SignManager) Sign(playerID uint64, day int) (bool, error) {
+    key := fmt.Sprintf("sign:%d:%s", playerID, time.Now().Format("200601"))
+    
+    // SETBIT: 设置第day位为1
+    wasSet, err := m.redis.GetBit(ctx, key, int64(day)).Result()
+    if wasSet == 1 {
+        return false, nil // 已签到
+    }
+    
+    err = m.redis.SetBit(ctx, key, int64(day), 1).Err()
+    return true, err
+}
+
+// 获取本月签到天数
+func (m *SignManager) GetSignDays(playerID uint64) (int64, error) {
+    key := fmt.Sprintf("sign:%d:%s", playerID, time.Now().Format("200601"))
+    return m.redis.BitCount(ctx, key, nil).Result()
+}
+
+// 检查某天是否签到
+func (m *SignManager) IsSigned(playerID uint64, day int) (bool, error) {
+    key := fmt.Sprintf("sign:%d:%s", playerID, time.Now().Format("200601"))
+    val, err := m.redis.GetBit(ctx, key, int64(day)).Result()
+    return val == 1, err
+}
+
+// 获取连续签到天数
+func (m *SignManager) GetStreak(playerID uint64) int {
+    today := time.Now()
+    streak := 0
+    
+    for i := 0; i < 31; i++ {
+        day := today.AddDate(0, 0, -i)
+        key := fmt.Sprintf("sign:%d:%s", playerID, day.Format("200601"))
+        
+        val, _ := m.redis.GetBit(ctx, key, int64(day.Day()-1)).Result()
+        if val == 0 {
+            break
+        }
+        streak++
+    }
+    
+    return streak
+}
+```
+
+#### 6.3.5 好友系统（Set + Hash）
+
+```go
+// 好友系统实现
+type FriendManager struct {
+    redis *redis.Client
+}
+
+// 添加好友
+func (m *FriendManager) AddFriend(playerID, friendID uint64) error {
+    pipe := m.redis.Pipeline()
+    
+    key1 := fmt.Sprintf("friends:%d", playerID)
+    key2 := fmt.Sprintf("friends:%d", friendID)
+    
+    // 双向添加
+    pipe.SAdd(ctx, key1, fmt.Sprintf("%d", friendID))
+    pipe.SAdd(ctx, key2, fmt.Sprintf("%d", playerID))
+    
+    // 记录好友关系详情
+    detailKey := fmt.Sprintf("friend_detail:%d:%d", playerID, friendID)
+    pipe.HSet(ctx, detailKey, map[string]interface{}{
+        "intimacy":  0,
+        "added_at":  time.Now().Unix(),
+        "last_chat": 0,
+    })
+    
+    _, err := pipe.Exec(ctx)
+    return err
+}
+
+// 删除好友
+func (m *FriendManager) RemoveFriend(playerID, friendID uint64) error {
+    pipe := m.redis.Pipeline()
+    
+    pipe.SRem(ctx, fmt.Sprintf("friends:%d", playerID), fmt.Sprintf("%d", friendID))
+    pipe.SRem(ctx, fmt.Sprintf("friends:%d", friendID), fmt.Sprintf("%d", playerID))
+    pipe.Del(ctx, fmt.Sprintf("friend_detail:%d:%d", playerID, friendID))
+    pipe.Del(ctx, fmt.Sprintf("friend_detail:%d:%d", friendID, playerID))
+    
+    _, err := pipe.Exec(ctx)
+    return err
+}
+
+// 获取好友列表
+func (m *FriendManager) GetFriends(playerID uint64) ([]uint64, error) {
+    key := fmt.Sprintf("friends:%d", playerID)
+    members, err := m.redis.SMembers(ctx, key).Result()
+    if err != nil {
+        return nil, err
+    }
+    
+    var friends []uint64
+    for _, member := range members {
+        id, _ := strconv.ParseUint(member, 10, 64)
+        friends = append(friends, id)
+    }
+    return friends, nil
+}
+
+// 检查是否是好友
+func (m *FriendManager) IsFriend(playerID, friendID uint64) bool {
+    return m.redis.SIsMember(ctx, fmt.Sprintf("friends:%d", playerID), fmt.Sprintf("%d", friendID)).Val()
+}
+
+// 获取好友数量
+func (m *FriendManager) GetFriendCount(playerID uint64) (int64, error) {
+    return m.redis.SCard(ctx, fmt.Sprintf("friends:%d", playerID)).Result()
+}
+
+// 获取共同好友
+func (m *FriendManager) GetMutualFriends(playerID1, playerID2 uint64) ([]uint64, error) {
+    key1 := fmt.Sprintf("friends:%d", playerID1)
+    key2 := fmt.Sprintf("friends:%d", playerID2)
+    
+    // Redis交集操作
+    members, err := m.redis.SInter(ctx, key1, key2).Result()
+    if err != nil {
+        return nil, err
+    }
+    
+    var mutual []uint64
+    for _, member := range members {
+        id, _ := strconv.ParseUint(member, 10, 64)
+        mutual = append(mutual, id)
+    }
+    return mutual, nil
+}
+```
+
 ---
 
 ## 7. Kafka 在游戏中的典型用法
@@ -371,6 +885,223 @@ func (p *KafkaProducer) SendTrackEvent(event TrackEvent) error {
 }
 ```
 
+### 7.3 Kafka 消费者实战
+
+#### 7.3.1 经济流水消费者
+
+```go
+// 经济流水消费者：将Kafka事件写入ClickHouse
+type EconomyConsumer struct {
+    consumer   sarama.ConsumerGroup
+    ch         *sql.DB // ClickHouse连接
+    batchSize  int
+    batch      []EconomyLog
+    flushTimer *time.Ticker
+}
+
+func NewEconomyConsumer(brokers []string, groupID string, ch *sql.DB) *EconomyConsumer {
+    config := sarama.NewConfig()
+    config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
+    config.Consumer.Offsets.Initial = sarama.OffsetOldest
+    config.Consumer.Return.Errors = true
+    
+    consumer, _ := sarama.NewConsumerGroup(brokers, groupID, config)
+    
+    return &EconomyConsumer{
+        consumer:   consumer,
+        ch:         ch,
+        batchSize:  1000,
+        batch:      make([]EconomyLog, 0, 1000),
+        flushTimer: time.NewTicker(5 * time.Second),
+    }
+}
+
+// 实现ConsumerGroupHandler接口
+func (c *EconomyConsumer) Setup(session sarama.ConsumerGroupSession) error { return nil }
+func (c *EconomyConsumer) Cleanup(session sarama.ConsumerGroupSession) error { return nil }
+
+func (c *EconomyConsumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+    for msg := range claim.Messages() {
+        var log EconomyLog
+        if err := json.Unmarshal(msg.Value, &log); err != nil {
+            log.Error("解析经济流水失败", "error", err)
+            continue
+        }
+        
+        c.batch = append(c.batch, log)
+        
+        // 批量写入ClickHouse
+        if len(c.batch) >= c.batchSize {
+            c.flushBatch()
+        }
+        
+        // 标记消息已消费
+        session.MarkMessage(msg, "")
+    }
+    return nil
+}
+
+// 批量写入ClickHouse
+func (c *EconomyConsumer) flushBatch() {
+    if len(c.batch) == 0 {
+        return
+    }
+    
+    tx, _ := c.ch.Begin()
+    stmt, _ := tx.Prepare(`
+        INSERT INTO economy流水 (time, player_id, currency, amount, reason, balance_after)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `)
+    
+    for _, log := range c.batch {
+        stmt.Exec(log.Time, log.PlayerID, log.Currency, log.Amount, log.Reason, log.BalanceAfter)
+    }
+    
+    stmt.Close()
+    tx.Commit()
+    
+    log.Info("批量写入经济流水", "count", len(c.batch))
+    c.batch = c.batch[:0]
+}
+
+// 启动消费者
+func (c *EconomyConsumer) Start(ctx context.Context) {
+    // 定时刷新剩余数据
+    go func() {
+        for {
+            select {
+            case <-c.flushTimer.C:
+                c.flushBatch()
+            case <-ctx.Done():
+                c.flushBatch()
+                return
+            }
+        }
+    }()
+    
+    // 消费消息
+    for {
+        if err := c.consumer.Consume(ctx, []string{"economy_logs"}, c); err != nil {
+            log.Error("消费失败", "error", err)
+            time.Sleep(5 * time.Second) // 重试
+        }
+    }
+}
+```
+
+#### 7.3.2 埋点事件消费者
+
+```go
+// 埋点事件消费者：实时统计关键指标
+type TrackEventConsumer struct {
+    consumer sarama.ConsumerGroup
+    redis    *redis.Client
+}
+
+func (c *TrackEventConsumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+    for msg := range claim.Messages() {
+        var event TrackEvent
+        if err := json.Unmarshal(msg.Value, &event); err != nil {
+            continue
+        }
+        
+        pipe := c.redis.Pipeline()
+        today := time.Now().Format("2006-01-02")
+        
+        switch event.EventName {
+        case "login":
+            // 统计DAU
+            pipe.SAdd(ctx, fmt.Sprintf("dau:%s", today), fmt.Sprintf("%d", event.PlayerID))
+            pipe.Expire(ctx, fmt.Sprintf("dau:%s", today), 48*time.Hour)
+            
+        case "register":
+            // 统计新增用户
+            pipe.SAdd(ctx, fmt.Sprintf("new_users:%s", today), fmt.Sprintf("%d", event.PlayerID))
+            pipe.Expire(ctx, fmt.Sprintf("new_users:%s", today), 48*time.Hour)
+            
+        case "first_pay":
+            // 统计首充
+            pipe.SAdd(ctx, fmt.Sprintf("first_pay:%s", today), fmt.Sprintf("%d", event.PlayerID))
+            pipe.Expire(ctx, fmt.Sprintf("first_pay:%s", today), 48*time.Hour)
+            
+            // 更新首充时间
+            pipe.Set(ctx, fmt.Sprintf("first_pay_time:%d", event.PlayerID), today, 0)
+        }
+        
+        pipe.Exec(ctx)
+        session.MarkMessage(msg, "")
+    }
+    return nil
+}
+```
+
+#### 7.3.3 消费者组配置最佳实践
+
+```go
+// Kafka消费者组配置
+func NewConsumerConfig() *sarama.Config {
+    config := sarama.NewConfig()
+    
+    // 消费者组配置
+    config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
+    config.Consumer.Offsets.Initial = sarama.OffsetOldest
+    config.Consumer.Return.Errors = true
+    
+    // 批量消费配置（提高吞吐）
+    config.Consumer.Fetch.Min = 1           // 最小拉取1条
+    config.Consumer.Fetch.Default = 1024*1024 // 默认拉取1MB
+    config.Consumer.Fetch.Max = 10*1024*1024  // 最大拉取10MB
+    
+    // 会话超时配置
+    config.Consumer.Group.Session.Timeout = 20 * time.Second
+    config.Consumer.Group.Heartbeat.Interval = 6 * time.Second
+    
+    // 偏移量提交
+    config.Consumer.Offsets.AutoCommit.Enable = true
+    config.Consumer.Offsets.AutoCommit.Interval = 1 * time.Second
+    
+    return config
+}
+
+// 消费者健康检查
+type ConsumerHealth struct {
+    ConsumerGroup string
+    Lag           map[string]int64 // 每个partition的lag
+    LastCommit    time.Time
+    Status        string // healthy/degraded/unhealthy
+}
+
+func (c *ConsumerHealth) Check(brokers []string, group string) *ConsumerHealth {
+    admin, _ := sarama.NewClusterAdmin(brokers, sarama.NewConfig())
+    
+    // 获取消费者组详情
+    groupDesc, _ := admin.DescribeConsumerGroups([]string{group})
+    
+    for _, g := range groupDesc {
+        for _, member := range g.Members {
+            // 获取每个partition的lag
+            // lag = 最新offset - 已消费offset
+        }
+    }
+    
+    // 判断健康状态
+    totalLag := int64(0)
+    for _, lag := range c.Lag {
+        totalLag += lag
+    }
+    
+    if totalLag > 100000 {
+        c.Status = "unhealthy"
+    } else if totalLag > 10000 {
+        c.Status = "degraded"
+    } else {
+        c.Status = "healthy"
+    }
+    
+    return c
+}
+```
+
 ---
 
 ## 8. ClickHouse 在游戏中的典型用法
@@ -378,7 +1109,7 @@ func (p *KafkaProducer) SendTrackEvent(event TrackEvent) error {
 ### 8.1 表设计
 
 ```sql
--- 玩家行为宽表
+-- 玩家行为宽表（分区+排序键优化）
 CREATE TABLE player_events (
     event_time DateTime,
     player_id UInt64,
@@ -388,6 +1119,7 @@ CREATE TABLE player_events (
     server_id UInt32,
     properties String  -- JSON
 ) ENGINE = MergeTree()
+PARTITION BY toYYYYMM(event_time)
 ORDER BY (event_name, event_time, player_id);
 
 -- 经济流水宽表
@@ -399,13 +1131,45 @@ CREATE TABLE economy流水 (
     reason String,
     balance_after Int64
 ) ENGINE = MergeTree()
+PARTITION BY toYYYYMM(time)
 ORDER BY (reason, time, player_id);
+
+-- 战斗日志表（按天分区，支持回放分析）
+CREATE TABLE battle_logs (
+    battle_id String,
+    start_time DateTime,
+    end_time DateTime,
+    mode String,          -- pvp/pve/guild_war
+    player_ids Array(UInt64),
+    winner_side UInt8,
+    duration UInt32,       -- 战斗时长(秒)
+    damage_stats String,   -- JSON: 伤害统计
+    items_used String      -- JSON: 使用的道具
+) ENGINE = MergeTree()
+PARTITION BY toYYYYMMDD(start_time)
+ORDER BY (mode, start_time, battle_id);
+
+-- 付费分析表
+CREATE TABLE payment_analytics (
+    order_time DateTime,
+    player_id UInt64,
+    product_id UInt32,
+    amount Decimal(10,2),
+    currency String,
+    channel String,        -- ios/android/web
+    is_first_pay Bool,
+    vip_level UInt8,
+    player_level UInt32,
+    days_since_register UInt32
+) ENGINE = MergeTree()
+PARTITION BY toYYYYMM(order_time)
+ORDER BY (player_id, order_time);
 ```
 
 ### 8.2 分析查询示例
 
 ```sql
--- 次日留存率
+-- 1. 次日留存率（按注册日期）
 SELECT 
     DATE(first_login) AS reg_date,
     COUNT(DISTINCT player_id) AS reg_users,
@@ -420,16 +1184,90 @@ FROM (
 LEFT JOIN player_events next_day 
     ON first_login.player_id = next_day.player_id 
     AND DATE(next_day.time) = DATE(first_login) + INTERVAL 1 DAY
-GROUP BY reg_date;
+GROUP BY reg_date
+ORDER BY reg_date;
 
--- 经济通胀监控
+-- 2. 经济通胀监控（每日产出/消耗/净变化）
 SELECT 
     DATE(time) AS day,
+    currency,
     SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END) AS total_income,
     SUM(CASE WHEN amount < 0 THEN -amount ELSE 0 END) AS total_cost,
-    total_income - total_cost AS net_change
+    total_income - total_cost AS net_change,
+    -- 通胀率 = 净增量 / 总消耗
+    round(net_change * 100.0 / total_cost, 2) AS inflation_rate
 FROM economy流水
-GROUP BY day;
+WHERE time >= today() - 30
+GROUP BY day, currency
+ORDER BY day, currency;
+
+-- 3. 付费漏斗分析（浏览商店→付费成功）
+SELECT 
+    step,
+    COUNT(DISTINCT player_id) AS users,
+    round(users * 100.0 / first_value(users) OVER (ORDER BY step), 2) AS conversion_rate
+FROM (
+    SELECT player_id, 
+        CASE 
+            WHEN event_name = 'shop_view' THEN 1
+            WHEN event_name = 'item_view' THEN 2
+            WHEN event_name = 'pay_click' THEN 3
+            WHEN event_name = 'pay_success' THEN 4
+        END AS step
+    FROM player_events
+    WHERE event_name IN ('shop_view', 'item_view', 'pay_click', 'pay_success')
+    AND event_time >= today() - 7
+)
+GROUP BY step
+ORDER BY step;
+
+-- 4. 玩家LTV分析（按注册天数的累计付费）
+SELECT 
+    days_since_register,
+    COUNT(DISTINCT player_id) AS active_users,
+    SUM(amount) AS total_revenue,
+    total_revenue / active_users AS arpu,
+    -- 累计ARPU
+    sum(arpu) OVER (ORDER BY days_since_register) AS cumulative_arpu
+FROM payment_analytics
+WHERE order_time >= today() - 90
+GROUP BY days_since_register
+ORDER BY days_since_register;
+
+-- 5. 渠道ROI分析
+SELECT 
+    channel,
+    COUNT(DISTINCT player_id) AS players,
+    SUM(amount) AS revenue,
+    revenue / players AS arpu,
+    -- 假设CPA为10元/用户
+    revenue / (players * 10) AS roi
+FROM payment_analytics
+WHERE order_time >= today() - 30
+GROUP BY channel
+ORDER BY revenue DESC;
+
+-- 6. 流失预警分析（7天未登录的高价值用户）
+SELECT 
+    p.player_id,
+    p.level,
+    p.vip_level,
+    max(e.time) AS last_active,
+    dateDiff('day', last_active, now()) AS inactive_days,
+    COALESCE(SUM(pa.amount), 0) AS total_pay
+FROM player p
+LEFT JOIN player_events e ON p.id = e.player_id
+LEFT JOIN payment_analytics pa ON p.id = pa.player_id
+WHERE p.id IN (
+    SELECT player_id FROM player_events 
+    WHERE time >= today() - 30
+    GROUP BY player_id
+    HAVING max(time) < today() - 7
+)
+GROUP BY p.player_id, p.level, p.vip_level
+HAVING total_pay > 100 -- 高价值：累计付费>100元
+ORDER BY total_pay DESC
+LIMIT 100;
 ```
 
 ---
@@ -458,6 +1296,51 @@ SELECT
     SUM(CASE WHEN retained THEN 1 ELSE 0 END) AS retained_users
 FROM read_csv_auto('retention_data.csv')
 GROUP BY reg_date;
+
+-- 性能对比：DuckDB vs Pandas
+-- DuckDB处理100万行CSV：~0.5秒
+-- Pandas处理100万行CSV：~2秒
+-- DuckDB处理1000万行CSV：~3秒
+-- Pandas处理1000万行CSV：~15秒
+```
+
+### 9.3 Python集成示例
+
+```python
+import duckdb
+
+# 连接数据库（内存模式）
+conn = duckdb.connect(':memory:')
+
+# 查询CSV文件
+result = conn.execute("""
+    SELECT 
+        event_name,
+        COUNT(*) as event_count,
+        COUNT(DISTINCT player_id) as unique_players
+    FROM read_csv_auto('player_events.csv')
+    WHERE event_time >= '2024-01-01'
+    GROUP BY event_name
+    ORDER BY event_count DESC
+""").fetchall()
+
+# 查询Parquet文件（列存格式，更高效）
+result = conn.execute("""
+    SELECT 
+        DATE_TRUNC('day', event_time) as day,
+        COUNT(*) as events
+    FROM read_parquet('events/*.parquet')
+    GROUP BY day
+    ORDER BY day
+""").fetchall()
+
+# 导出结果到CSV
+conn.execute("""
+    COPY (
+        SELECT * FROM read_csv_auto('raw_data.csv')
+        WHERE score > 1000
+    ) TO 'filtered_data.csv' (HEADER, DELIMITER ',')
+""")
 ```
 
 ---
@@ -498,5 +1381,3 @@ GROUP BY reg_date;
 
 1. 确定每个数据类型用什么存储
 2. 设计缓存策略和一致性方案
-3. 搭建数据链路（Kafka → ClickHouse）
-4. 建立分析仪表盘

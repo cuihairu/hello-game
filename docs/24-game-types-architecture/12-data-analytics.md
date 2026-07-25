@@ -22,6 +22,71 @@
 | 社交数据 | 玩家关系和互动 | 好友、公会、聊天 | 数据库 |
 | 性能数据 | 系统运行指标 | 延迟、帧率、错误 | 监控系统 |
 
+### 1.3 数据质量保障
+
+```go
+// 数据质量检查器
+type DataQualityChecker struct {
+    clickhouse *sql.DB
+}
+
+// 检查数据完整性
+func (c *DataQualityChecker) CheckCompleteness(table, date string) (float64, error) {
+    var total, missing int64
+    
+    // 检查必填字段是否为空
+    query := fmt.Sprintf(`
+        SELECT 
+            count() as total,
+            countIf(event_name = '') as missing_name,
+            countIf(player_id = 0) as missing_player
+        FROM %s 
+        WHERE toDate(event_time) = '%s'
+    `, table, date)
+    
+    row := c.clickhouse.QueryRow(query)
+    row.Scan(&total, &missing, &missing_...)
+    
+    completeness := float64(total-missing) / float64(total) * 100
+    return completeness, nil
+}
+
+// 检查数据时效性
+func (c *DataQualityChecker) CheckTimeliness(table string, maxDelay time.Duration) (bool, error) {
+    var latestEvent time.Time
+    
+    query := fmt.Sprintf(`
+        SELECT max(event_time) FROM %s
+    `, table)
+    
+    err := c.clickhouse.QueryRow(query).Scan(&latestEvent)
+    if err != nil {
+        return false, err
+    }
+    
+    delay := time.Since(latestEvent)
+    return delay <= maxDelay, nil
+}
+
+// 检查数据一致性
+func (c *DataQualityChecker) CheckConsistency(mysqlCount, chCount int64) float64 {
+    if mysqlCount == 0 {
+        return 100.0
+    }
+    return float64(chCount) / float64(mysqlCount) * 100
+}
+```
+
+### 1.4 常见数据问题与处理
+
+| 问题 | 原因 | 检测方法 | 处理方案 |
+|------|------|---------|---------|
+| 重复数据 | 网络重试 | COUNT(DISTINCT) | 去重处理 |
+| 缺失数据 | 埋点丢失 | NULL值检查 | 插值/标记 |
+| 异常数据 | 外挂/错误 | 统计异常检测 | 标记/过滤 |
+| 延迟数据 | Kafka积压 | 时间戳对比 | 等待/告警 |
+| 格式错误 | 埋点bug | 正则校验 | 修正/丢弃 |
+
 ---
 
 ## 2. 核心指标体系
@@ -57,6 +122,78 @@
 | 人均关卡完成数 | 平均每日完成关卡数 | 进度指标 |
 | 人均战斗次数 | 平均每日战斗次数 | 活跃指标 |
 | 社交互动率 | 有社交行为的用户占比 | 社交健康度 |
+
+### 2.4 指标实时计算（Redis）
+
+```go
+// 实时指标计算器
+type MetricsCalculator struct {
+    redis *redis.Client
+}
+
+// 计算DAU（使用HyperLogLog，精确去重）
+func (c *MetricsCalculator) RecordLogin(playerID uint64) {
+    today := time.Now().Format("2006-01-02")
+    key := fmt.Sprintf("dau:hll:%s", today)
+    
+    // HyperLogLog去重计数（误差<0.81%）
+    c.redis.PFAdd(ctx, key, fmt.Sprintf("%d", playerID))
+    c.redis.Expire(ctx, key, 48*time.Hour)
+}
+
+func (c *MetricsCalculator) GetDAU() (int64, error) {
+    today := time.Now().Format("2006-01-02")
+    key := fmt.Sprintf("dau:hll:%s", today)
+    return c.redis.PFCount(ctx, key).Result()
+}
+
+// 计算实时ARPU
+func (c *MetricsCalculator) GetRealtimeARPU() (float64, error) {
+    today := time.Now().Format("2006-01-02")
+    
+    // 从Redis获取实时收入
+    revenue, _ := c.redis.Get(ctx, fmt.Sprintf("revenue:%s", today)).Float64()
+    
+    // 获取DAU
+    dau, _ := c.GetDAU()
+    
+    if dau == 0 {
+        return 0, nil
+    }
+    
+    return revenue / float64(dau), nil
+}
+
+// 记录付费事件
+func (c *MetricsCalculator) RecordPayment(playerID uint64, amount float64) {
+    today := time.Now().Format("2006-01-02")
+    pipe := c.redis.Pipeline()
+    
+    // 累加收入
+    pipe.IncrByFloat(ctx, fmt.Sprintf("revenue:%s", today), amount)
+    pipe.Expire(ctx, fmt.Sprintf("revenue:%s", today), 48*time.Hour)
+    
+    // 记录付费用户
+    pipe.SAdd(ctx, fmt.Sprintf("pay_users:%s", today), fmt.Sprintf("%d", playerID))
+    pipe.Expire(ctx, fmt.Sprintf("pay_users:%s", today), 48*time.Hour)
+    
+    pipe.Exec(ctx)
+}
+
+// 计算实时付费率
+func (c *MetricsCalculator) GetPayRate() (float64, error) {
+    today := time.Now().Format("2006-01-02")
+    
+    dau, _ := c.GetDAU()
+    payUsers, _ := c.redis.SCard(ctx, fmt.Sprintf("pay_users:%s", today)).Result()
+    
+    if dau == 0 {
+        return 0, nil
+    }
+    
+    return float64(payUsers) / float64(dau) * 100, nil
+}
+```
 
 ---
 
@@ -145,6 +282,59 @@ func CalculateConversionRates(steps []FunnelStep) []float64 {
 }
 ```
 
+### 3.3 ClickHouse 漏斗查询
+
+```sql
+-- 游戏内付费漏斗（浏览商店→选择商品→点击购买→确认支付→支付成功）
+WITH funnel AS (
+    SELECT 
+        player_id,
+        maxIf(event_time, event_name = 'shop_view') AS t1,
+        maxIf(event_time, event_name = 'item_select') AS t2,
+        maxIf(event_time, event_name = 'pay_click') AS t3,
+        maxIf(event_time, event_name = 'pay_confirm') AS t4,
+        maxIf(event_time, event_name = 'pay_success') AS t5
+    FROM player_events
+    WHERE event_time >= today() - 7
+    AND event_name IN ('shop_view', 'item_select', 'pay_click', 'pay_confirm', 'pay_success')
+    GROUP BY player_id
+)
+SELECT 
+    countIf(t1 > 0) AS step1_shop_view,
+    countIf(t2 > t1) AS step2_item_select,
+    countIf(t3 > t2) AS step3_pay_click,
+    countIf(t4 > t3) AS step4_pay_confirm,
+    countIf(t5 > t4) AS step5_pay_success,
+    round(step2_item_select * 100.0 / step1_shop_view, 2) AS rate_1_2,
+    round(step3_pay_click * 100.0 / step2_item_select, 2) AS rate_2_3,
+    round(step4_pay_confirm * 100.0 / step3_pay_click, 2) AS rate_3_4,
+    round(step5_pay_success * 100.0 / step4_pay_confirm, 2) AS rate_4_5,
+    round(step5_pay_success * 100.0 / step1_shop_view, 2) AS overall_rate
+FROM funnel;
+
+-- 各渠道注册漏斗对比
+WITH channel_funnel AS (
+    SELECT 
+        channel,
+        countIf(event_name = 'install') AS installs,
+        countIf(event_name = 'register') AS registers,
+        countIf(event_name = 'tutorial_complete') AS tutorials,
+        countIf(event_name = 'first_pay') AS first_pays
+    FROM player_events
+    WHERE event_time >= today() - 7
+    GROUP BY channel
+)
+SELECT 
+    channel,
+    installs,
+    registers,
+    round(registers * 100.0 / installs, 2) AS reg_rate,
+    round(tutorials * 100.0 / registers, 2) AS tutorial_rate,
+    round(first_pays * 100.0 / tutorials, 2) AS pay_rate
+FROM channel_funnel
+ORDER BY installs DESC;
+```
+
 ---
 
 ## 4. 留存分析
@@ -231,6 +421,67 @@ func (a *RetentionAnalyzer) AnalyzeNewUserRetention(regDate time.Time, days int)
 - 7天后缓慢下降：长期粘性问题
 ```
 
+### 4.4 ClickHouse 留存查询
+
+```sql
+-- 7日留存率（按注册日期）
+WITH first_login AS (
+    SELECT 
+        player_id,
+        toDate(min(event_time)) AS reg_date
+    FROM player_events
+    WHERE event_name = 'login'
+    GROUP BY player_id
+),
+retention AS (
+    SELECT 
+        fl.reg_date,
+        fl.player_id,
+        countIf(toDate(pe.event_time) = fl.reg_date + 1) AS d1,
+        countIf(toDate(pe.event_time) = fl.reg_date + 3) AS d3,
+        countIf(toDate(pe.event_time) = fl.reg_date + 7) AS d7,
+        countIf(toDate(pe.event_time) = fl.reg_date + 14) AS d14,
+        countIf(toDate(pe.event_time) = fl.reg_date + 30) AS d30
+    FROM first_login fl
+    LEFT JOIN player_events pe ON fl.player_id = pe.player_id
+    WHERE pe.event_name = 'login'
+    GROUP BY fl.reg_date, fl.player_id
+)
+SELECT 
+    reg_date,
+    count() AS new_users,
+    round(sum(d1) * 100.0 / count(), 2) AS d1_retention,
+    round(sum(d3) * 100.0 / count(), 2) AS d3_retention,
+    round(sum(d7) * 100.0 / count(), 2) AS d7_retention,
+    round(sum(d14) * 100.0 / count(), 2) AS d14_retention,
+    round(sum(d30) * 100.0 / count(), 2) AS d30_retention
+FROM retention
+WHERE reg_date >= today() - 30
+GROUP BY reg_date
+ORDER BY reg_date;
+
+-- 不同渠道的留存对比
+WITH first_login AS (
+    SELECT 
+        player_id,
+        toDate(min(event_time)) AS reg_date,
+        argMax(channel, event_time) AS channel
+    FROM player_events
+    WHERE event_name = 'login'
+    GROUP BY player_id
+)
+SELECT 
+    fl.channel,
+    count(DISTINCT fl.player_id) AS new_users,
+    round(countIf(toDate(pe.event_time) = fl.reg_date + 1) * 100.0 / new_users, 2) AS d1_retention,
+    round(countIf(toDate(pe.event_time) = fl.reg_date + 7) * 100.0 / new_users, 2) AS d7_retention
+FROM first_login fl
+LEFT JOIN player_events pe ON fl.player_id = pe.player_id
+WHERE fl.reg_date >= today() - 7
+GROUP BY fl.channel
+ORDER BY new_users DESC;
+```
+
 ---
 
 ## 5. 付费分析
@@ -312,6 +563,88 @@ func (a *PayAnalyzer) SegmentUsers(startDate, endDate time.Time) []PaySegment {
 | 首充转化率 | 首充用户 ÷ 新增用户 | 首充引导效果 |
 | 复购率 | 复购用户 ÷ 付费用户 | 付费粘性 |
 | ARPU | 总收入 ÷ DAU | 整体付费能力 |
+
+### 5.4 ClickHouse 付费深度分析
+
+```sql
+-- 1. 付费用户分层分析（鲸鱼/海豚/小鱼）
+WITH pay_users AS (
+    SELECT 
+        player_id,
+        sum(amount) AS total_pay,
+        count() AS pay_count,
+        min(order_time) AS first_pay_time,
+        max(order_time) AS last_pay_time
+    FROM payment_analytics
+    WHERE order_time >= today() - 30
+    GROUP BY player_id
+)
+SELECT 
+    CASE 
+        WHEN total_pay >= 1000 THEN '鲸鱼(≥1000元)'
+        WHEN total_pay >= 100 THEN '海豚(100-999元)'
+        WHEN total_pay > 0 THEN '小鱼(1-99元)'
+    END AS segment,
+    count() AS users,
+    round(users * 100.0 / (SELECT count() FROM pay_users), 2) AS user_pct,
+    sum(total_pay) AS revenue,
+    round(revenue * 100.0 / (SELECT sum(total_pay) FROM pay_users), 2) AS revenue_pct,
+    round(avg(pay_count), 1) AS avg_pay_count,
+    round(avg(total_pay), 2) AS avg_pay_amount
+FROM pay_users
+GROUP BY segment
+ORDER BY revenue DESC;
+
+-- 2. 付费间隔分析（多久复购）
+WITH pay_intervals AS (
+    SELECT 
+        player_id,
+        dateDiff('day', 
+            lag(order_time) OVER (PARTITION BY player_id ORDER BY order_time),
+            order_time
+        ) AS days_between
+    FROM payment_analytics
+    WHERE order_time >= today() - 90
+)
+SELECT 
+    CASE 
+        WHEN days_between <= 1 THEN '1天内'
+        WHEN days_between <= 3 THEN '1-3天'
+        WHEN days_between <= 7 THEN '3-7天'
+        WHEN days_between <= 30 THEN '7-30天'
+        ELSE '30天以上'
+    END AS interval_group,
+    count() AS occurrences,
+    round(occurrences * 100.0 / (SELECT count() FROM pay_intervals WHERE days_between IS NOT NULL), 2) AS pct
+FROM pay_intervals
+WHERE days_between IS NOT NULL
+GROUP BY interval_group
+ORDER BY interval_group;
+
+-- 3. 商品购买热度分析
+SELECT 
+    product_id,
+    count() AS buy_count,
+    sum(amount) AS total_revenue,
+    count(DISTINCT player_id) AS unique_buyers,
+    round(total_revenue / buy_count, 2) AS avg_price
+FROM payment_analytics
+WHERE order_time >= today() - 7
+GROUP BY product_id
+ORDER BY total_revenue DESC
+LIMIT 20;
+
+-- 4. 付费时段分布（什么时间充值最多）
+SELECT 
+    toHour(order_time) AS hour,
+    count() AS pay_count,
+    sum(amount) AS revenue,
+    count(DISTINCT player_id) AS pay_users
+FROM payment_analytics
+WHERE order_time >= today() - 7
+GROUP BY hour
+ORDER BY hour;
+```
 
 ---
 
@@ -396,6 +729,68 @@ func CalculateSignificance(controlConversions, controlTotal,
 }
 ```
 
+### 6.4 A/B 测试实战案例
+
+```sql
+-- 商店UI改版A/B测试效果分析
+WITH test_groups AS (
+    SELECT 
+        player_id,
+        group_name,
+        event_name,
+        event_time
+    FROM ab_test_events
+    WHERE test_id = 'shop_ui_v2'
+    AND event_time >= '2024-01-01'
+    AND event_time <= '2024-01-14'
+),
+conversion AS (
+    SELECT 
+        group_name,
+        count(DISTINCT player_id) AS total_users,
+        countIf(event_name = 'shop_view') AS shop_views,
+        countIf(event_name = 'pay_success') AS pay_success,
+        sumIf(amount, event_name = 'pay_success') AS total_revenue
+    FROM test_groups te
+    LEFT JOIN payment_analytics pa ON te.player_id = pa.player_id
+    GROUP BY group_name
+)
+SELECT 
+    group_name,
+    total_users,
+    shop_views,
+    pay_success,
+    round(pay_success * 100.0 / total_users, 2) AS pay_rate,
+    round(total_revenue / total_users, 2) AS arpu,
+    round(total_revenue / pay_success, 2) AS arppu
+FROM conversion
+ORDER BY group_name;
+
+-- 使用ClickHouse内置的统计函数
+SELECT 
+    group_name,
+    count() AS samples,
+    avg(amount) AS mean_amount,
+    stddevPop(amount) AS std_amount,
+    -- 95%置信区间
+    avg(amount) - 1.96 * stddevPop(amount) / sqrt(count()) AS ci_lower,
+    avg(amount) + 1.96 * stddevPop(amount) / sqrt(count()) AS ci_upper
+FROM ab_test_events ate
+JOIN payment_analytics pa ON ate.player_id = pa.player_id
+WHERE test_id = 'shop_ui_v2'
+GROUP BY group_name;
+```
+
+### 6.5 A/B 测试注意事项
+
+| 注意事项 | 说明 | 解决方案 |
+|---------|------|---------|
+| 样本量不足 | 结果不具统计显著性 | 使用功效分析计算最小样本量 |
+| 测试时间太短 | 可能受周期性影响 | 至少运行1-2个完整周期 |
+| 辛普森悖论 | 整体和分组结论矛盾 | 分层分析，控制混杂变量 |
+| 多重比较 | 多次检验增加假阳性 | 使用Bonferroni校正 |
+| 新奇效应 | 新功能短期吸引力 | 延长测试时间，观察趋势 |
+
 ---
 
 ## 7. 数据仓库与 ETL
@@ -460,6 +855,69 @@ func (j *ETLJob) Run() error {
 }
 ```
 
+### 7.3 实战ETL：用户行为数据入仓
+
+```go
+// 从Kafka消费 → 清洗 → 写入ClickHouse
+type BehaviorETL struct {
+    kafkaConsumer sarama.ConsumerGroup
+    clickhouse    *sql.DB
+}
+
+func (e *BehaviorETL) Transform(events []map[string]interface{}) ([]map[string]interface{}, error) {
+    var cleaned []map[string]interface{}
+    
+    for _, event := range events {
+        // 1. 过滤无效事件
+        if event["player_id"] == nil || event["event_name"] == nil {
+            continue
+        }
+        
+        // 2. 补全缺失字段
+        if event["event_time"] == nil {
+            event["event_time"] = time.Now().Format("2006-01-02 15:04:05")
+        }
+        
+        // 3. 标准化事件名
+        event["event_name"] = strings.ToLower(event["event_name"].(string))
+        
+        // 4. 解析properties JSON
+        if props, ok := event["properties"].(string); ok {
+            var parsed map[string]interface{}
+            json.Unmarshal([]byte(props), &parsed)
+            event["properties"] = parsed
+        }
+        
+        cleaned = append(cleaned, event)
+    }
+    
+    return cleaned, nil
+}
+
+func (e *BehaviorETL) Load(events []map[string]interface{}) error {
+    tx, _ := e.clickhouse.Begin()
+    stmt, _ := tx.Prepare(`
+        INSERT INTO player_events (event_time, player_id, event_name, event_type, level, server_id, properties)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `)
+    
+    for _, event := range events {
+        stmt.Exec(
+            event["event_time"],
+            event["player_id"],
+            event["event_name"],
+            event["event_type"],
+            event["level"],
+            event["server_id"],
+            event["properties"],
+        )
+    }
+    
+    stmt.Close()
+    return tx.Commit()
+}
+```
+
 ---
 
 ## 8. 可视化与仪表盘
@@ -482,6 +940,74 @@ func (j *ETLJob) Run() error {
 | 产品仪表盘 | 产品团队 | 转化率、功能使用率 |
 | 技术仪表盘 | 技术团队 | 延迟、错误率、容量 |
 | 老板仪表盘 | 管理层 | 收入趋势、用户增长 |
+
+### 8.3 仪表盘数据查询示例
+
+```sql
+-- 1. 运营日报数据
+SELECT 
+    toDate(event_time) AS day,
+    uniqExact(player_id) AS dau,
+    uniqExactIf(player_id, level = 1) AS new_users,
+    round(avg(daily_play_time), 1) AS avg_play_time,
+    round(avg(daily_pay_amount), 2) AS arpu
+FROM player_daily_summary
+WHERE day >= today() - 30
+GROUP BY day
+ORDER BY day;
+
+-- 2. 收入趋势（按渠道）
+SELECT 
+    toDate(order_time) AS day,
+    channel,
+    sum(amount) AS revenue,
+    count(DISTINCT player_id) AS pay_users,
+    round(revenue / pay_users, 2) AS arppu
+FROM payment_analytics
+WHERE order_time >= today() - 7
+GROUP BY day, channel
+ORDER BY day, revenue DESC;
+
+-- 3. 实时在线人数（每分钟）
+SELECT 
+    toStartOfMinute(event_time) AS minute,
+    uniqExact(player_id) AS online_count
+FROM player_events
+WHERE event_name = 'heartbeat'
+AND event_time >= now() - INTERVAL 1 HOUR
+GROUP BY minute
+ORDER BY minute;
+```
+
+### 8.4 可视化图表选择指南
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    图表选择决策树                             │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  比较数据？                                                  │
+│  ├── 多个类别比较 → 柱状图/条形图                             │
+│  ├── 随时间变化 → 折线图                                     │
+│  └── 部分与整体 → 饼图/环形图                                │
+│                                                             │
+│  分布分析？                                                  │
+│  ├── 单变量分布 → 直方图                                     │
+│  ├── 双变量关系 → 散点图                                     │
+│  └── 多变量关系 → 热力图                                     │
+│                                                             │
+│  流程分析？                                                  │
+│  ├── 转化漏斗 → 漏斗图                                       │
+│  ├── 流向关系 → 桑基图                                       │
+│  └── 时间线 → 甘特图                                         │
+│                                                             │
+│  实时监控？                                                  │
+│  ├── 数值变化 → 数字卡片                                     │
+│  ├── 趋势变化 → 实时折线图                                   │
+│  └── 状态监控 → 仪表盘                                       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ---
 
