@@ -323,8 +323,8 @@ export default defineConfig({
           { text: '游戏编程模式', link: '/24-game-types-architecture/07-programming-patterns' },
           { text: '常见玩法系统设计', link: '/24-game-types-architecture/08-gameplay-systems' },
           { text: '辅助系统设计', link: '/24-game-types-architecture/09-auxiliary-systems' },
-          { text: '商业运营与团队组织', link: '/24-game-types-architecture/10-commercial-operations' },
-          { text: '运营基础设施与负荷测试', link: '/24-game-types-architecture/11-operations-infra' },
+          { text: '策划与数值设计', link: '/24-game-types-architecture/10-game-design' },
+          { text: '技术运维与基础设施', link: '/24-game-types-architecture/11-tech-ops' },
           { text: '游戏数据分析', link: '/24-game-types-architecture/12-data-analytics' },
           { text: '开发体制与团队管理', link: '/24-game-types-architecture/13-dev-organization' }
         ]
