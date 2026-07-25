@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="56" fill="#284331"/>
+  <circle cx="60" cy="60" r="52" fill="#3a5f45"/>
+  
+  <!-- Game controller icon -->
+  <path d="M35 55 C35 45 45 40 55 40 L65 40 C75 40 85 45 85 55 L85 65 C85 75 75 80 65 80 L55 80 C45 80 35 75 35 65 Z" fill="#fff9eb" stroke="#7a4e20" stroke-width="2"/>
+  
+  <!-- D-pad -->
+  <rect x="42" y="52" width="4" height="12" rx="1" fill="#7a4e20"/>
+  <rect x="38" y="56" width="12" height="4" rx="1" fill="#7a4e20"/>
+  
+  <!-- Buttons -->
+  <circle cx="72" cy="54" r="3" fill="#7a4e20"/>
+  <circle cx="78" cy="60" r="3" fill="#7a4e20"/>
+  <circle cx="72" cy="66" r="3" fill="#7a4e20"/>
+  <circle cx="66" cy="60" r="3" fill="#7a4e20"/>
+  
+  <!-- Connection lines (representing networking) -->
+  <path d="M20 30 L40 45" stroke="#6f7f49" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <path d="M100 30 L80 45" stroke="#6f7f49" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <path d="M20 90 L40 75" stroke="#6f7f49" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <path d="M100 90 L80 75" stroke="#6f7f49" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  
+  <!-- Network nodes -->
+  <circle cx="20" cy="30" r="4" fill="#6f7f49"/>
+  <circle cx="100" cy="30" r="4" fill="#6f7f49"/>
+  <circle cx="20" cy="90" r="4" fill="#6f7f49"/>
+  <circle cx="100" cy="90" r="4" fill="#6f7f49"/>
+</svg>
