@@ -314,19 +314,19 @@ export default defineConfig({
         collapsed: false,
         items: [
           { text: '概述', link: '/24-game-types-architecture/' },
-          { text: '游戏核心技术总览', link: '/24-game-types-architecture/01-core-technologies' },
-          { text: '常见玩法系统设计', link: '/24-game-types-architecture/02-gameplay-systems' },
-          { text: '商业运营与团队组织', link: '/24-game-types-architecture/03-commercial-operations' },
-          { text: 'P2P 架构与 NAT 穿越', link: '/24-game-types-architecture/04-p2p-architecture' },
-          { text: '容量规划与系统结构', link: '/24-game-types-architecture/05-capacity-planning' },
-          { text: '通信协议设计', link: '/24-game-types-architecture/06-protocol-design' },
-          { text: '辅助系统设计', link: '/24-game-types-architecture/07-auxiliary-systems' },
-          { text: '运营基础设施与负荷测试', link: '/24-game-types-architecture/08-operations-infra' },
-          { text: '开发体制与团队管理', link: '/24-game-types-architecture/09-dev-organization' },
-          { text: '游戏数据分析', link: '/24-game-types-architecture/10-data-analytics' },
-          { text: '游戏概念与设计基础', link: '/24-game-types-architecture/11-game-concepts' },
-          { text: '游戏编程模式', link: '/24-game-types-architecture/12-programming-patterns' },
-          { text: '游戏发展史与技术演进', link: '/24-game-types-architecture/13-game-history' }
+          { text: '游戏发展史与技术演进', link: '/24-game-types-architecture/01-game-history' },
+          { text: '游戏概念与设计基础', link: '/24-game-types-architecture/02-game-concepts' },
+          { text: '游戏编程模式', link: '/24-game-types-architecture/03-programming-patterns' },
+          { text: '游戏核心技术总览', link: '/24-game-types-architecture/04-core-technologies' },
+          { text: '通信协议设计', link: '/24-game-types-architecture/05-protocol-design' },
+          { text: 'P2P 架构与 NAT 穿越', link: '/24-game-types-architecture/06-p2p-architecture' },
+          { text: '容量规划与系统结构', link: '/24-game-types-architecture/07-capacity-planning' },
+          { text: '常见玩法系统设计', link: '/24-game-types-architecture/08-gameplay-systems' },
+          { text: '辅助系统设计', link: '/24-game-types-architecture/09-auxiliary-systems' },
+          { text: '商业运营与团队组织', link: '/24-game-types-architecture/10-commercial-operations' },
+          { text: '运营基础设施与负荷测试', link: '/24-game-types-architecture/11-operations-infra' },
+          { text: '游戏数据分析', link: '/24-game-types-architecture/12-data-analytics' },
+          { text: '开发体制与团队管理', link: '/24-game-types-architecture/13-dev-organization' }
         ]
       }
     ],
