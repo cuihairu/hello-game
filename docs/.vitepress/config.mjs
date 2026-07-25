@@ -4,6 +4,7 @@ export default defineConfig({
   title: '游戏开发系统化知识地图',
   description: '围绕游戏项目里的真实问题组织的知识体系',
   lang: 'zh-CN',
+  base: '/hello-game/',
   cleanUrls: true,
 
   head: [
