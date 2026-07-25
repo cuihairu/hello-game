@@ -321,13 +321,14 @@ export default defineConfig({
           { text: '05 并发模型：7种常见并发思路', link: '/24-game-types-architecture/05-concurrency-models' },
           { text: '06 常见框架：从最轻到最重', link: '/24-game-types-architecture/06-frameworks' },
           { text: '07 架构：游戏核心技术总览', link: '/24-game-types-architecture/07-core-arch' },
-          { text: '08 实现：游戏编程模式', link: '/24-game-types-architecture/08-programming-patterns' },
-          { text: '09 实现：常见玩法系统设计', link: '/24-game-types-architecture/09-gameplay-systems' },
-          { text: '10 实现：辅助系统设计', link: '/24-game-types-architecture/10-auxiliary-systems' },
-          { text: '11 数据：游戏数据分析', link: '/24-game-types-architecture/11-data-analytics' },
-          { text: '12 运维：基础设施与监控', link: '/24-game-types-architecture/12-tech-ops' },
-          { text: '13 管理：开发体制与团队协作', link: '/24-game-types-architecture/13-dev-organization' },
-          { text: '14 参考：书籍、案例与最佳实践', link: '/24-game-types-architecture/14-references' }
+          { text: '08 数据存储与中间件', link: '/24-game-types-architecture/08-data-storage' },
+          { text: '09 实现：游戏编程模式', link: '/24-game-types-architecture/09-programming-patterns' },
+          { text: '10 实现：常见玩法系统设计', link: '/24-game-types-architecture/10-gameplay-systems' },
+          { text: '11 实现：辅助系统设计', link: '/24-game-types-architecture/11-auxiliary-systems' },
+          { text: '12 数据：游戏数据分析', link: '/24-game-types-architecture/12-data-analytics' },
+          { text: '13 运维：基础设施与监控', link: '/24-game-types-architecture/13-tech-ops' },
+          { text: '14 管理：开发体制与团队协作', link: '/24-game-types-architecture/14-dev-organization' },
+          { text: '15 参考：书籍、案例与最佳实践', link: '/24-game-types-architecture/15-references' }
         ]
       }
     ],
