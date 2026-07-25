@@ -1,10 +1,24 @@
-# 05 并发模型：7种常见并发思路与适用场景
+# 并发模型：7种常见并发思路与适用场景
 
-游戏服务器的并发模型决定了系统能承受多少连接、如何处理定时逻辑、以及开发复杂度。本章梳理 7 种主流并发模型，用代码示例说明每种模型的核心思路，并给出游戏场景下的适用性对比。
+游戏服务器的并发模型决定了系统能承受多少连接、如何处理定时逻辑、以及开发复杂度。选择错误的并发模型会导致系统在高并发下崩溃，或者开发复杂度失控。
+
+> **参考书籍**：本章并发模型对比参考《百万在线》中的服务器架构选型实践，以及《游戏服务器架构与优化》中的并发模型章节。
 
 ---
 
-## 1. 单线程事件循环（Single-Thread Event Loop）
+## 1. 为什么并发模型如此重要
+
+游戏服务器与 Web 服务器有一个本质区别：**游戏服务器需要维护长时间的有状态连接**。Web 请求是"无状态"的——每个请求独立处理，处理完就释放资源。但游戏连接是"有状态"的——一个玩家可能在线几小时甚至几天，期间服务端需要持续维护他的位置、背包、任务进度等状态。
+
+这意味着：**并发模型不仅要能处理高连接数，还要能高效管理大量长时间存在的状态**。一个能处理 10 万连接但每个连接占用 1MB 内存的模型，需要 100GB 内存——这在实际中是不可接受的。
+
+选择并发模型时需要权衡四个维度：**连接容量**（能处理多少连接）、**开发复杂度**（代码有多难写和维护）、**延迟特性**（每个操作的延迟是多少）、**资源效率**（每个连接占用多少内存和 CPU）。
+
+---
+
+## 2. 七种并发模型详解
+
+### 2.1 单线程事件循环（Single-Thread Event Loop）
 
 **核心思路**：一个线程跑一个无限循环，每次循环处理一批就绪的 I/O 事件和定时器，处理期间不阻塞。
 
@@ -19,166 +33,29 @@
 └─────────────────────────────┘
 ```
 
-### Go 代码示例：用 goroutine 模拟单线程事件循环
+**为什么它适合轻量级场景**：单线程事件循环没有任何锁、没有竞态条件、代码逻辑非常清晰。对于小游戏服务器（如微信小游戏的后端）、网关层、轻量逻辑服务来说，它是最佳选择。
 
-```go
-package main
+**为什么它不适合 MMO**：单线程意味着所有连接的处理都在一个线程里。如果一个连接的处理耗时 10ms，其他 999 个连接都要等 10ms。在高并发下，延迟会急剧恶化。
 
-import (
-	"fmt"
-	"time"
-)
+**适用场景**：小游戏服务器、网关层、轻量逻辑服务、配置管理服务。
 
-// 单线程事件循环模拟器
-type EventLoop struct {
-	timers    []timerTask
-	tasks     chan func()
-	running   bool
-}
+**坑**：Node.js 的事件循环中不能有同步阻塞操作（如 `fs.readFileSync`），否则会卡住整个循环。Go 中可以用 goroutine 模拟事件循环，但要注意 channel 的阻塞行为。
 
-type timerTask struct {
-	fn       func()
-	interval time.Duration
-	next     time.Time
-}
-
-func NewEventLoop() *EventLoop {
-	return &EventLoop{
-		tasks: make(chan func(), 256),
-	}
-}
-
-func (el *EventLoop) AddTimer(d time.Duration, fn func()) {
-	el.timers = append(el.timers, timerTask{
-		fn:       fn,
-		interval: d,
-		next:     time.Now().Add(d),
-	})
-}
-
-func (el *EventLoop) Post(fn func()) {
-	el.tasks <- fn
-}
-
-func (el *EventLoop) Run() {
-	el.running = true
-	for el.running {
-		now := time.Now()
-
-		// 处理就绪的定时器
-		for i := range el.timers {
-			if now.After(el.timers[i].next) {
-				el.timers[i].fn()
-				el.timers[i].next = now.Add(el.timers[i].interval)
-			}
-		}
-
-		// 处理就绪的 task（非阻塞）
-		select {
-		case task := <-el.tasks:
-			task()
-		default:
-			time.Sleep(time.Millisecond) // 没有任务时短暂休眠
-		}
-	}
-}
-
-func main() {
-	el := NewEventLoop()
-
-	el.AddTimer(100*time.Millisecond, func() {
-		fmt.Println("tick every 100ms")
-	})
-
-	el.Post(func() {
-		fmt.Println("posted task executed")
-	})
-
-	go el.Run()
-
-	time.Sleep(500 * time.Millisecond)
-}
-```
-
-**优点**：无锁、无竞态、代码逻辑清晰
-**缺点**：不能利用多核、阻塞操作会卡住整个循环
-**游戏适用场景**：小游戏服务器、网关层、轻量逻辑服务
-
----
-
-## 2. 线程池（Thread Pool）
+### 2.2 线程池（Thread Pool）
 
 **核心思路**：预先创建一组工作线程，任务从共享队列中取出执行。I/O 密集时配合非阻塞 I/O。
 
 **典型代表**：Java ExecutorService、C++ 自定义实现
 
-### Go 代码示例：简单线程池
+**为什么它适合计算密集型任务**：线程池可以利用多核 CPU 并行处理任务。对于战斗数值计算、AI 寻路、地图 AOI 计算等 CPU 密集型任务，线程池是最佳选择。
 
-```go
-package main
+**为什么它不适合高并发网络 I/O**：每个线程占用约 1MB 栈空间，1000 个线程就要 1GB 内存。而且线程切换有开销（约 1-10 微秒），在高并发下会成为瓶颈。
 
-import (
-	"fmt"
-	"sync"
-	"time"
-)
+**适用场景**：战斗数值计算、AI 寻路、地图 AOI 计算、日志写入。
 
-type ThreadPool struct {
-	workers int
-	jobs    chan func()
-	wg      sync.WaitGroup
-}
+**坑**：线程池中的任务如果访问共享数据，必须加锁。锁的竞争会导致性能下降——这是线程池最大的痛点。
 
-func NewThreadPool(workers int) *ThreadPool {
-	tp := &ThreadPool{
-		workers: workers,
-		jobs:    make(chan func(), 100),
-	}
-	for i := 0; i < workers; i++ {
-		go tp.worker(i)
-	}
-	return tp
-}
-
-func (tp *ThreadPool) worker(id int) {
-	for job := range tp.jobs {
-		job()
-		tp.wg.Done()
-	}
-}
-
-func (tp *ThreadPool) Submit(fn func()) {
-	tp.wg.Add(1)
-	tp.jobs <- fn
-}
-
-func (tp *ThreadPool) Wait() {
-	tp.wg.Wait()
-}
-
-func main() {
-	pool := NewThreadPool(4)
-
-	for i := 0; i < 20; i++ {
-		n := i
-		pool.Submit(func() {
-			fmt.Printf("worker process task %d\n", n)
-			time.Sleep(50 * time.Millisecond)
-		})
-	}
-
-	pool.Wait()
-	fmt.Println("all tasks done")
-}
-```
-
-**优点**：能利用多核、适合批量计算任务
-**缺点**：任务间共享数据需加锁、上下文切换开销
-**游戏适用场景**：战斗数值计算、AI 寻路、地图 AOI 计算
-
----
-
-## 3. Reactor 模型
+### 2.3 Reactor 模型
 
 **核心思路**：Reactor 监听 I/O 事件，分发给对应的 Handler 处理。Handler 在同一个线程中同步执行。
 
@@ -198,461 +75,63 @@ func main() {
 └──────────────────────────────────┘
 ```
 
-### Go 代码示例：Reactor 模式
+**为什么它是网络代理层的首选**：Reactor 模型用单线程处理网络 I/O，避免了线程切换和锁的开销。对于网关/代理层这种"转发消息、不做复杂计算"的场景，Reactor 是最佳选择。
 
-```go
-package main
+**为什么它不适合做游戏逻辑**：Handler 在 Reactor 线程中同步执行，如果一个 Handler 耗时较长，会阻塞后续所有事件的处理。游戏逻辑通常涉及数据库操作、复杂计算，不适合放在 Reactor 线程中。
 
-import (
-	"fmt"
-	"net"
-	"sync"
-)
+**适用场景**：网关/代理层、高连接数低延迟服务、TCP 连接管理。
 
-// Reactor 模型核心
-type Reactor struct {
-	handlers map[string]func(net.Conn)
-	mu       sync.RWMutex
-}
-
-func NewReactor() *Reactor {
-	return &Reactor{
-		handlers: make(map[string]func(net.Conn)),
-	}
-}
-
-// 注册事件处理器
-func (r *Reactor) Register(event string, handler func(net.Conn)) {
-	r.mu.Lock()
-	r.handlers[event] = handler
-	r.mu.Unlock()
-}
-
-// 事件分发（简化版：模拟 epoll 返回事件后分发）
-func (r *Reactor) Dispatch(event string, conn net.Conn) {
-	r.mu.RLock()
-	handler, ok := r.handlers[event]
-	r.mu.RUnlock()
-
-	if ok {
-		handler(conn) // Reactor 线程中同步执行
-	}
-}
-
-func main() {
-	reactor := NewReactor()
-
-	// 注册 "on_connect" 事件处理器
-	reactor.Register("on_connect", func(conn net.Conn) {
-		fmt.Println("new connection from", conn.RemoteAddr())
-	})
-
-	// 注册 "on_message" 事件处理器
-	reactor.Register("on_message", func(conn net.Conn) {
-		buf := make([]byte, 1024)
-		n, _ := conn.Read(buf)
-		fmt.Printf("received: %s\n", buf[:n])
-	})
-
-	// 模拟事件分发
-	ln, _ := net.Listen("tcp", ":9090")
-	fmt.Println("listening on :9090")
-
-	for {
-		conn, err := ln.Accept()
-		if err != nil {
-			continue
-		}
-		go reactor.Dispatch("on_connect", conn)
-		go reactor.Dispatch("on_message", conn)
-	}
-}
-```
-
-**优点**：单线程处理网络 I/O，避免线程切换、无锁
-**缺点**：Handler 执行慢会阻塞后续事件
-**游戏适用场景**：网关/代理层、高连接数低延迟服务
-
----
-
-## 4. Proactor 模型
+### 2.4 Proactor 模型
 
 **核心思路**：发起异步 I/O 操作后，由操作系统在完成后通知应用（完成回调）。与 Reactor 的区别：Reactor 通知"就绪可读"，Proactor 通知"读完了"。
 
 **典型代表**：Windows IOCP、Linux io_uring、Boost.Asio (Proactor 模式)
 
-### Go 代码示例：Proactor 模式（用 io_uring 思路模拟）
+**为什么它比 Reactor 更高效**：Reactor 模型中，Handler 需要自己调用 `read()` 来读取数据。如果数据还没到，`read()` 会阻塞（或者需要非阻塞 I/O + 重试）。Proactor 模型中，操作系统已经把数据读好了，Handler 直接处理数据即可——没有等待、没有重试。
 
-```go
-package main
+**为什么它更难实现**：Proactor 依赖操作系统的异步 I/O 支持。Linux 的 io_uring 是一个很好的实现，但 API 复杂、调试困难。回调地狱（callback hell）也是 Proactor 模型的痛点。
 
-import (
-	"fmt"
-	"sync"
-	"time"
-)
+**适用场景**：需要极致 I/O 吞吐的后端、跨服通信、大规模日志写入。
 
-// 模拟 Proactor 的异步完成通知
-type AsyncOperation struct {
-	ID       int
-	Data     []byte
-	Done     chan struct{}
-}
-
-type Proactor struct {
-	completions chan *AsyncOperation
-	workerCount int
-	wg          sync.WaitGroup
-}
-
-func NewProactor(workers int) *Proactor {
-	p := &Proactor{
-		completions: make(chan *AsyncOperation, 64),
-		workerCount: workers,
-	}
-	// 启动完成回调工作线程
-	for i := 0; i < workers; i++ {
-		go p.worker(i)
-	}
-	return p
-}
-
-func (p *Proactor) worker(id int) {
-	for op := range p.completions {
-		// 模拟：I/O 完成后的回调处理
-		fmt.Printf("[worker %d] operation %d completed, data: %s\n",
-			id, op.ID, string(op.Data))
-		close(op.Done)
-	}
-}
-
-// 提交异步读操作（模拟 OS 异步 I/O）
-func (p *Proactor) AsyncRead(op *AsyncOperation) {
-	p.wg.Add(1)
-	go func() {
-		// 模拟异步 I/O：一段时间后完成
-		time.Sleep(50 * time.Millisecond)
-		op.Data = []byte("async data")
-		p.completions <- op // 通知完成
-	}()
-}
-
-func main() {
-	proactor := NewProactor(4)
-
-	// 提交 5 个异步操作
-	for i := 0; i < 5; i++ {
-		op := &AsyncOperation{ID: i, Done: make(chan struct{})}
-		proactor.AsyncRead(op)
-
-		go func(op *AsyncOperation) {
-			<-op.Done
-			fmt.Printf("operation %d fully processed\n", op.ID)
-		}(op)
-	}
-
-	time.Sleep(300 * time.Millisecond)
-	fmt.Println("all async operations completed")
-}
-```
-
-**优点**：真正异步 I/O、吞吐量高
-**缺点**：依赖 OS 支持、回调地狱、调试复杂
-**游戏适用场景**：需要极致 I/O 吞吐的后端、跨服通信、大规模日志写入
-
----
-
-## 5. Actor 模型
+### 2.5 Actor 模型
 
 **核心思路**：每个 Actor 是独立计算单元，拥有自己的状态和邮箱。Actor 之间只通过消息通信，不共享状态。天然隔离，无锁。
 
 **典型代表**：Erlang/OTP、Akka (Java/Scala)、Microsoft Orleans
 
-### Go 代码示例：简单 Actor 框架
+**为什么它是 MMO 的理想选择**：MMO 中每个玩家都是一个独立实体，有自己的状态（位置、背包、任务进度）。用 Actor 模型，每个玩家就是一个 Actor，所有操作都通过消息传递，天然避免了竞态条件。
 
-```go
-package main
+**为什么它不适合所有场景**：Actor 之间通过消息通信，消息需要序列化/反序列化，这有 CPU 开销。而且 Actor 模型的调试比较困难——你需要追踪消息的流转路径，而不是像单线程那样直接看调用栈。
 
-import (
-	"fmt"
-	"sync"
-)
+**适用场景**：MMO 实体管理、分布式游戏服务器（Erlang 风格）、聊天系统。
 
-// Actor 接口
-type Actor interface {
-	Handle(msg Message)
-}
-
-// 消息
-type Message struct {
-	Type string
-	Data interface{}
-}
-
-// Actor 系统
-type ActorSystem struct {
-	actors map[string]chan Message
-	wg     sync.WaitGroup
-}
-
-func NewActorSystem() *ActorSystem {
-	return &ActorSystem{
-		actors: make(map[string]chan Message),
-	}
-}
-
-// 创建 Actor
-func (sys *ActorSystem) CreateActor(name string, handler func(Message)) {
-	ch := make(chan Message, 64)
-	sys.actors[name] = ch
-
-	sys.wg.Add(1)
-	go func() {
-		defer sys.wg.Done()
-		for msg := range ch {
-			handler(msg) // 串行处理，无竞态
-		}
-	}()
-}
-
-// 发送消息
-func (sys *ActorSystem) Send(name string, msg Message) {
-	if ch, ok := sys.actors[name]; ok {
-		ch <- msg
-	}
-}
-
-// 游戏示例：玩家 Actor
-func PlayerActor() func(Message) {
-	hp := 100
-	return func(msg Message) {
-		switch msg.Type {
-		case "damage":
-			damage := msg.Data.(int)
-			hp -= damage
-			if hp < 0 {
-				hp = 0
-			}
-			fmt.Printf("玩家受到 %d 伤害, 剩余 HP: %d\n", damage, hp)
-		case "heal":
-			heal := msg.Data.(int)
-			hp += heal
-			if hp > 100 {
-				hp = 100
-			}
-			fmt.Printf("玩家恢复 %d HP, 当前 HP: %d\n", heal, hp)
-		case "query_hp":
-			fmt.Printf("玩家 HP: %d\n", hp)
-		}
-	}
-}
-
-func main() {
-	sys := NewActorSystem()
-
-	// 创建玩家 Actor
-	sys.CreateActor("player1", PlayerActor())
-	sys.CreateActor("player2", PlayerActor())
-
-	// 发送消息 —— 所有操作都是消息传递，无共享状态
-	sys.Send("player1", Message{Type: "damage", Data: 30})
-	sys.Send("player1", Message{Type: "heal", Data: 10})
-	sys.Send("player2", Message{Type: "damage", Data: 50})
-	sys.Send("player1", Message{Type: "query_hp", Data: nil})
-	sys.Send("player2", Message{Type: "query_hp", Data: nil})
-
-	// 等待所有消息处理完毕
-	// （简化：实际需要 close channel 或超时机制）
-	time.Sleep(100 * time.Millisecond)
-}
-```
-
-**优点**：天然隔离无竞态、分布式友好、故障隔离
-**缺点**：消息序列化开销、调试困难、延迟较高
-**游戏适用场景**：MMO 实体管理、分布式游戏服务器（Erlang 风格）、聊天系统
-
-> ⚠️ 上面的代码需要 `import "time"`，完整可运行版本见项目源码。
-
----
-
-## 6. 协程/纤程（Coroutine）
+### 2.6 协程（Coroutine）
 
 **核心思路**：用户态的轻量级线程，可被调度器在多个协程间切换。切换在用户态完成，无需内核介入，开销极低。
 
 **典型代表**：Go goroutine、Kotlin 协程、Lua 协程、C++20 Coroutines、Erlang 进程
 
-### Go 代码示例：goroutine 协程调度
+**为什么 Go goroutine 是游戏服务器的首选**：一个 goroutine 只占用约 2KB 内存，而一个 OS 线程占用约 1MB。这意味着你可以用同样的内存创建 500 倍数量的并发单元。而且 goroutine 的创建和切换开销极低（约 100 纳秒），远低于 OS 线程（约 1-10 微秒）。
 
-```go
-package main
+**为什么它不是银弹**：大量 goroutine 会导致 GC 压力增大（需要扫描更多内存）。如果 goroutine 之间需要共享数据，仍然需要使用 sync.Mutex 等同步原语——协程只是简化了并发编程，没有消除并发问题。
 
-import (
-	"fmt"
-	"sync"
-	"time"
-)
+**适用场景**：几乎所有 Go 游戏服务器都用 goroutine，每个连接一个协程、每个定时器一个协程。
 
-// 模拟游戏中的协程场景：每个玩家是一个 goroutine
-func playerSession(id int, wg *sync.WaitGroup) {
-	defer wg.Done()
-
-	fmt.Printf("[player %d] 登录\n", id)
-
-	// 模拟：玩家每秒执行一次心跳
-	ticker := time.NewTicker(time.Second)
-	defer ticker.Stop()
-
-	count := 0
-	for range ticker.C {
-		count++
-		fmt.Printf("[player %d] 心跳 #%d\n", id, count)
-		if count >= 3 {
-			fmt.Printf("[player %d] 离线\n", id)
-			return
-		}
-	}
-}
-
-// 协程间通信：用 channel 实现消息传递
-func messageBus(msgCh chan string) {
-	for msg := range msgCh {
-		fmt.Printf("[bus] 广播: %s\n", msg)
-	}
-}
-
-func main() {
-	var wg sync.WaitGroup
-	msgCh := make(chan string, 10)
-
-	// 启动消息总线
-	go messageBus(msgCh)
-
-	// 启动 3 个玩家协程
-	for i := 1; i <= 3; i++ {
-		wg.Add(1)
-		go playerSession(i, &wg)
-	}
-
-	// 模拟世界事件广播
-	go func() {
-		for i := 0; i < 3; i++ {
-			time.Sleep(1500 * time.Millisecond)
-			msgCh <- fmt.Sprintf("世界事件 #%d", i+1)
-		}
-		close(msgCh)
-	}()
-
-	wg.Wait()
-	fmt.Println("所有玩家会话结束")
-}
-```
-
-**优点**：极低创建/切换开销、编程模型简单（同步写法异步执行）
-**缺点**：GC 压力（大量协程时）、共享数据仍需同步原语
-**游戏适用场景**：**几乎所有 Go 游戏服务器都用 goroutine**，每个连接一个协程、每个定时器一个协程
-
----
-
-## 7. CSP（Communicating Sequential Processes）
+### 2.7 CSP（Communicating Sequential Processes）
 
 **核心思路**：进程之间不共享内存，只通过 Channel（带缓冲或无缓冲）通信。"Do not communicate by sharing memory; instead, share memory by communicating."
 
 **典型代表**：Go channel、Occam、Ada
 
-### Go 代码示例：纯 CSP 风格游戏服务器
+**为什么它与 Go 天然契合**：Go 语言的 channel 就是 CSP 模型的实现。在 Go 游戏服务器中，你可以把不同的系统（位置服务、战斗服务、聊天服务）设计为独立的 goroutine，通过 channel 通信。每个系统有自己的状态，不需要加锁。
 
-```go
-package main
+**为什么它比 Actor 模型更适合 Go**：Actor 模型中，消息发送给特定的 Actor（需要知道 Actor 的地址）。CSP 模型中，消息发送给 Channel（发送者不知道谁接收）。这种解耦让系统更容易扩展——你可以随时添加新的消费者到同一个 channel。
 
-import (
-	"fmt"
-	"time"
-)
-
-// 每个游戏系统是一个独立进程，通过 channel 通信
-
-// 玩家位置更新
-type PositionUpdate struct {
-	PlayerID int
-	X, Y     float64
-}
-
-// 战斗伤害
-type DamageEvent struct {
-	AttackerID int
-	TargetID   int
-	Damage     int
-}
-
-// 位置进程：维护所有玩家位置
-func positionService(
-	updates <-chan PositionUpdate,
-	queries chan<- string,
-) {
-	positions := make(map[int][2]float64)
-
-	for {
-		select {
-		case u := <-updates:
-			positions[u.PlayerID] = [2]float64{u.X, u.Y}
-			fmt.Printf("[position] 玩家 %d 移动到 (%.0f, %.0f)\n",
-				u.PlayerID, u.X, u.Y)
-		case q := <-queries:
-			// 响应查询
-			_ = q
-		case <-time.After(5 * time.Second):
-			fmt.Println("[position] 超时退出")
-			return
-		}
-	}
-}
-
-// 战斗进程：处理伤害事件
-func combatService(damages <-chan DamageEvent) {
-	hp := map[int]int{1: 100, 2: 100, 3: 100}
-
-	for dmg := range damages {
-		hp[dmg.TargetID] -= dmg.Damage
-		if hp[dmg.TargetID] < 0 {
-			hp[dmg.TargetID] = 0
-		}
-		fmt.Printf("[combat] 玩家 %d 攻击玩家 %d, 造成 %d 伤害, 目标剩余 HP: %d\n",
-			dmg.AttackerID, dmg.TargetID, dmg.Damage, hp[dmg.TargetID])
-
-		if hp[dmg.TargetID] == 0 {
-			fmt.Printf("[combat] 玩家 %d 被击败！\n", dmg.TargetID)
-		}
-	}
-}
-
-func main() {
-	posUpdates := make(chan PositionUpdate, 10)
-	combatEvents := make(chan DamageEvent, 10)
-	queries := make(chan string, 1)
-
-	// 启动系统进程
-	go positionService(posUpdates, queries)
-	go combatService(combatEvents)
-
-	// 模拟游戏事件
-	posUpdates <- PositionUpdate{PlayerID: 1, X: 10, Y: 20}
-	combatEvents <- DamageEvent{AttackerID: 1, TargetID: 2, Damage: 30}
-	posUpdates <- PositionUpdate{PlayerID: 2, X: 15, Y: 25}
-	combatEvents <- DamageEvent{AttackerID: 3, TargetID: 1, Damage: 50}
-	combatEvents <- DamageEvent{AttackerID: 1, TargetID: 2, Damage: 80}
-
-	time.Sleep(2 * time.Second)
-	fmt.Println("game simulation done")
-}
-```
-
-**优点**：无锁、无竞态、易于推理和组合、天然支持分布式
-**缺点**：channel 通信有序列化开销、调试多进程交互复杂
-**游戏适用场景**：Go 游戏服务器架构首选，多系统解耦（位置服务、战斗服务、聊天服务各自独立进程）
+**适用场景**：Go 游戏服务器架构首选，多系统解耦（位置服务、战斗服务、聊天服务各自独立进程）。
 
 ---
 
-## 7 种并发模型对比
+## 3. 七种模型对比
 
 | 模型 | 并发单元 | 共享状态 | 通信方式 | 延迟 | 吞吐 | 开发难度 | 游戏适用 |
 |------|---------|---------|---------|------|------|---------|---------|
@@ -666,7 +145,9 @@ func main() {
 
 ---
 
-## 实际选型建议
+## 4. 实际选型建议
+
+### 4.1 按语言选型
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -686,9 +167,49 @@ func main() {
 └─────────────────────────────────────────────────────┘
 ```
 
+### 4.2 按游戏类型选型
+
+| 游戏类型 | 推荐模型 | 原因 |
+|---------|---------|------|
+| 微信小游戏 | 单线程事件循环 | 连接数少、逻辑简单 |
+| 卡牌/挂机 | 单线程事件循环 + 协程 | 无实时同步需求 |
+| MMO | Actor / CSP | 需要管理大量有状态实体 |
+| FPS/MOBA | Reactor + 协程 | 需要低延迟网络 I/O |
+| 塔防 | 协程 | 需要定时逻辑，但不需要高并发 |
+| 链游 | CSP | 多系统解耦，链上/链下分离 |
+
+### 4.3 混合模型：现实中的最佳实践
+
+大多数成熟的游戏服务器不会只用一种模型，而是**混合使用**：
+
+- **网关层**：Reactor 模型（处理网络 I/O）
+- **游戏逻辑层**：CSP/Actor 模型（处理业务逻辑）
+- **计算层**：线程池（处理 AI、寻路等计算密集任务）
+- **定时器层**：协程（处理心跳、buff 倒计时等定时逻辑）
+
+这种分层架构让每层使用最适合的模型，既保证了性能，又控制了复杂度。
+
 ---
 
-## 小结
+## 5. 常见陷阱与避坑指南
+
+### 5.1 不要过早优化并发模型
+
+很多团队在项目初期就花大量时间设计"完美的并发架构"，结果发现实际需求根本用不上那么多并发能力。**先用最简单的模型跑起来，等遇到性能瓶颈再优化**——这是最务实的策略。
+
+### 5.2 不要忽视 GC 压力
+
+Go 的 goroutine 虽然轻量，但大量 goroutine 会导致 GC 扫描的内存增多。在 Go 中，每个 goroutine 的栈空间会动态增长，但不会自动收缩。如果创建了 10 万个 goroutine，GC 需要扫描的内存可能达到几 GB。
+
+**解决方案**：使用对象池复用 goroutine、限制同时存活的 goroutine 数量、定期触发 GC。
+
+### 5.3 不要混淆"并发"和"并行"
+
+并发是"同时处理多个任务"（可能在同一个线程上交替执行），并行是"同时执行多个任务"（需要多个线程）。单线程事件循环是并发但不并行；线程池是并发且并行。理解这个区别有助于你选择正确的模型。
+
+---
+
+## 6. 小结
 
 | 关键问题 | 答案 |
 |---------|------|
