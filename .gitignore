@@ -1,3 +1,6 @@
 book
+node_modules
 .DS_Store
 .idea
+docs/.vitepress/dist
+docs/.vitepress/cache
