@@ -1,55 +1,5 @@
----
-layout: home
+# 游戏开发系统化知识地图
 
-hero:
-  name: "游戏开发系统化知识地图"
-  text: "围绕真实问题组织的知识体系"
-  tagline: 从方法论到落地实践，覆盖游戏项目从立项到上线的全链路技术知识
-  image:
-    src: /hero-gamepad.svg
-    alt: 游戏开发知识地图
-  actions:
-    - theme: brand
-      text: 开始阅读
-      link: /01-methodology/
-    - theme: alt
-      text: 阅读指南
-      link: /00-reading-guide/
+这套内容围绕游戏项目里的真实问题组织，而不是按技术名词或岗位边界堆砌。主线从方法论开始，一路进入问题模型、网络、同步、服务、客户端、数据、运营、稳定性和安全；附录只负责横向对照和专题展开。
 
-features:
-  - icon: 🗺️
-    title: 总论与方法论
-    details: 从游戏类型、平台与商业形态出发，建立分析问题的方法框架
-    link: /01-methodology/
-  - icon: 🎮
-    title: 问题模型
-    details: 将游戏按问题特征分类——房间制、实时对战、持续在线、长周期成长等
-    link: /02-models/
-  - icon: 🔌
-    title: 网络与同步
-    details: 传输协议、帧同步、状态同步、预测补偿与确定性保证
-    link: /03-network/
-  - icon: ⚙️
-    title: 运行时与并发
-    details: Actor 模型、协程、Tick 驱动、锁竞争与流控机制
-    link: /05-concurrency-runtime/
-  - icon: 🏗️
-    title: 服务与架构
-    details: 服务拆分、控制平面、IPC 消息系统与分布式协调
-    link: /06-services-control-plane/
-  - icon: 📊
-    title: 数据与运营
-    details: 数据建模、缓存中间件、埋点 BI、商业化与风控
-    link: /13-data-database/
----
-
-<style>
-:root {
-  --vp-home-hero-image-background-image: radial-gradient(
-    circle at 50% 40%,
-    rgba(111, 127, 73, 0.18),
-    rgba(40, 67, 49, 0.08) 60%,
-    transparent 100%
-  );
-}
-</style>
+适合这套知识库的使用方式有三种：立项时用它识别主导矛盾，开发中用它检查方案边界，上线后用它做事故复盘和长期治理。无论从哪一页进入，最好都回到前两章确认项目的问题模型，再决定是否采用某个具体技术方案。
