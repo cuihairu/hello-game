@@ -322,7 +322,10 @@ export default defineConfig({
           { text: '通信协议设计', link: '/24-game-types-architecture/06-protocol-design' },
           { text: '辅助系统设计', link: '/24-game-types-architecture/07-auxiliary-systems' },
           { text: '运营基础设施与负荷测试', link: '/24-game-types-architecture/08-operations-infra' },
-          { text: '开发体制与团队管理', link: '/24-game-types-architecture/09-dev-organization' }
+          { text: '开发体制与团队管理', link: '/24-game-types-architecture/09-dev-organization' },
+          { text: '游戏数据分析', link: '/24-game-types-architecture/10-data-analytics' },
+          { text: '游戏概念与设计基础', link: '/24-game-types-architecture/11-game-concepts' },
+          { text: '游戏编程模式', link: '/24-game-types-architecture/12-programming-patterns' }
         ]
       }
     ],
