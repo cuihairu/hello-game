@@ -310,24 +310,24 @@ export default defineConfig({
         ]
       },
       {
-        text: '24. 游戏类型与架构选型',
+        text: '游戏后端知识体系',
         collapsed: false,
         items: [
           { text: '概述', link: '/24-game-types-architecture/' },
-          { text: '游戏发展史与技术演进', link: '/24-game-types-architecture/01-game-history' },
-          { text: '游戏概念与设计基础', link: '/24-game-types-architecture/02-game-concepts' },
-          { text: '策划与数值设计', link: '/24-game-types-architecture/03-game-design' },
-          { text: '游戏核心技术总览', link: '/24-game-types-architecture/04-core-technologies' },
-          { text: '通信协议设计', link: '/24-game-types-architecture/05-protocol-design' },
-          { text: 'P2P 架构与 NAT 穿越', link: '/24-game-types-architecture/06-p2p-architecture' },
-          { text: '容量规划与系统结构', link: '/24-game-types-architecture/07-capacity-planning' },
-          { text: '游戏编程模式', link: '/24-game-types-architecture/08-programming-patterns' },
-          { text: '常见玩法系统设计', link: '/24-game-types-architecture/09-gameplay-systems' },
-          { text: '辅助系统设计', link: '/24-game-types-architecture/10-auxiliary-systems' },
-          { text: '技术运维与基础设施', link: '/24-game-types-architecture/11-tech-ops' },
-          { text: '游戏数据分析', link: '/24-game-types-architecture/12-data-analytics' },
-          { text: '开发体制与团队管理', link: '/24-game-types-architecture/13-dev-organization' },
-          { text: '前端技术与游戏引擎', link: '/24-game-types-architecture/14-frontend-engines' }
+          { text: '01 入门：游戏与技术的关系', link: '/24-game-types-architecture/01-entry' },
+          { text: '02 核心：数值与经济系统', link: '/24-game-types-architecture/02-game-design' },
+          { text: '03 前端：游戏引擎与客户端基础', link: '/24-game-types-architecture/03-frontend-engines' },
+          { text: '04 网络：通信、同步与联机基础', link: '/24-game-types-architecture/04-network' },
+          { text: '05 并发模型：7种常见并发思路', link: '/24-game-types-architecture/05-concurrency-models' },
+          { text: '06 常见框架：从最轻到最重', link: '/24-game-types-architecture/06-frameworks' },
+          { text: '07 架构：游戏核心技术总览', link: '/24-game-types-architecture/07-core-arch' },
+          { text: '08 实现：游戏编程模式', link: '/24-game-types-architecture/08-programming-patterns' },
+          { text: '09 实现：常见玩法系统设计', link: '/24-game-types-architecture/09-gameplay-systems' },
+          { text: '10 实现：辅助系统设计', link: '/24-game-types-architecture/10-auxiliary-systems' },
+          { text: '11 数据：游戏数据分析', link: '/24-game-types-architecture/11-data-analytics' },
+          { text: '12 运维：基础设施与监控', link: '/24-game-types-architecture/12-tech-ops' },
+          { text: '13 管理：开发体制与团队协作', link: '/24-game-types-architecture/13-dev-organization' },
+          { text: '14 参考：书籍、案例与最佳实践', link: '/24-game-types-architecture/14-references' }
         ]
       }
     ],
