@@ -129,4 +129,4 @@ npm run docs:preview # 预览构建结果
 
 ## 许可证
 
-MIT License
+Apache License 2.0
