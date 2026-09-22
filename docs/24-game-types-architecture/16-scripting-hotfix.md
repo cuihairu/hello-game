@@ -140,7 +140,7 @@ local hp = player:GetHP()                   -- 明确暴露的方法
 player:TakeDamage(amount)                   -- 语义清晰的操作
 
 -- 避免：无限制穿透宿主
-local rawEntity = C++.EntityMgr.GetById(id) -- 直接穿透原生层
+local rawEntity = EntityMgr.GetById(id) -- 直接穿透 C++ 原生层
 rawEntity.internalData.hp = 99999            -- 绕过所有校验
 ```
 

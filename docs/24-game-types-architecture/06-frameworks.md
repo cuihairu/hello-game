@@ -3402,7 +3402,7 @@ aoi_config = {
 
 ### 数据库优化
 
-```python
+```sql
 # 数据库表结构优化
 CREATE TABLE players (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,

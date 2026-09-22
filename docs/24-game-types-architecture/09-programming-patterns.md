@@ -425,7 +425,10 @@ func (s *Server) ProcessPlayer(player *Player) {
 Nystrom 在书中用了一个非常经典的例子来说明状态模式的必要性：假设你在开发一款横版过关游戏，主角可以站立、跳跃、下蹲、俯冲。如果用布尔标志来管理状态：
 
 ```go
-isJumping, isDucking, isCharging bool
+// 用布尔标志管理状态（示意）
+type PlayerState struct {
+    isJumping, isDucking, isCharging bool
+}
 ```
 
 你很快就会发现布尔标志的组合爆炸问题——`isJumping` 和 `isDucking` 同时为 true 是什么情况？`isCharging` 和 `isJumping` 同时为 true 呢？每增加一个新状态，你需要检查所有现有状态的组合是否合法。
@@ -788,7 +791,7 @@ func Execute(instructions []Instruction, caster *Unit) {
 
 假设你在开发一款 MMO 游戏，有几百种怪物。每种怪物都有独特的技能和行为。如果每个怪物类都直接调用底层 API（播放动画、生成特效、播放音效、修改状态）：
 
-```go
+```cpp
 class Goblin : Monster {
     void useSpecialAbility() {
         graphics.playAnimation("fireball");
@@ -869,7 +872,7 @@ func (g *Goblin) SpecialAbility() {
 
 在游戏开发中，你经常需要创建大量"同类型但不同属性"的对象。比如卡牌游戏中有几百种卡牌，每种卡牌有不同的攻击力、防御力、技能、描述。如果每种卡牌都创建一个类：
 
-```go
+```cpp
 class FireballCard : Card { ... }
 class IceBlastCard : Card { ... }
 class ThunderStrikeCard : Card { ... }
