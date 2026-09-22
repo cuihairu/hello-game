@@ -951,7 +951,7 @@ func LoadCardTypes(path string) map[string]*CardType {
 
 在传统面向对象设计中，游戏实体用继承来组织：
 
-```
+```text
 Entity
 ├── Character
 │   ├── Player
@@ -1044,7 +1044,7 @@ player.AddComponent(&InventoryComponent{Capacity: 20})
 
 在游戏服务器中，不同的系统需要相互通信：网络层收到玩家操作后需要通知逻辑层，逻辑层处理完后需要通知网络层发送结果，战斗系统需要通知 UI 系统更新显示。如果所有通信都是直接调用：
 
-```
+```text
 网络层 → 逻辑层 → 战斗系统 → UI系统
 网络层 → 经济系统 → 数据库
 网络层 → 社交系统 → 好友系统

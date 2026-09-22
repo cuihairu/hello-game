@@ -24,7 +24,7 @@
 
 ### 框架光谱：从轻到重
 
-```
+```text
 轻 ◀──────────────────────────────────────────────────▶ 重
 HTTP Server → Netty → Skynet → Pitaya → Photon → KBEngine → BigWorld
 (通用)      (网络库)  (Actor)  (Go框架)  (商业)   (Python)   (商业)
@@ -304,7 +304,7 @@ Netty 本身是一个高性能网络框架，不是游戏服务器框架。但�
 
 Pipeline 是 Netty 最核心的设计。每个 Channel（连接）都有一个 Pipeline，数据在 Pipeline 中经过一系列 Handler 的处理。
 
-```
+```text
 入站方向 ────────────────────────────────>
 
   [Decode] -> [Frame] -> [Game Logic] -> [Auth]
@@ -436,7 +436,7 @@ public class ReconnectHandler {
 
 ### Java 游戏服务器的典型架构
 
-```
+```text
 Netty (网络层) + Spring (业务层) + Redis (缓存) + MySQL (持久化)
 ```
 
@@ -523,7 +523,7 @@ Skynet 由云风开源，核心设计哲学是**用最少的资源做最多的�
 
 Skynet 的源码结构极其精简，整个核心 C 代码不到 5000 行：
 
-```
+```text
 skynet-src/
 ├── skynet.h              # 核心头文件，定义所有公开API
 ├── skynet_main.c         # 主入口，解析配置文件，启动引擎
@@ -570,7 +570,7 @@ int skynet_timeout(uint32_t handle, int time, int session);
 
 ### 服务（Service）的完整生命周期
 
-```
+```text
 创建: skynet.newservice() -> skynet_server_create() -> 创建上下文 -> 分配消息队列 -> 加载Lua脚本 -> 执行main函数
 
 运行: 消息队列有消息 -> 工作线程取出 -> skynet_server_dispatch() -> 执行回调(CMD.xxx)
@@ -707,7 +707,7 @@ cluster.open("player_service")
 
 ### 实战：完整游戏服务器架构
 
-```
+```text
 ┌──────────────────────────────────────────┐
 │              Skynet 进程                  │
 │  ┌──────┐ ┌────────┐ ┌───────┐          │
@@ -789,7 +789,7 @@ Pitaya 在 Go 游戏框架中的定位是**开箱即用的 Actor + 集群框架*
 
 ### Pitaya 架构深度解析
 
-```
+```text
 ┌──────────────────────────────────────────┐
 │              Pitaya 架构                  │
 │  ┌──────────┐  ┌──────────┐  ┌───────┐  │
@@ -831,7 +831,7 @@ app.Start()
 ```
 
 etcd 存储内容：
-```
+```text
 /pitaya/servers/game/1 -> {"addr":"10.0.0.1:8001",...}
 /pitaya/servers/game/2 -> {"addr":"10.0.0.2:8001",...}
 /pitaya/servers/chat/1 -> {"addr":"10.0.0.1:8002",...}
@@ -1009,7 +1009,7 @@ KBEngine 源自蜗牛游戏，用 Python（CellApp）+ C++（底层引擎）实�
 
 ### KBEngine 架构深度解析
 
-```
+```text
 +----------------------------------------------------------+
 |                    KBEngine 架构                           |
 |                                                          |
@@ -1118,7 +1118,7 @@ class PlayerCell(KBEngine.Entity):
 
 ### 消息路由机制
 
-```
+```text
 客户端 -> Baseapp -> Cellapp -> 目标 Entity
   |         |         |         |
   |    路由到合理的  路由到合理的  执行方法
@@ -1474,7 +1474,7 @@ BigWorld 的 Space 是游戏世界的基本单位：
 
 当游戏规模扩大时，单体 HTTP Server 会遇到瓶颈。此时需要拆分成微服务：
 
-```
+```text
 ┌──────────────────────────────────────────────────────┐
 │                    API Gateway (Nginx)                │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐           │
@@ -2234,7 +2234,7 @@ public class PerformanceMonitor extends ChannelInboundHandlerAdapter {
 
 以一个典型的 MMO 游戏为例，展示如何用 Skynet 构建完整的、可扩展的服务端架构：
 
-```
+```text
 ┌──────────────────────────────────────────────────────────┐
 │                    Skynet 集群架构                        │
 │                                                          │
@@ -2828,7 +2828,7 @@ return monitor
 
 ### 完整的 MMO 服务器架构
 
-```
+```text
 ┌──────────────────────────────────────────────────────────┐
 │                    Pitaya 集群架构                        │
 │                                                          │
@@ -3263,7 +3263,7 @@ func (p *PlayerComponent) handleExpensiveOperation(data interface{}) {
 
 ### 完整的 MMO 部署拓扑
 
-```
+```text
 +----------------------------------------------------------+
 |                    生产环境部署拓扑                         |
 |                                                          |
@@ -3497,7 +3497,7 @@ def batchSendMessages(client, messages):
 
 ### 完整的部署拓扑
 
-```
+```text
 +----------------------------------------------------------+
 |                    BigWorld 生产部署                       |
 |                                                          |
@@ -3893,7 +3893,7 @@ Skynet 的内存效率比 Pitaya 高，但 Pitaya 的开发效率比 Skynet 高�
 
 ### 框架选型决策树
 
-```
+```text
 你的游戏是什么类型？
 +-- 卡牌/回合制 --> HTTP Server 足够
 +-- SLG（策略） --> HTTP Server + 定时任务

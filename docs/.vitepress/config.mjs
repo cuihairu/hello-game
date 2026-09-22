@@ -31,6 +31,7 @@ export default defineConfig({
     // - / 其余路径为知识库主线（方法论 → 问题模型 → … → 稳定性 + 附录）
     sidebar: {
       '/24-game-types-architecture/': [
+        { text: '📌 游戏类型与架构选型对照', link: '/24-game-types-architecture/' },
         {
           text: '🟢 入门',
           collapsed: false,

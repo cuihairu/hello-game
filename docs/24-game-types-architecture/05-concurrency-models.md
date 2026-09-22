@@ -72,7 +72,7 @@ Web 后端基本只需要回答第一个问题，第二个问题被推给了数�
 
 所以更贴近现实的并发模型设计，不是"整个服务器用一个模型"，而是：
 
-```
+```text
         ┌──────────────────────────────────────────────┐
         │              连接层（高并发 I/O）              │
         │      Reactor / Proactor / 每连接一个协程       │
@@ -103,7 +103,7 @@ Web 后端基本只需要回答第一个问题，第二个问题被推给了数�
 
 **典型代表**：Node.js、Redis、Nginx worker、Lua 单进程游戏服
 
-```
+```text
 ┌────────────────────────────────────┐
 │            Event Loop               │
 │                                    │
@@ -205,7 +205,7 @@ func (r *Room) tick() {
 
 **典型代表**：Netty、libevent、libuv、Redis、Nginx、muduo
 
-```
+```text
 单 Reactor：
   epoll ──► Reactor 分发 ──► Handler1 / Handler2 / Handler3 ...
                               （同一个线程内依次执行）
@@ -254,7 +254,7 @@ b.group(bossGroup, workerGroup)          // 主从 Reactor
 
 **典型代表**：Windows IOCP、Linux io_uring、Boost.Asio 的异步模式
 
-```
+```text
 Reactor：  内核："fd 可读了" ──► 你调用 read() 拷贝数据 ──► 处理
 Proactor： 你预先提交"读到这个缓冲区" ──► 内核完成读取并拷贝完毕
            ──► 通知你："数据在 buffer 里，直接处理"
@@ -280,7 +280,7 @@ Proactor： 你预先提交"读到这个缓冲区" ──► 内核完成读取�
 
 **典型代表**：Erlang/OTP、Skynet、Akka、Microsoft Orleans
 
-```
+```text
 ┌─────────┐   msg   ┌──────────────┐    msg    ┌─────────┐
 │ Actor A │ ──────► │  Actor B     │ ────────► │ Actor C │
 │ 私有状态 │         │ [邮箱: m3,m2] │           │ 私有状态 │
@@ -381,7 +381,7 @@ func handleConn(conn net.Conn) {
 
 **典型代表**：Go channel（语言级内置）、Core.async（Clojure）
 
-```
+```text
 Actor：   A ──msg──► [B 的邮箱] ──► B        （点对点，知道对方是谁）
 CSP：     A ──msg──► [Channel] ──► 谁消费？──► B 或 C 或 B+C
                       （中介，发送方与消费方解耦）
@@ -458,7 +458,7 @@ func persistStage(in <-chan PersistJob) {
 
 ### 案例 1：卡牌/挂机服（无实时同步）
 
-```
+```text
 HTTP/WebSocket 网关（Reactor 或每连接一个 goroutine）
         │
         ▼
@@ -474,7 +474,7 @@ HTTP/WebSocket 网关（Reactor 或每连接一个 goroutine）
 
 ### 案例 2：MOBA/FPS 房间服（强实时）
 
-```
+```text
 网关层：主从 Reactor（每连接会话，TCP_NODELAY，长度字段分包）
         │ 消息解码+校验后投递
         ▼
@@ -595,7 +595,7 @@ default:
 
 ### 按语言/生态选型
 
-```
+```text
 团队主语言是什么？
 │
 ├─ Go ────────────► goroutine + channel（CSP）为主干
