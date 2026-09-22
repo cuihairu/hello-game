@@ -992,7 +992,7 @@ func main() {
 
 ### 参考资源
 
-- Pitaya 官方文档：https://topfreegames.github.io/pitaya/
+- Pitaya 官方文档：https://github.com/topfreegames/pitaya/tree/main/docs
 - 《Go 语言实战》（William Kennedy）
 - NATS 官方文档：https://docs.nats.io/
 - etcd 官方文档：https://etcd.io/docs/
@@ -1461,7 +1461,6 @@ BigWorld 的 Space 是游戏世界的基本单位：
 ### 参考资源
 
 - **深入分析**：[BigWorld 源码分析与架构研究](https://github.com/cuihairu/BigWorld)（43个文档，12794行，覆盖 Entity/AOI/网络/线程/内存/安全/部署等全部核心模块）
-- BigWorld 官方文档：https://docs.bigworldtech.com/
 - 《百万在线》：大型 MMO 架构设计的经典书籍
 - 《游戏编程模式》
 - 《分布式系统：概念与设计》（Coulouris 等）
