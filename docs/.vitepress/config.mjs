@@ -378,7 +378,7 @@ export default defineConfig({
           text: '附录 A3. 配置表、数据驱动与研发协作',
           collapsed: true,
           items: [
-            { text: '配置表与研发协作', link: '/17-config-pipeline/' },
+            { text: '配置管线与研发协作', link: '/17-config-pipeline/' },
             { text: '配置表驱动开发', link: '/17-config-pipeline/01' },
             { text: '表结构设计与拆分', link: '/17-config-pipeline/02' },
             { text: '校验、导出与代码生成', link: '/17-config-pipeline/03' },
@@ -389,7 +389,7 @@ export default defineConfig({
           text: '附录 A4. 压测、容量规划与扩缩容',
           collapsed: true,
           items: [
-            { text: '压测与扩缩容', link: '/19-capacity-scaling/' },
+            { text: '容量扩缩', link: '/19-capacity-scaling/' },
             { text: '压测与容量规划', link: '/19-capacity-scaling/01' },
             { text: '扩容、缩容与动态加服', link: '/19-capacity-scaling/02' },
             { text: '分区、迁移、合服与下线', link: '/19-capacity-scaling/03' },
