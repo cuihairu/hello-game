@@ -35,7 +35,7 @@ export default defineConfig({
           text: '🟢 入门',
           collapsed: false,
           items: [
-            { text: '01 游戏与技术的关系', link: '/24-game-types-architecture/01-entry' }
+            { text: '01 游戏后端技术全景', link: '/24-game-types-architecture/01-entry' }
           ]
         },
         {
@@ -50,7 +50,7 @@ export default defineConfig({
           text: '🔷 架构',
           collapsed: false,
           items: [
-            { text: '04 网络通信与同步', link: '/24-game-types-architecture/04-network' },
+            { text: '04 通信协议设计', link: '/24-game-types-architecture/04-network' },
             { text: '05 并发模型', link: '/24-game-types-architecture/05-concurrency-models' },
             { text: '06 常见框架', link: '/24-game-types-architecture/06-frameworks' },
             { text: '07 架构总览', link: '/24-game-types-architecture/07-core-arch' },
@@ -61,7 +61,7 @@ export default defineConfig({
           text: '🟡 实现',
           collapsed: false,
           items: [
-            { text: '09 编程模式', link: '/24-game-types-architecture/09-programming-patterns' },
+            { text: '09 游戏编程模式', link: '/24-game-types-architecture/09-programming-patterns' },
             { text: '10 玩法系统设计', link: '/24-game-types-architecture/10-gameplay-systems' },
             { text: '11 辅助系统设计', link: '/24-game-types-architecture/11-auxiliary-systems' }
           ]
@@ -70,19 +70,19 @@ export default defineConfig({
           text: '🟠 运营',
           collapsed: false,
           items: [
-            { text: '12 数据分析', link: '/24-game-types-architecture/12-data-analytics' },
-            { text: '13 运维与监控', link: '/24-game-types-architecture/13-tech-ops' },
-            { text: '14 开发管理', link: '/24-game-types-architecture/14-dev-organization' }
+            { text: '12 游戏数据分析', link: '/24-game-types-architecture/12-data-analytics' },
+            { text: '13 运维实战', link: '/24-game-types-architecture/13-tech-ops' },
+            { text: '14 研发组织', link: '/24-game-types-architecture/14-dev-organization' }
           ]
         },
         {
           text: '🔴 专题',
           collapsed: false,
           items: [
-            { text: '15 书籍与案例', link: '/24-game-types-architecture/15-references' },
-            { text: '16 脚本与热更新', link: '/24-game-types-architecture/16-scripting-hotfix' },
-            { text: '17 版本与发布', link: '/24-game-types-architecture/17-versioning-release' },
-            { text: '18 安全与合规', link: '/24-game-types-architecture/18-security-compliance' }
+            { text: '15 学习资源', link: '/24-game-types-architecture/15-references' },
+            { text: '16 脚本热更新', link: '/24-game-types-architecture/16-scripting-hotfix' },
+            { text: '17 版本发布与配置', link: '/24-game-types-architecture/17-versioning-release' },
+            { text: '18 安全与风控合规', link: '/24-game-types-architecture/18-security-compliance' }
           ]
         }
       ],

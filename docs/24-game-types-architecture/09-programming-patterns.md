@@ -1,4 +1,4 @@
-# 游戏编程模式 — 深度解析
+# 09 游戏编程模式
 
 > 基于 Robert Nystrom《Game Programming Patterns》（gameprogrammingpatterns.com）整理，面向游戏服务端开发。
 >
