@@ -1003,7 +1003,7 @@ func main() {
 
 ### KBEngine 的定位：大型 MMO 的开源解决方案
 
-KBEngine 源自蜗牛游戏，用 Python（CellApp）+ C++（底层引擎）实现了一套完整的 MMO 服务端架构。它的核心概念是 **Entity + Cell**：每个在线玩家是一个 Entity，场景被分割成多个 Cell，Entity 在 Cell 之间迁移。
+KBEngine 源自蜗牛游戏，用 Python（Cellapp）+ C++（底层引擎）实现了一套完整的 MMO 服务端架构。它的核心概念是 **Entity + Cell**：每个在线玩家是一个 Entity，场景被分割成多个 Cell，Entity 在 Cell 之间迁移。
 
 **为什么选择 KBEngine？** 完整（登录、匹配、战斗、背包、公会全都有）、开源（免费使用，可以深度定制）、文档丰富（中文社区活跃）、性能优秀（C++ 底层保证关键路径性能）。
 
