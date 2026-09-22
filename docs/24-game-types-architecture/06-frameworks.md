@@ -245,7 +245,7 @@ func (rl *RateLimiter) Allow() bool {
 
 **问题1：玩家作弊** — 客户端篡改请求数据
 
-解决方案：服务器权威计算。所有数值计算都在服务器端完成，客户端只发送操作指令。
+解决方案：服务端权威计算。所有数值计算都在服务器端完成，客户端只发送操作指令。
 
 ```go
 // 错误做法
@@ -3065,7 +3065,7 @@ func (p *PlayerComponent) Attack(ctx context.Context, msg *pb.AttackRequest) (*p
         return &pb.AttackResponse{Success: false, Error: "cannot attack"}, nil
     }
 
-    // 计算伤害（服务器权威）
+    // 计算伤害（服务端权威）
     damage := p.calculateDamage(msg.TargetId, msg.SkillId)
 
     // 应用伤害
