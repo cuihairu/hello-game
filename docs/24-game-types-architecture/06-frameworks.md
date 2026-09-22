@@ -277,7 +277,7 @@ type GoodAttackRequest struct {
 
 ### 参考资源
 
-- 《Go Web编程》（谢建华）
+- 《Go Web编程》（谢孟军）
 - 《HTTP权威指南》
 - gorilla/websocket 文档
 - 《游戏编程模式》中的"服务端预测"模式
@@ -772,7 +772,7 @@ end
 
 ### 参考资源
 
-- 《Skynet 设计与实现》（云风）
+- 云风的《skynet 设计综述》系列文章
 - 《Lua 程序设计》（Robert Ierusalimschy）
 - Skynet 官方仓库：https://github.com/cloudwu/skynet
 - 云风博客：https://blog.codingnow.com/
@@ -1464,7 +1464,7 @@ BigWorld 的 Space 是游戏世界的基本单位：
 - BigWorld 官方文档：https://docs.bigworldtech.com/
 - 《百万在线》：大型 MMO 架构设计的经典书籍
 - 《游戏编程模式》
-- 《分布式系统：概念与设计》（Tanenbaum）
+- 《分布式系统：概念与设计》（Coulouris 等）
 
 ---
 
@@ -3921,7 +3921,7 @@ Skynet 的内存效率比 Pitaya 高，但 Pitaya 的开发效率比 Skynet 高�
 | 《Lua 程序设计》 | Robert Ierusalimschy | Lua 语言圣经 |
 | 《Python 核心编程》 | - | Python 语言权威指南 |
 | 《深入理解Java虚拟机》 | 周志明 | JVM 调优权威参考 |
-| 《分布式系统：概念与设计》 | Tanenbaum | 分布式系统经典教材 |
+| 《分布式系统：概念与设计》 | Coulouris 等 | 分布式系统经典教材 |
 | 《大规模C++程序设计》 | - | C++ 性能优化 |
 
 ---

@@ -64,7 +64,7 @@
 
 #### ③ 《分布式系统：概念与设计》（Distributed Systems: Concepts and Design）
 
-- **作者**：Andrew Tanenbaum, Maarten Van Steen
+- **作者**：George Coulouris, Jean Dollimore, Tim Kindberg, Gordon Blair
 - **阅读理由**：分布式系统的理论基础，理解一致性、共识、容错
 - **重点章节**：一致性模型、复制、容错、安全
 - **适用阶段**：中级，理解游戏后端的分布式本质
@@ -296,7 +296,7 @@
 **网络编程进阶**：
 - 《TCP/IP详解》（卷一）：深入理解网络协议
 - 《UNIX网络编程》：网络编程的圣经
-- 《高性能网络编程》：网络性能优化实战
+- 陶辉的《高性能网络编程》系列文章：网络性能优化实战
 
 **系统设计进阶**：
 - 《数据密集型应用系统设计》（DDIA）：分布式系统设计指南
