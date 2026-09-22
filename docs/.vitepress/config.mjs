@@ -369,7 +369,7 @@ export default defineConfig({
             { text: '强实时对战型架构', link: '/09-problem-domain/02' },
             { text: '持续在线世界型架构', link: '/09-problem-domain/03' },
             { text: '长周期成长型架构', link: '/09-problem-domain/04' },
-            { text: '高频对象与经济平台型架构', link: '/09-problem-domain/05' },
+            { text: '经济平台型架构', link: '/09-problem-domain/05' },
             { text: '这页的用途', link: '/09-problem-domain/06' }
           ]
         },
