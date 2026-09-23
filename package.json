@@ -6,11 +6,17 @@
   "scripts": {
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:preview": "vitepress preview docs",
+    "test": "vitest run --coverage"
   },
   "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.9",
+    "@vitest/coverage-v8": "^5.0.1",
+    "@vue/test-utils": "^2.5.1",
+    "happy-dom": "^20.14.5",
     "mermaid": "^11.16.1",
     "vitepress": "^2.0.0-alpha.20",
+    "vitest": "^5.0.1",
     "vue": "^3.5.13"
   }
 }

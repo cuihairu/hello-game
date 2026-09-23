@@ -5,6 +5,7 @@
 <script setup>
 import { ref, onMounted, watch, nextTick } from 'vue'
 import mermaid from 'mermaid'
+import { renderTo } from './renderDiagram.js'
 
 const props = defineProps({
   code: { type: String, required: true },
@@ -29,14 +30,7 @@ watch(() => props.code, async () => {
 })
 
 async function renderDiagram() {
-  if (!container.value) return
-  try {
-    const { svg } = await mermaid.render(props.id, props.code)
-    container.value.innerHTML = svg
-  } catch (e) {
-    console.error('Mermaid render error:', e)
-    container.value.innerHTML = `<pre class="mermaid-error">Diagram Error: ${e.message}</pre>`
-  }
+  await renderTo(mermaid, container.value, props.id, props.code)
 }
 </script>
 
