@@ -197,18 +197,21 @@ func calcDamage(p DamageParams) int64 {
 服务端的标准做法：
 
 ```go
-// 每场战斗独立的随机源
-battle := &Battle{
-    rng:    rand.New(rand.NewPCG(seedA, seedB)), // 独立源，不用全局
-    seedA:  seedA,   // seed 由服务器生成：matchID ^ 时间戳等
-    seedB:  seedB,
-}
-
-// 战斗日志里记录种子——回放/裁决时重建完全相同的随机序列
-battleLog := BattleLog{
-    Seed:    [2]uint64{seedA, seedB},
-    Inputs:  frameInputs, // 帧输入序列（完整、有序、可重放）
-    Version: logicVersion, // 数值配置版本，回放必须用当时的配置
+// 每场战斗独立的随机源（创建战斗时调用）
+func newBattle(seedA, seedB uint64, frameInputs []FrameInput, logicVersion string) *Battle {
+    battle := &Battle{
+        rng:    rand.New(rand.NewPCG(seedA, seedB)), // 独立源，不用全局
+        seedA:  seedA,   // seed 由服务器生成：matchID ^ 时间戳等
+        seedB:  seedB,
+    }
+    // 战斗日志里记录种子——回放/裁决时重建完全相同的随机序列
+    battleLog := BattleLog{
+        Seed:    [2]uint64{seedA, seedB},
+        Inputs:  frameInputs, // 帧输入序列（完整、有序、可重放）
+        Version: logicVersion, // 数值配置版本，回放必须用当时的配置
+    }
+    _ = battleLog // 演示代码里仅用于说明；真实代码写入持久层
+    return battle
 }
 ```
 

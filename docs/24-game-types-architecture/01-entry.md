@@ -411,6 +411,110 @@ L3 — 低实时（> 200ms）
 
 ---
 
+## 代码示例：一个最小的游戏服务器
+
+本章是全景导论，尚未进入任何专题。但 1.3 节给出的本质定义——**实时的、有状态的、高一致性的虚拟世界模拟器**——用一个百行以内的骨架就能直观呈现。下面的示例把六条核心原则中的三条直接写进代码：**服务端权威**、**最小数据传输**、**分层解耦**（连接层与逻辑层分离）。后续章节会逐层替换它的每个部分。
+
+```go
+// 最小游戏服务器：单房间、单写者、帧广播
+// 它回答了游戏后端最核心的三个本质问题：
+// 状态放在哪（Room）、谁有权写它（只有 Run 这个 goroutine）、怎么对外表现（每帧广播）
+func main() {
+    ln, _ := net.Listen("tcp", ":7000")
+    room := NewRoom()
+    go room.Run(15 * time.Millisecond) // 15Hz 逻辑帧：游戏后端的"心跳"（第 7 章 Tick）
+    for {
+        conn, _ := ln.Accept()
+        go handleConn(conn, room)      // 一个连接一个 goroutine（第 5 章协程模型）
+    }
+}
+
+type Vec struct{ X, Y float64 }
+
+type Player struct {
+    ID   uint64
+    Pos  Vec     // 权威状态：服务端认这一份，客户端的位置只是表现
+    conn net.Conn
+}
+
+type Room struct {
+    players map[uint64]*Player
+    join    chan *Player
+    leave   chan uint64
+    input   chan Input
+}
+
+func NewRoom() *Room {
+    return &Room{
+        players: make(map[uint64]*Player),
+        join:    make(chan *Player, 16),
+        leave:   make(chan uint64, 16),
+        input:   make(chan Input, 256), // 有界队列：容量是显式的设计参数（第 5 章背压）
+    }
+}
+
+// Run 是房间里唯一的写者：玩家增减、移动、广播全部顺序执行，天然无竞态
+func (r *Room) Run(frame time.Duration) {
+    t := time.NewTicker(frame)
+    defer t.Stop()
+    for {
+        select {
+        case p := <-r.join:
+            r.players[p.ID] = p
+        case id := <-r.leave:
+            delete(r.players, id)
+        case in := <-r.input:
+            r.applyInput(in)   // 校验后写入权威状态
+        case <-t.C:
+            r.broadcastFrame() // 每帧把"谁在哪"发给所有人
+        }
+    }
+}
+
+// 服务端权威：客户端上报只是声明，超速移动直接丢弃（第 18 章风控的第一道防线）
+func (r *Room) applyInput(in Input) {
+    p, ok := r.players[in.PlayerID]
+    if !ok {
+        return
+    }
+    moved := p.Pos.Add(in.Dir)
+    if dist(p.Pos, moved) > maxStep { // 速度校验：按服务端的规则重算
+        return
+    }
+    p.Pos = moved
+}
+
+// 最小数据传输：每帧只广播"谁在哪"这一份必要信息
+// 真实实现会在此做 Delta 压缩、兴趣区域裁剪与消息合并（第 4 章）
+func (r *Room) broadcastFrame() {
+    frame := make([]PlayerPos, 0, len(r.players))
+    for _, p := range r.players {
+        frame = append(frame, PlayerPos{p.ID, p.Pos})
+    }
+    for _, p := range r.players {
+        p.conn.Send(frame)
+    }
+}
+
+// 连接层只做解码与投递，不写任何房间状态——分层解耦
+func handleConn(conn net.Conn, room *Room) {
+    p := &Player{ID: nextID(), conn: conn}
+    room.join <- p
+    defer func() { room.leave <- p.ID; conn.Close() }()
+    for {
+        in, err := decodeInput(conn) // 长度分帧解码（第 4 章拆包器）
+        if err != nil {
+            return
+        }
+        room.input <- in             // 只投递声明；写者只有 Run
+    }
+}
+```
+
+对照 1.1 节的技术演进史，这个骨架其实就是 1990s MUD 时代原型服的直系后代——也说明游戏后端的核心问题三十年来没有变过：**状态放哪、谁能写、怎么同步**。它往后生长的每一步，都对应一个后续讲次：房间多起来要单写者隔离与消息投递（第 5 章），骨架要被框架封装（第 6 章），进程要拆分出网关与战斗服（第 7 章），广播要压缩与裁剪（第 4 章）。
+
+---
+
 > **本章小结**：游戏后端不是"互联网后端 + 游戏逻辑"，而是一个完全不同的技术领域。它面临的实时性、一致性、并发、扩展、运维、安全六大挑战，要求我们从第一性原理出发思考架构设计，而不是简单套用互联网的常见做法。
 
 接下来的章节，我们将深入每种游戏类型的具体架构，看看这些原则如何在实践中落地。

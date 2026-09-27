@@ -262,15 +262,17 @@ func UpdatePlayer(player *Player) error {
 | **雪崩** | 大量 key 同时过期，DB 被压垮 | 过期时间太集中 | 过期时间加随机值 |
 
 ```go
-// 防穿透：空值缓存（约5行）
-if player.ID == 0 {
-    redis.Set(ctx, cacheKey, "NULL", 5*time.Minute)
-    return nil, ErrPlayerNotFound
+// 防穿透 + 防雪崩：上表两个问题在同一处代码里的守卫形态
+func getWithGuards(ctx context.Context, cacheKey string, player *Player, data []byte) (any, error) {
+    if player.ID == 0 {
+        redis.Set(ctx, cacheKey, "NULL", 5*time.Minute) // 防穿透：空值也缓存，穿透请求不再打到 DB
+        return nil, ErrPlayerNotFound
+    }
+    // 防雪崩：过期时间加随机值（约2行），避免整片缓存同时失效
+    ttl := 30*time.Minute + time.Duration(rand.Intn(600))*time.Second
+    redis.Set(ctx, cacheKey, data, ttl)
+    return data, nil
 }
-
-// 防雪崩：过期时间加随机值（约2行）
-ttl := 30*time.Minute + time.Duration(rand.Intn(600))*time.Second
-redis.Set(ctx, cacheKey, data, ttl)
 ```
 
 ### 幂等与对账：充值不能发两次

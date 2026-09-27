@@ -124,20 +124,22 @@ Web 后端基本只需要回答第一个问题，第二个问题被推给了数�
 **游戏中的真实用法**：
 
 ```go
-// 轻量卡牌服的主循环骨架（伪代码）
-for {
-    now := time.Now()
-    // 1. 非阻塞地取网络事件（设置很短的超时）
-    events := poller.Wait(1 * time.Millisecond)
-    for _, ev := range events {
-        msg := decode(ev)          // 只做解码，不做重活
-        queue.Push(msg)            // 进待处理队列
-    }
-    // 2. 处理到期的定时器（体力恢复、建筑升级）
-    timerWheel.Advance(now)
-    // 3. 批量处理消息，限制每轮配额防止饿死定时器
-    for i := 0; i < 500 && queue.Len() > 0; i++ {
-        handleOne(queue.Pop())
+// 轻量卡牌服的主循环骨架（伪代码）：
+func mainLoop() {
+    for {
+        now := time.Now()
+        // 1. 非阻塞地取网络事件（设置很短的超时）
+        events := poller.Wait(1 * time.Millisecond)
+        for _, ev := range events {
+            msg := decode(ev)          // 只做解码，不做重活
+            queue.Push(msg)            // 进待处理队列
+        }
+        // 2. 处理到期的定时器（体力恢复、建筑升级）
+        timerWheel.Advance(now)
+        // 3. 批量处理消息，限制每轮配额防止饿死定时器
+        for i := 0; i < 500 && queue.Len() > 0; i++ {
+            handleOne(queue.Pop())
+        }
     }
 }
 ```
@@ -518,13 +520,15 @@ HTTP/WebSocket 网关（Reactor 或每连接一个 goroutine）
 
 ```go
 // 有上限的落库队列：满时的策略是显式选择的
-select {
-case persistCh <- job:
-    // 正常入队
-default:
-    metrics.Inc("persist_queue_overflow")
-    log.Warn("persist queue full, degrade to local file")
-    appendToLocalWAL(job)   // 降级：先落本地，事后补偿
+func enqueuePersist(persistCh chan<- PersistJob, job PersistJob) {
+    select {
+    case persistCh <- job:
+        // 正常入队
+    default:
+        metrics.Inc("persist_queue_overflow")
+        log.Warn("persist queue full, degrade to local file")
+        appendToLocalWAL(job)   // 降级：先落本地，事后补偿
+    }
 }
 ```
 
@@ -588,6 +592,119 @@ default:
 2. 判断这份状态是否真的需要跨线程共享
 3. 优先考虑分片、复制、单写者、异步聚合这类结构解法
 4. 结构改不了时，才做锁粒度优化、读写锁或无锁结构
+
+---
+
+## 代码示例：单写者房间服的最小骨架
+
+本章概念密度高，代码分散在各模型小节里。这一节把三个关键词——**单写者、消息驱动、背压**——装进一个可读的最小骨架。它用到的正是模型光谱里"协程 + CSP + 单线程逻辑上下文"的组合：接入层是协程模型，投递靠 channel（CSP），房间内部是单线程逻辑上下文。第 6 章的 Go 框架，几乎都是这个骨架的产品化封装。
+
+### 房间：单写者上下文 + 有界队列
+
+```go
+// 房间：单写者上下文。所有状态只被 Run 这一个 goroutine 碰
+type Room struct {
+    id      uint64
+    players map[uint64]*Player // 位置、血量、Buff——只有下面 Run 里的代码有权写
+    msgCh   chan Message       // 有界队列：容量是显式设计参数，不是"内存够就行"
+}
+
+const roomQueueSize = 4096
+
+func NewRoom(id uint64) *Room {
+    return &Room{
+        id:      id,
+        players: make(map[uint64]*Player),
+        msgCh:   make(chan Message, roomQueueSize),
+    }
+}
+
+// 提交消息：满时的策略是显式选择的，而不是默默阻塞调用方
+func (r *Room) Submit(msg Message) error {
+    select {
+    case r.msgCh <- msg:
+        return nil
+    default:
+        return ErrRoomBusy // 背压：调用方按消息价值决定丢弃、降级还是断开
+    }
+}
+
+// 唯一的写者：顺序消费消息，天然无锁、顺序确定（可重演的前提）
+func (r *Room) Run(tick <-chan time.Time) {
+    for {
+        select {
+        case msg := <-r.msgCh:
+            r.handle(msg)
+            r.drainPending() // 积压一口气清掉，再推进帧
+            r.advanceFrame() // 定时同步、回合结算、超时判定
+        case <-tick:
+            r.advanceFrame() // 没消息也照常推进：世界不能因为安静而停摆
+        }
+    }
+}
+
+// drainPending：非阻塞清空积压，配额上限防止极端洪峰占满一整帧
+func (r *Room) drainPending() {
+    for i := 0; i < 256; i++ {
+        select {
+        case msg := <-r.msgCh:
+            r.handle(msg)
+        default:
+            return
+        }
+    }
+}
+```
+
+两个值得注意的防御性设计：**队列容量写进代码**（呼应"流控与背压"一节的三件套），**每轮处理配额**（防止消息洪峰把帧推进饿死）。单写者的红利在这里兑现——`handle` 里改任何字段都不需要锁，出问题时只需看顺序执行轨迹，不用怀疑并发交错。
+
+### 接入层：并发发生在边缘
+
+```go
+// 一个连接一个 goroutine（协程模型）：写法是顺序的，成本是 KB 级的
+func handleConn(conn net.Conn, table *RoomTable) {
+    defer conn.Close()
+    for {
+        msg, err := decodeMessage(conn) // "阻塞"在这里——挂起的只是这个 goroutine
+        if err != nil {
+            table.Route(conn.ID).Submit(Message{Kind: KindDisconnect, ConnID: conn.ID})
+            return                      // 断线也作为消息投递：状态变更仍只发生在房间里
+        }
+        room := table.Get(msg.RoomID)   // 连接层只解码、路由，不碰任何房间状态
+        if err := room.Submit(msg); errors.Is(err, ErrRoomBusy) {
+            if msg.Kind == KindMove {
+                continue                // 丢旧保新：位置包过期即弃（背压退化第 1 档）
+            }
+            conn.Close()                // 核心消息进不去：说明房间已过载到值得断连
+            return
+        }
+    }
+}
+```
+
+这就是"**并发发生在边缘，串行发生在核心**"的完整形态：连接层承受阻塞与乱序，房间内是确定的顺序世界。注意断线的处理方式——它不是直接删玩家，而是投递一条 `KindDisconnect` 消息，让房间在正确的顺序位置上处理掉线（可能与"正在结算"这样的时序问题天然串行化）。
+
+### 房间想用多核时：委托，而不是加锁
+
+```go
+// 房间内遇到重计算（如 200 个怪批量寻路）：不阻塞逻辑线程，委托线程池
+func (r *Room) handle(msg Message) {
+    switch msg.Kind {
+    case KindRepathAll:
+        targets := r.snapshotMovables() // 1. 单写者内取只读快照，随后立即返回
+        pool.Submit(func() {
+            paths := pathfinder.Batch(targets)          // 2. 线程池并行计算，不碰房间状态
+            r.Submit(Message{Kind: KindPathsReady, Data: paths}) // 3. 结果以消息回房间
+        }) // 提交失败走降级：直接用旧路径，绝不阻塞房间
+    case KindPathsReady:
+        r.applyPaths(msg.Data.([]Path)) // 4. 写状态的仍然只有 Run——锁根本没有出现
+    }
+}
+```
+
+这是对"线程池"一节那个隐蔽成本的正面回答：任务一旦访问共享数据就回到锁的世界——**除非共享数据只有一个写者**。这里线程池从不直接写房间状态，只通过消息回投，所以计算层拿到了多核加速，房间内保持了零锁。混合架构的分工口诀（接入高并发 I/O、计算用线程池、核心单线程推进）在这个函数里全部落地。
+
+这个骨架的所有扩展——多房间（每房间一个 `Run` + 房间表路由）、跨服（消息出进程改走 RPC，房间内模型不变）、持久化（脏数据走异步写队列）——都不动摇"单写者"这个核心决策。下一节选型指南里按语言、按游戏类型的选择，本质上是给这个骨架的接入层和计算层换不同实现。
 
 ---
 

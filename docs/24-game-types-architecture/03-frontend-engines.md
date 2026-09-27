@@ -187,9 +187,12 @@ type PlayerBrief struct {
     Avatar string // URL，通常是最大头
 }
 
-// 100 人排行榜，同一份数据：
-json.Marshal(players)      // ≈ 14 KB —— 字段名每人重复一遍是大头
-proto.Marshal(pbPlayers)   // ≈ 3 KB  —— 字段号编码，字段名只在 .proto 里出现一次
+// 100 人排行榜，同一份数据的序列化体积对比：
+func compareSizes(players []PlayerBrief, pbPlayers *pb.RankList) (int, int) {
+    jsonBytes, _ := json.Marshal(players)     // ≈ 14 KB —— 字段名每人重复一遍是大头
+    protoBytes, _ := proto.Marshal(pbPlayers) // ≈ 3 KB  —— 字段号编码，字段名只在 .proto 里出现一次
+    return len(jsonBytes), len(protoBytes)
+}
 ```
 
 差距的来源有两个：JSON 每条记录都重复传输字段名（`"uid":10001,"name":"..."`），Protobuf 只传字段号和值；整数值在 Protobuf 里走 varint 变长编码，等级 35 这样的数只要 1 字节。对小游戏来说这不只是流量——还是弱网下的加载等待时间和客户端内存占用。**列表类接口的验收标准里应该写上响应体积上限**（常见做法是 5KB 以内），而不是等客户端抱怨加载慢再回头裁字段。裁字段的优先级：先裁"客户端当前页用不到的"，再考虑列表接口不返回大字段（头像 URL 换成头像 ID，由客户端拼 CDN 地址）。

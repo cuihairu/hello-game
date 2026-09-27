@@ -541,6 +541,85 @@
 
 ---
 
+## 代码示例：风控闭环的最小实现
+
+本章偏治理与决策，通篇没有代码。但 1.3 的"权威判断放对位置"、3.2 的风控闭环、3.4 的分层与梯度，落到工程上都有很具体的代码形态。这一节给出最小实现——它不构成完整的风控系统，但每个函数都对应本章的一个核心论断。
+
+### 权威校验：拒绝之外，还要发信号
+
+```go
+// 客户端上报只是声明：移动包声明"我从 A 走到了 B"，服务端裁决是否可能
+func (s *Session) OnMove(report MoveReport) {
+    if !s.authority.MovePossible(s.player, report) {
+        s.metrics.Inc("move_rejected")                 // 拒绝但不立刻处罚：单次异常可能是网络抖动
+        s.risk.Emit(SignalSpeedAbnormal, s.player.ID)  // 作为信号累积，交给风控闭环
+        s.player.RollbackTo(s.authority.LastConfirmed(s.player)) // 回滚到服务端已确认位置
+        return
+    }
+    s.authority.Commit(s.player, report)               // 合法才写入权威状态
+}
+
+// 数值同理：购买声明"我花 10 钻买礼包"，价格以服务端配置表为准
+func (s *Session) OnBuy(req BuyRequest) error {
+    goods := s.config.Goods(req.GoodsID)               // 价格、限购次数查表，不信客户端
+    if goods == nil || req.Price != goods.Price {
+        return ErrIllegalRequest                       // 与表不符：直接拒绝，并记入审计日志
+    }
+    return s.wallet.Charge(s.player, goods)
+}
+```
+
+注意第一段的处理方式：**拒绝、回滚、发信号是三个独立动作**。直接封号是把"单次异常"当成"定罪"，误伤网络差的玩家；正确的做法是拒绝生效、状态回滚、信号进入画像累积——处罚是风控闭环的事，不是校验器的事。
+
+### 信号累积与处置梯度
+
+```go
+// 信号只是信号：单条不定罪，按层级累积、随时间衰减
+type RiskProfile struct {
+    fair    float64 // 公平类分数：加速、胜率、操作频率（对应 3.4 的风险分层）
+    asset   float64 // 资产类分数：异常交易、资金流向
+    signals []Signal
+}
+
+func (e *RiskEngine) Evaluate(p *RiskProfile) Disposition {
+    switch {
+    case p.asset > assetFreezeThreshold:
+        return Disposition{Level: 3, Act: e.freezeTrade}          // 冻结交易能力，资产待查
+    case p.fair > fairQuarantineThreshold:
+        return Disposition{Level: 4, Act: e.isolateToShadowPool}  // 隔离到特殊匹配池
+    case p.fair > fairLimitThreshold:
+        return Disposition{Level: 2, Act: e.limitMatching}        // 限制匹配，继续观察
+    case p.any() > observeThreshold:
+        return Disposition{Level: 1, Act: e.auditOnly}            // 证据不足：只记录不处置
+    }
+    return DispositionNone
+}
+```
+
+三个关键设计都直接对应本章论断：**按层级分分数**（3.4 的风险分层——资产类容忍度极低所以阈值最低档也重罚，公平类可先限制观察）；**处置有梯度**（不确定时先控风险，证据充分再升级，每一级都可回退）；**观察也是处置**（Level 1 不动玩家，只让审计盯住）。
+
+### 处置留痕：可申诉的证据链
+
+```go
+// 每一次处置都生成审计事件：谁、为什么、依据什么信号、怎么申诉
+func (e *RiskEngine) audit(p *RiskProfile, d Disposition) {
+    e.auditLog.Append(AuditEvent{
+        PlayerID: p.ID,
+        Action:   d.String(),
+        Signals:  p.topSignals(3),  // 触发处置的信号及权重——申诉时客服能看懂依据
+        RuleVer:  e.ruleVersion,    // 规则版本——复盘时能还原"当时为什么这么判"
+        At:       time.Now(),
+    })
+    d.Act(p) // 先留痕，后执行：处置动作的执行顺序也是可审计的
+}
+```
+
+呼应本章 2.1 的结论：审计的重点不是记录，而是**可追责**。没有 `Signals` 和 `RuleVer` 的封禁日志，在申诉场景里等于没有日志——客服无法向玩家解释依据，团队无法在规则改版后复盘误伤。
+
+这三段合起来就是 3.2 风控闭环的最小形态：**信号采集（权威校验的拒绝）→ 累积画像 → 分层处置（梯度）→ 审计留痕（可申诉）**。风控系统真正的分水岭不在模型精度，而在每一环是否可解释、可回退——这正是 3.3 说"很多风控系统最后不工作"的根源。
+
+---
+
 ## 6. 常见误区与总结
 
 ### 6.1 安全与反作弊常见误区

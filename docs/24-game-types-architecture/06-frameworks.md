@@ -206,12 +206,15 @@ func (cm *ConnectionManager) HandleWebSocket(w http.ResponseWriter, r *http.Requ
 **连接池优化**：
 
 ```go
-transport := &http.Transport{
-    MaxIdleConns:        200,
-    MaxIdleConnsPerHost: 20,
-    IdleConnTimeout:     90 * time.Second,
+// 连接池调优：复用连接，避免每个请求重建 TCP
+func newHTTPClient() *http.Client {
+    transport := &http.Transport{
+        MaxIdleConns:        200,
+        MaxIdleConnsPerHost: 20,
+        IdleConnTimeout:     90 * time.Second,
+    }
+    return &http.Client{Transport: transport, Timeout: 5 * time.Second}
 }
-client := &http.Client{Transport: transport, Timeout: 5 * time.Second}
 ```
 
 **限流保护**：
@@ -813,21 +816,24 @@ Pitaya 在 Go 游戏框架中的定位是**开箱即用的 Actor + 集群框架*
 etcd 是 Pitaya 的服务发现核心：
 
 ```go
-config := pitaya.DefaultConfig()
-config.Discovery.Type = "etcd"
-config.Discovery.Etcd.RootPath = "/pitaya"
-config.Discovery.Etcd.Endpoints = []string{
-    "10.0.0.1:2379",
-    "10.0.0.2:2379",
-    "10.0.0.3:2379",
-}
+// 接入 etcd 服务发现并启动（bootstrap 的完整形态）
+func startServer() {
+    config := pitaya.DefaultConfig()
+    config.Discovery.Type = "etcd"
+    config.Discovery.Etcd.RootPath = "/pitaya"
+    config.Discovery.Etcd.Endpoints = []string{
+        "10.0.0.1:2379",
+        "10.0.0.2:2379",
+        "10.0.0.3:2379",
+    }
 
-app := pitaya.New(config)
-app.ConfigureServer("game", "1", map[string]string{
-    "region": "asia",
-    "version": "1.0.0",
-})
-app.Start()
+    app := pitaya.New(config)
+    app.ConfigureServer("game", "1", map[string]string{
+        "region": "asia",
+        "version": "1.0.0",
+    })
+    app.Start()
+}
 ```
 
 etcd 存储内容：
@@ -1695,12 +1701,17 @@ func (sm *SessionManager) Destroy(sessionID string) error {
 **1. SQL 注入防护**：
 
 ```go
-// 错误做法：字符串拼接
-query := "SELECT * FROM players WHERE name = '" + playerName + "'"
+// 错误做法：字符串拼接（参数注入查询结构，绝不可用）
+func queryBad(playerName string) string {
+    query := "SELECT * FROM players WHERE name = '" + playerName + "'"
+    return query
+}
 
-// 推荐做法：参数化查询
-query := "SELECT * FROM players WHERE name = ?"
-db.Query(query, playerName)
+// 推荐做法：参数化查询（占位符由驱动转义）
+func queryGood(playerName string) {
+    query := "SELECT * FROM players WHERE name = ?"
+    db.Query(query, playerName)
+}
 ```
 
 **2. XSS 防护**：
@@ -2944,36 +2955,37 @@ func (r *PlayerRemote) GetInfo(ctx context.Context, msg *pb.GetInfoRequest) (*pb
 
 ```go
 // 路由策略：决定消息发送到哪个服务器实例
+func setupRoutes(app *pitaya.App) {
+    // 1. 广播路由：发送到所有匹配的服务器
+    app.AddRoute("game", func(server pitaya.Server, msg *pitaya.Message,
+        lastRoute string, payload interface{}) (string, error) {
+        return "game", nil  // 所有 game 前缀的消息路由到 game 服务器
+    })
 
-// 1. 广播路由：发送到所有匹配的服务器
-app.AddRoute("game", func(server pitaya.Server, msg *pitaya.Message,
-    lastRoute string, payload interface{}) (string, error) {
-    return "game", nil  // 所有 game 前缀的消息路由到 game 服务器
-})
+    // 2. 精确路由：发送到特定服务器
+    app.AddRoute("game", func(server pitaya.Server, msg *pitaya.Message,
+        lastRoute string, payload interface{}) (string, error) {
+        // 根据玩家ID路由到特定服务器
+        var req pb.MoveRequest
+        proto.Unmarshal(msg.GetPayload(), &req)
 
-// 2. 精确路由：发送到特定服务器
-app.AddRoute("game", func(server pitaya.Server, msg *pitaya.Message,
-    lastRoute string, payload interface{}) (string, error) {
-    // 根据玩家ID路由到特定服务器
-    var req pb.MoveRequest
-    proto.Unmarshal(msg.GetPayload(), &req)
+        // 使用一致性哈希，保证同一玩家总是路由到同一服务器
+        serverID := consistentHash.Get(req.PlayerId)
+        return "game." + serverID, nil
+    })
 
-    // 使用一致性哈希，保证同一玩家总是路由到同一服务器
-    serverID := consistentHash.Get(req.PlayerId)
-    return "game." + serverID, nil
-})
+    // 3. 场景路由：根据场景ID路由
+    app.AddRoute("game", func(server pitaya.Server, msg *pitaya.Message,
+        lastRoute string, payload interface{}) (string, error) {
+        var req pb.SceneMessage
+        proto.Unmarshal(msg.GetPayload(), &req)
 
-// 3. 场景路由：根据场景ID路由
-app.AddRoute("game", func(server pitaya.Server, msg *pitaya.Message,
-    lastRoute string, payload interface{}) (string, error) {
-    var req pb.SceneMessage
-    proto.Unmarshal(msg.GetPayload(), &req)
-
-    // 根据场景ID路由
-    sceneID := req.SceneId
-    serverID := sceneServerMap[sceneID]
-    return "game." + serverID, nil
-})
+        // 根据场景ID路由
+        sceneID := req.SceneId
+        serverID := sceneServerMap[sceneID]
+        return "game." + serverID, nil
+    })
+}
 ```
 
 ### 完整的游戏服务器示例

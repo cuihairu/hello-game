@@ -278,13 +278,15 @@ func (e *EventEmitter) Emit(eventType string, data interface{}) {
     }
 }
 
-// 使用：解耦的击杀事件
-emitter.On("monster_killed", func(e Event) {
-    achievement.Check(e.Data.(MonsterID))
-})
-emitter.On("monster_killed", func(e Event) {
-    audio.PlayKillSound()
-})
+// 使用：解耦的击杀事件——击杀方只 Emit，不关心谁在听
+func registerKillHandlers(emitter *EventEmitter, achievement *AchievementSystem, audio *AudioPlayer) {
+    emitter.On("monster_killed", func(e Event) {
+        achievement.Check(e.Data.(MonsterID))
+    })
+    emitter.On("monster_killed", func(e Event) {
+        audio.PlayKillSound()
+    })
+}
 ```
 
 #### 常见错误
@@ -346,9 +348,10 @@ func (p *MonsterPrototype) Spawn(level int) *Monster {
     return m
 }
 
-// 使用：从配置加载原型
-prototypes := loadPrototypesFromJSON("monsters.json")
-monster := prototypes["goblin"].Spawn(currentLevel)
+// 使用：从配置加载原型，再按当前等级生成实例
+func spawnGoblin(prototypes map[string]*MonsterPrototype, currentLevel int) *Monster {
+    return prototypes["goblin"].Spawn(currentLevel)
+}
 ```
 
 #### 常见错误
@@ -645,9 +648,12 @@ func (s *Server) Run() {
 游戏世界中有成千上万个对象——怪物、子弹、特效、粒子、NPC。每个对象每帧都需要更新自己的状态。如果在游戏循环中手动调用每个对象的更新方法：
 
 ```go
-for _, monster := range monsters { monster.Update() }
-for _, bullet := range bullets { bullet.Update() }
-for _, effect := range effects { effect.Update() }
+// 每帧推进：三种实体各一个紧凑循环，缓存友好
+func frameUpdate(monsters []*Monster, bullets []*Bullet, effects []*Effect) {
+    for _, monster := range monsters { monster.Update() }
+    for _, bullet := range bullets { bullet.Update() }
+    for _, effect := range effects { effect.Update() }
+}
 ```
 
 代码变得冗长且脆弱——每次添加新类型的对象，都要修改游戏循环。
@@ -1027,10 +1033,13 @@ func (c *CombatComponent) Update(dt float64) {
     // 战斗逻辑
 }
 
-// 使用：组合组件构建实体
-player := NewEntity()
-player.AddComponent(&CombatComponent{ATK: 100, DEF: 50})
-player.AddComponent(&InventoryComponent{Capacity: 20})
+// 使用：组合组件构建实体——行为来自组装，不是继承
+func buildPlayer() *Entity {
+    player := NewEntity()
+    player.AddComponent(&CombatComponent{ATK: 100, DEF: 50})
+    player.AddComponent(&InventoryComponent{Capacity: 20})
+    return player
+}
 ```
 
 #### 常见错误
@@ -1189,11 +1198,14 @@ func GetService(name string) interface{} {
     return container.services[name]
 }
 
-// 使用
-Register("db", NewDatabase())
-Register("cache", NewCache())
+// 使用：启动时注册，业务侧通过接口取用
+func registerServices() {
+    Register("db", NewDatabase())
+    Register("cache", NewCache())
 
-db := GetService("db").(Database)
+    db := GetService("db").(Database)
+    _ = db // 演示取用方式；真实代码在依赖方使用
+}
 ```
 
 #### 常见错误
@@ -1408,10 +1420,12 @@ func (p *Pool) Put(obj interface{}) {
     p.pool = append(p.pool, obj)
 }
 
-// 使用
-bulletPool := &Pool{
-    New:   func() interface{} { return &Bullet{} },
-    Reset: func(obj interface{}) { obj.(*Bullet).Reset() },
+// 使用：池负责复用，New/Reset 由业务注入
+func newBulletPool() *Pool {
+    return &Pool{
+        New:   func() interface{} { return &Bullet{} },
+        Reset: func(obj interface{}) { obj.(*Bullet).Reset() },
+    }
 }
 ```
 
@@ -1431,10 +1445,13 @@ bulletPool := &Pool{
 在 MMO 游戏中，地图上有几万个实体（玩家、怪物、NPC、道具）。如果要计算"谁在谁的视野范围内"，最简单的方式是两两比较：
 
 ```go
-for a := 0; a < count; a++ {
-    for b := a + 1; b < count; b++ {
-        if distance(entities[a], entities[b]) < AOI_RADIUS {
-            // 在视野内
+// 朴素 AOI 实现：两两比较所有实体对
+func bruteForceAOI(entities []*Entity, count int) {
+    for a := 0; a < count; a++ {
+        for b := a + 1; b < count; b++ {
+            if distance(entities[a], entities[b]) < AOI_RADIUS {
+                // 在视野内
+            }
         }
     }
 }

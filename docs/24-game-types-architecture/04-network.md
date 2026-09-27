@@ -621,7 +621,118 @@ NAT 类型决定了两个客户端能否直接打通：
 
 ---
 
-## 13. 小结
+## 13. 代码示例：一帧消息的完整旅程
+
+前面各节是按设计维度展开的零件——消息 ID、包头、拆包器、防重放、限流。这一节把它们装成**一条完整的收包链路**，看一帧消息从字节流到业务处理依次经过哪些防线。示例是讲解用的最小实现（省略了超时、指标上报、连接管理等工程细节），但主干与生产实现同构。
+
+### 包头与整帧编解码
+
+```go
+// 包头固定 20 字节，与 6.1 的字段表一一对应
+const (
+    magicNumber = 0x474D // "GM"：字节流错位时逐字节重同步的锚点
+    headerSize  = 20
+)
+
+type Header struct {
+    Version uint8  // 协议版本，版本协商用（见 11.3）
+    Flags   uint8  // 压缩/加密/分片标记位，接收方按位决定如何解包
+    MsgID   uint32 // 模块(8)+动作(16)+类型(8)，路由的唯一依据
+    SeqNum  uint32 // 防重放与去重，按连接单调递增
+}
+
+// 编码：定长包头在前，包体紧随其后
+func EncodeFrame(h *Header, body []byte) []byte {
+    buf := make([]byte, headerSize+len(body))
+    binary.LittleEndian.PutUint16(buf[0:2], magicNumber)
+    buf[2] = h.Version
+    buf[3] = h.Flags
+    binary.LittleEndian.PutUint32(buf[4:8], h.MsgID)
+    binary.LittleEndian.PutUint32(buf[8:12], h.SeqNum)
+    binary.LittleEndian.PutUint32(buf[12:16], uint32(len(body)))  // 长度上限校验的依据
+    binary.LittleEndian.PutUint32(buf[16:20], crc32.ChecksumIEEE(body))
+    copy(buf[headerSize:], body)
+    return buf
+}
+```
+
+字段顺序一旦上线就是契约——这就是 6.1 说包头是"信封"的含义。**校验和只覆盖包体**：头部出错等价于字节流整体错位，由魔数负责发现和重同步，两道机制各管一层。
+
+### 接收管线：防线按成本排序
+
+```go
+// 一帧消息的旅程：拆包产物 → 防重放 → 限流 → 路由 → 按需解压 → 业务
+// 防线排序原则：便宜的在前，昂贵的在后，让伪造包在早期就被拦下
+func (s *Server) OnPacket(conn *Conn, packet []byte) {
+    h, body, err := decodeFrame(packet)      // 1. 魔数/长度/校验（6.2 拆包器的产物）
+    if err != nil {
+        conn.CloseWithError(err)             // 结构性错误：踢线，不做字节级猜测
+        return
+    }
+    if !conn.replay.Check(h.SeqNum) {        // 2. 防重放（9.2），每个连接独立 guard
+        metrics.Inc("replay_dropped")        // 静默丢弃：不回错误包，不向攻击者暴露探测信号
+        return
+    }
+    if !conn.limiter.Allow(1) {              // 3. 令牌桶限流（9.3），全局 + 分操作阈值
+        metrics.Inc("rate_limited")          // 触发留证据：限流是风控体系的第一道信号源
+        return
+    }
+    handler := s.route[h.MsgID]              // 4. 一次位运算 + 一次查表（5.2 的路由红利）
+    if handler == nil {
+        s.replyError(conn, h.MsgID, ErrUnknownMsg)
+        return
+    }
+    if h.Flags&flagCompressed != 0 {         // 5. 按需解压：只有通过前三道防线的包才值得花 CPU
+        if body, err = decompress(body); err != nil {
+            return
+        }
+    }
+    handler(conn.Session, body)              // 6. 进入业务逻辑，此时消息已可信、有界
+}
+```
+
+**顺序即设计**。防重放是 O(1) 位图操作，令牌桶是 O(1) 浮点运算，都远便宜于解压和业务处理；把解压放在防线之后，伪造流量就无法消耗解压 CPU。6.2 的三个生产级防御（重同步、长度上限、半包等待）都发生在第 1 步之前——拆包器挡住结构攻击，这条管线挡住语义攻击。
+
+### 分片重组器：超时清理是灵魂
+
+```go
+type fragmentGroup struct {
+    total    int               // 预期分片数，来自首个分片的包头
+    received map[int][]byte    // 已收到的分片，按索引存放
+    deadline time.Time         // 单组生存期：超时整体丢弃
+}
+
+func (r *Reassembler) Accept(f Fragment) []byte {
+    g := r.groups[f.Key()]
+    if g == nil {
+        g = &fragmentGroup{received: make(map[int][]byte), deadline: time.Now().Add(5 * time.Second)}
+        r.groups[f.Key()] = g                // 首个分片到达时建组
+    }
+    g.received[f.Index] = f.Payload
+    if len(g.received) < g.total {
+        return nil                           // 未收齐，继续等
+    }
+    delete(r.groups, f.Key())                // 收齐：重组并释放
+    return join(g.received)
+}
+
+// 后台定时清理：丢包或攻击都会制造永远等不齐的组
+func (r *Reassembler) Sweep(now time.Time) {
+    for key, g := range r.groups {
+        if now.After(g.deadline) {
+            delete(r.groups, key)            // 超时丢组：内存防线的最后一环
+        }
+    }
+}
+```
+
+重组器最容易被省略的恰恰是 `Sweep`——没有它，一个丢在路上的分片就让一组缓冲泄漏到进程重启；被恶意伪造分片 ID 时，它同时是**内存防线**。这与 6.3 的结论一致：分片功能的一半复杂度在重组的超时治理上。
+
+这三段合起来，正是本章 Checklist 第 5~13 条的可执行形态。真正上线时，拆包、防重放、限流都在接入层完成，业务 Handler 拿到的已经是干净、有界、可信的消息——**协议设计的目标，就是让业务代码可以放心地"什么都不防"**。
+
+---
+
+## 14. 小结
 
 | 关键问题 | 答案 |
 |---------|------|
