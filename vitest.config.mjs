@@ -14,6 +14,7 @@ export default defineConfig({
         'docs/.vitepress/config.mjs',
         'docs/.vitepress/theme/index.js',
         'docs/.vitepress/theme/components/MermaidDiagram.vue',
+        'docs/.vitepress/theme/components/ReadingProgress.vue',
         'docs/.vitepress/theme/components/renderDiagram.js'
       ],
       thresholds: {
