@@ -374,3 +374,261 @@
   background: rgba(154, 110, 58, 0.3);
   color: #e8dcc8;
 }
+
+/* ============================================================
+   Mintlify-Inspired Readability Layer（阅读体验优化层）
+   选型：popular-web-designs / mintlify——「阅读优化型文档设计」
+   原则：留白与行距优先、5%~8% 微边框代替重阴影、克制的绿色强调、
+        大圆角容器、三档字重。深浅两套 token 同步定义。
+   ============================================================ */
+
+/* ---------- Readability Tokens ---------- */
+:root {
+  --mb-mint: #1d8f6a;                        /* 纸面兼容的深松绿：hover/焦点/激活 */
+  --mb-border-subtle: rgba(44, 36, 22, 0.08);  /* 5% 级微边框 */
+  --mb-border-medium: rgba(44, 36, 22, 0.14);
+  --mb-shadow-ambient: 0 2px 4px rgba(92, 64, 51, 0.04);
+  --mb-progress-1: #2c8f6f;
+  --mb-progress-2: #b8860b;
+  --mb-progress-track: rgba(122, 78, 32, 0.12);
+}
+
+.dark {
+  --mb-mint: #4fd6a8;
+  --mb-border-subtle: rgba(255, 255, 255, 0.08);
+  --mb-border-medium: rgba(255, 255, 255, 0.13);
+  --mb-shadow-ambient: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --mb-progress-1: #4fd6a8;
+  --mb-progress-2: #d4a017;
+  --mb-progress-track: rgba(255, 255, 255, 0.1);
+}
+
+/* ---------- Reading Typography ---------- */
+/* 中文长文阅读：加大行距、微调字距、拉开段落呼吸 */
+.vp-doc {
+  line-height: 1.85;
+  letter-spacing: 0.005em;
+}
+
+.vp-doc p {
+  margin: 1.1em 0;
+}
+
+.vp-doc li + li {
+  margin-top: 0.4em;
+}
+
+/* 内容量规：本站表格与代码较宽，43rem → 46rem，仍保持舒适行长 */
+.VPDoc.has-aside .content-container {
+  max-width: 46rem;
+}
+
+/* 标题：Mintlify 的紧字距原则（中文取 -0.01em，避免挤压） */
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3 {
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+
+/* ---------- Code Blocks ---------- */
+/* 代码容器：微边框 + 大圆角，浅色暖纸、深色深木，双模式同构 */
+.vp-doc div[class*='language-'] {
+  border: 1px solid var(--mb-border-subtle);
+  border-radius: 12px;
+  box-shadow: var(--mb-shadow-ambient);
+  margin: 1.25rem 0;
+}
+
+.vp-doc div[class*='language-'] code {
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+/* 行内代码：小圆角胶囊，保留琥珀基调 */
+.vp-doc :not(pre) > code {
+  border-radius: 5px;
+}
+
+/* 复制按钮：hover 才浮出的低干扰形态 */
+.vp-doc div[class*='language-'] .copy {
+  border-radius: 6px;
+  opacity: 0.4;
+  transition: opacity 0.2s;
+}
+
+.vp-doc div[class*='language-']:hover .copy,
+.vp-doc div[class*='language-'] .copy:focus {
+  opacity: 1;
+}
+
+.vp-doc div[class*='language-'] .copy:hover {
+  background: var(--vp-c-brand-soft);
+}
+
+/* ---------- Tables ---------- */
+/* 表格：行悬浮提示、微边框、密度适配长文 */
+.vp-doc table {
+  font-size: 0.92em;
+  border-collapse: collapse;
+}
+
+.vp-doc tbody tr {
+  transition: background 0.15s;
+}
+
+.vp-doc tbody tr:nth-child(2n) {
+  background: transparent;
+}
+
+.vp-doc tbody tr:hover {
+  background: rgba(122, 78, 32, 0.05);
+}
+
+.dark .vp-doc tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.vp-doc th,
+.vp-doc td {
+  border-color: var(--mb-border-subtle);
+}
+
+.dark .vp-doc th,
+.dark .vp-doc td {
+  border-color: var(--mb-border-subtle);
+}
+
+.vp-doc th {
+  border-bottom: 2px solid var(--mb-border-medium);
+}
+
+/* ---------- Navigation ---------- */
+/* 导航栏：底部微边框 + 毛玻璃（Mintlify sticky blur 语言） */
+.VPNavBar {
+  border-bottom: 1px solid var(--mb-border-subtle);
+}
+
+.VPNavBar .VPNavBarMenuLink:hover {
+  color: var(--mb-mint);
+}
+
+.VPNavBar .VPNavBarMenuLink.active {
+  color: var(--bw-clay);
+  font-weight: 600;
+}
+
+.dark .VPNavBar .VPNavBarMenuLink.active {
+  color: var(--bw-clay-light);
+}
+
+/* ---------- Sidebar ---------- */
+/* 侧栏：组题小字距、条目悬浮、激活态软底色 + 品牌指示条 */
+.VPSidebar .group .title {
+  letter-spacing: 0.04em;
+}
+
+.VPSidebarItem .text {
+  transition: color 0.15s;
+}
+
+.VPSidebarItem.level-2 .item:hover .text,
+.VPSidebarItem.level-3 .item:hover .text,
+.VPSidebarItem.level-4 .item:hover .text,
+.VPSidebarItem.level-5 .item:hover .text {
+  color: var(--mb-mint);
+}
+
+.VPSidebarItem.is-active > .item {
+  background: var(--vp-c-brand-soft);
+  border-radius: 8px;
+}
+
+/* ---------- Outline（页面导航 / TOC） ---------- */
+/* 目录：静默灰、悬浮品牌绿、激活深色 + 品牌指示点 */
+.VPDocAsideOutline .outline-link {
+  color: var(--vp-c-text-2);
+  transition: color 0.15s;
+}
+
+.VPDocAsideOutline .outline-link:hover {
+  color: var(--mb-mint);
+}
+
+.VPDocAsideOutline .outline-link.active {
+  color: var(--vp-c-text-1);
+  font-weight: 500;
+}
+
+.VPDocAsideOutline .outline-marker {
+  background-color: var(--mb-mint);
+  border-radius: 2px;
+}
+
+/* ---------- Cards（decision-grid / topology-card 精修） ---------- */
+.decision-grid > div {
+  border-radius: 16px;
+  border-color: var(--mb-border-subtle);
+  box-shadow: var(--mb-shadow-ambient);
+  padding: 1.5rem;
+}
+
+.decision-grid > div:hover {
+  border-color: var(--mb-border-medium);
+  box-shadow: 0 4px 12px rgba(92, 64, 51, 0.08);
+}
+
+.dark .decision-grid > div:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+}
+
+.topology-card {
+  border-radius: 16px;
+  border-width: 1px;
+  border-color: var(--mb-border-medium);
+  box-shadow: var(--mb-shadow-ambient);
+}
+
+/* ---------- Custom Blocks（提示容器） ---------- */
+.vp-doc .custom-block {
+  border-radius: 10px;
+  border-width: 1px;
+  border-left-width: 3px;
+}
+
+.vp-doc .custom-block .custom-block-title {
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+/* ---------- Mermaid 容器 ---------- */
+/* 图表卡片化：与代码块同族的容器语言 */
+.mermaid-diagram {
+  border: 1px solid var(--mb-border-subtle);
+  border-radius: 12px;
+  background: var(--vp-c-bg-alt);
+  box-shadow: var(--mb-shadow-ambient);
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+}
+
+.mermaid-error {
+  border-radius: 8px;
+}
+
+/* ---------- Focus Rings ---------- */
+/* 键盘可达性：品牌色焦点环（Mintlify focus ring 原则） */
+.vp-doc a:focus-visible,
+.VPSidebarItem .item:focus-visible,
+.VPNavBarMenuLink:focus-visible {
+  outline: 2px solid var(--mb-mint);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .mermaid-diagram {
+    padding: 0.75rem;
+  }
+}

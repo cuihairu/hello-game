@@ -22,4 +22,16 @@ describe('theme', () => {
     expect(name).toBe('MermaidDiagram')
     expect(comp.name).toBe('MermaidDiagram')
   })
+
+  it('Layout 覆盖默认主题并把阅读进度条挂进 layout-bottom 插槽', () => {
+    expect(typeof theme.Layout).toBe('function')
+    const vnode = theme.Layout()
+    // 仍然渲染默认主题的 Layout
+    expect(vnode.type).toBe(FakeDefaultTheme.Layout)
+    // layout-bottom 插槽里是 ReadingProgress 组件
+    const slot = vnode.children?.['layout-bottom']
+    expect(typeof slot).toBe('function')
+    const child = slot()
+    expect(child.type.__name ?? child.type.name).toBe('ReadingProgress')
+  })
 })
