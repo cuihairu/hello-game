@@ -616,7 +616,126 @@ func (m *MailService) ClaimAttachment(playerID uint64, mailID int64) (*Reward, e
 
 ---
 
-## 10. 不同游戏类型的系统优先级
+## 10. 代码示例：赛季结算与全服邮件的最小骨架
+
+第 0 节的三条共性约束——数据可结算、状态可恢复、行为可审计——听起来抽象，落到代码上就是「幂等键 + 凭证表」两个模式。这一节把它们装进本章最容易出事故的两个场景：赛季结算发奖（1.5 节）与全服邮件领取（8.2、8.3 节）。示例是本章设计决策的最小 Go 演示实现（非摘自真实项目），小节内代码块合并后可通过 `go vet` 与 `go build` 编译，并受全库代码块回归测试约束。
+
+### 赛季结算：崩溃重跑不会重复发奖
+
+```go
+type Reward struct {
+    Coin  int64
+    Item  int32
+    Count int64
+}
+
+type RankedPlayer struct {
+    UID  uint64
+    Rank int
+}
+
+// prizeFor：名次 → 奖励。真实实现读数值配置表（可热更，第 17 章），
+// 演示版用倒数公式表达「越靠前越厚」即可
+func prizeFor(rank int) Reward {
+    return Reward{Coin: int64(10000 / rank)}
+}
+
+var ErrDuplicateRef = errors.New("reward already granted")
+
+// SettleSeason：赛季结算。幂等键 = 赛季号 + 玩家 ID——
+// 结算程序崩溃重跑，重复调用不会重复发奖（1.5 节的纪律）
+func SettleSeason(season int32, top []RankedPlayer, grant func(uid uint64, r Reward, refID string) error) error {
+    for _, p := range top {
+        refID := fmt.Sprintf("season:%d:player:%d", season, p.UID)
+        err := grant(p.UID, prizeFor(p.Rank), refID)
+        switch {
+        case err == nil:
+            // 本格发奖成功
+        case errors.Is(err, ErrDuplicateRef):
+            continue // 幂等命中：这格奖已发过，跳过而不是报错
+        default:
+            return err // 真实失败：中断并重跑，已发的格子被幂等键挡住
+        }
+    }
+    return nil
+}
+```
+
+`SettleSeason` 敢于整批重跑的底气全部来自幂等键：`season + 玩家 ID` 拼进 `refID`，底下是第 2 章 6.3 节的流水先行账务——同一格奖第二次 `grant` 会命中 `ErrDuplicateRef`，跳过即可。注意失败处理的不对称：幂等命中是**继续**，真实失败是**中断重跑**——中断后重跑时已发过的格子被幂等键挡住，没发的格子从头补，结算程序因此可以做成「无状态 + 随时重入」，这是 1.5 节「结算本身需要幂等」的完整含义。Top N 快照在切换前后各存一份（1.5 节的归档要求），争议发生时证据链齐全。
+
+### 全服邮件：一份模板 + 登录时判定 + 领取凭证表
+
+```go
+// GlobalMail：全服邮件只有一份模板记录，不预生成百万条收件记录（8.2 节）
+type GlobalMail struct {
+    ID        int64
+    Title     string
+    Reward    Reward // 附件：沿用上一块的 Reward，入账走流水管线
+    PublishAt time.Time
+    ExpireAt  time.Time
+}
+
+// claimKey：领取凭证 (邮件ID, 玩家ID)，生产落库时加唯一约束
+type claimKey struct {
+    MailID int64
+    UID    uint64
+}
+
+var (
+    ErrNoMail         = errors.New("mail not found")
+    ErrMailExpired    = errors.New("mail expired")
+    ErrAlreadyClaimed = errors.New("attachment already claimed")
+)
+
+type MailBoard struct {
+    mails   []GlobalMail
+    claimed map[claimKey]struct{}
+}
+
+// VisibleTo：登录时对比「我的上次检查时间」与「发布时间」，
+// 动态可见、零收件记录——O(N) 写入推迟成 O(1) 的全部秘密
+func (b *MailBoard) VisibleTo(lastCheck time.Time) []GlobalMail {
+    var out []GlobalMail
+    for _, m := range b.mails {
+        if m.PublishAt.After(lastCheck) {
+            out = append(out, m)
+        }
+    }
+    return out
+}
+
+// Claim：领取附件。返回的奖励由调用方走第 2 章的流水管线入账，
+// 邮件系统自己绝不碰余额
+func (b *MailBoard) Claim(uid uint64, mailID int64, now time.Time) (Reward, error) {
+    var mail *GlobalMail
+    for i := range b.mails {
+        if b.mails[i].ID == mailID {
+            mail = &b.mails[i]
+            break
+        }
+    }
+    if mail == nil {
+        return Reward{}, ErrNoMail
+    }
+    if now.After(mail.ExpireAt) {
+        return Reward{}, ErrMailExpired // 过期走找回系统，绝不静默删除（8.3 节）
+    }
+    key := claimKey{MailID: mailID, UID: uid}
+    if _, ok := b.claimed[key]; ok {
+        return Reward{}, ErrAlreadyClaimed // 网络重试在这里被识别，绝不当新请求处理
+    }
+    b.claimed[key] = struct{}{}
+    return mail.Reward, nil
+}
+```
+
+`VisibleTo` 只做一次时间比较，百万玩家的「收件」是零记录的——8.2 节把 O(N) 写入推迟成 O(1) 的核心就在这个函数签名里：它需要调用方带上 `lastCheck`，也就是玩家维度的「上次邮件检查时间」。`Claim` 的三个检查各有分工：过期检查守住「清理逻辑必须先看附件状态」的红线（过期走找回系统而不是删除，8.3 节）；凭证表查重把网络重试识别为幂等命中（8.3 节的陷阱行）；领取动作只写一条 `(邮件ID, 玩家ID)` 凭证——它同时是审计证据，客诉「我没领到」时查这张表。附件入账仍走流水管线，邮件系统自己不碰余额。
+
+两个场景共用同一套底层设施：幂等键来自货币流水（第 2 章），凭证表来自数据库唯一约束（第 8 章），状态恢复靠的是「结算可重跑 + 邮件模板持久化」。玩法系统的大部分工作不是发明新机制，而是把规则正确安放到这些既有设施上——第 0 节那句话，到这里应该看得见了。
+
+---
+
+## 11. 不同游戏类型的系统优先级
 
 不同游戏类型对玩法系统的需求差异很大，理解这些差异有助于合理分配开发资源。
 
@@ -633,7 +752,7 @@ func (m *MailService) ClaimAttachment(playerID uint64, mailID int64) (*Reward, e
 
 ---
 
-## 11. 设计决策指南
+## 12. 设计决策指南
 
 **何时选择 Redis Sorted Set 做排行榜**
 

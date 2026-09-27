@@ -491,7 +491,124 @@ func (h *VersionHandler) CheckVersion(platform, channel, cur string) *VersionInf
 
 ---
 
-## 7. 引擎选择对服务端的影响总结
+## 7. 代码示例：切后台、重连与补发的会话骨架
+
+本章 2.1 与 2.3 节给出的是要点式片段，这一节把「显式挂起 + 宽限期」与「有限补发窗口 + 快照兜底」两个设计组装成一个可读的最小骨架。示例是本章设计决策的最小 Go 演示实现（非摘自真实项目），小节内代码块合并后可通过 `go vet` 与 `go build` 编译，并受全库代码块回归测试约束。
+
+### 显式挂起：判定掉线的依据从心跳改为宽限期
+
+```go
+type sessState uint8
+
+const (
+    sessActive    sessState = iota // 在线：正常收发，期待心跳
+    sessSuspended                  // 客户端上报切后台：心跳计时冻结
+    sessClosed
+)
+
+// 宽限期：分钟到半小时量级，按产品形态定。
+// iOS 切后台典型几分钟、部分 Android 省电策略下静默可达 10 分钟以上
+const gracePeriod = 15 * time.Minute
+
+// Conn：一个会话的运行态。切后台不等于掉线——
+// 判定依据从「没收到心跳」改成「挂起后宽限期已过」（2.1 节）
+type Conn struct {
+    UID       int64
+    state     sessState
+    suspendAt time.Time // 进入宽限期的时刻；active 态恒为零值
+}
+
+// Suspend：客户端切后台时发 suspend 包触发。
+// 资源不释放、消息继续入队，宽限期内随时可无损回来
+func (c *Conn) Suspend(now time.Time) {
+    if c.state == sessActive {
+        c.state = sessSuspended
+        c.suspendAt = now // 重复 suspend 不刷新计时：防异常客户端无限续期
+    }
+}
+
+// Resume：切回前台发 resume 包，恢复心跳计时并补发离线期间的消息
+func (c *Conn) Resume() {
+    c.state = sessActive
+    c.suspendAt = time.Time{} // 计时归零：误判率在这里下降一个量级
+}
+
+// Sweep：后台定时任务逐会话调用。返回 true 才真正断开、走完整重连流程
+func (c *Conn) Sweep(now time.Time) bool {
+    return c.state == sessSuspended && now.Sub(c.suspendAt) >= gracePeriod
+}
+```
+
+`Suspend`/`Resume` 由客户端的前后台切换事件触发，服务端只是忠实记录状态转换——这正是 2.1 节说的「显式挂起代替猜测」。注意三个细节：`Suspend` 只在 active 态生效，重复 suspend 不刷新计时，异常客户端无法用它无限续期；`Resume` 把 `suspendAt` 归零而不是删除字段，状态机转换显式、可回放；`Sweep` 是唯一能关闭会话的路径，判定条件是「挂起后宽限期届满」——iOS 切后台几分钟的玩家在这里不会被误杀，真正死链的回收延迟由宽限期长度显式定价。
+
+### 有限补发窗口：环形缓冲与快照兜底的分界线
+
+```go
+// Msg：下发的业务消息。Seq 是会话级序号，重连不重置（2.3 节）
+type Msg struct {
+    Seq  uint64
+    Body []byte
+}
+
+// Writer：客户端连接的最小抽象（真实项目是 WebSocket/TCP 连接的封装）
+type Writer interface {
+    Write(m Msg) error
+}
+
+// Replay：补发窗口的环形缓冲实现。容量创建时定死，
+// 写满后覆盖最老消息——窗口外的内容不再可补，这是快照兜底的触发条件
+type Replay struct {
+    buf  []Msg
+    head int // 下一个写入位置；写满一圈后它同时指向最老的消息
+    full bool
+}
+
+func NewReplay(capacity int) *Replay {
+    return &Replay{buf: make([]Msg, capacity)}
+}
+
+// Push：每条下发消息在发送前先入窗（发送失败无需特殊处理：
+// 序号在缓冲里，重连后按序号补发）
+func (r *Replay) Push(m Msg) {
+    r.buf[r.head] = m
+    r.head++
+    if r.head == len(r.buf) {
+        r.head = 0
+        r.full = true
+    }
+}
+
+// oldest：窗口内最老的序号。窗口未满时从 1 起全部可得
+func (r *Replay) oldest() uint64 {
+    if !r.full {
+        return 1
+    }
+    return r.buf[r.head].Seq
+}
+
+// ReplayTo：把 lastAck 之后的消息按序写给重连的客户端。
+// 返回 false 表示缺口起点已滚出窗口：调用方转快照兜底，不再尝试重放
+func (r *Replay) ReplayTo(w Writer, lastAck uint64) bool {
+    if lastAck+1 < r.oldest() {
+        return false
+    }
+    for i := 0; i < len(r.buf); i++ {
+        m := r.buf[(r.head+i)%len(r.buf)] // 从最老到最新遍历
+        if m.Seq > lastAck {
+            _ = w.Write(m) // 写失败交由传输层重试；序号还在窗口里
+        }
+    }
+    return true
+}
+```
+
+`Replay` 就是 2.3 节 `Pending` 字段的自包含实现。窗口容量在创建时定死：万人在线、每人 1000 条，就是千万元素级常驻内存——这笔账要在设计期算（本章常见陷阱表的最后一行）。`ReplayTo` 的返回值是两种恢复策略的分界线：缺口还在窗口内就按序重放，客户端按序号去重；起点已滚出窗口就返回 false，让调用方转快照兜底——「补几百条消息」和「重发一份全量」哪个更便宜，由这个布尔值决定，而不是由重连处理代码临场判断。
+
+把两块拼起来就是 2.3 节 `OnReconnect` 的完整底座：重连请求先过会话校验，`gap == 0` 直接恢复收发；缺口在窗口内走 `ReplayTo` 重放；窗口外注册业务层的快照生成器兜底。会话保持、增量恢复、快照兜底三件事各自独立成型，组合关系只在重连入口出现一次——这套机制与第 4 章广播设计、知识库主线「一致性、恢复与重连」是同一套东西的客户端视角。
+
+---
+
+## 8. 引擎选择对服务端的影响总结
 
 | 引擎选择 | 协议类型 | 连接方式 | 消息格式 | 特殊要求 |
 |---------|---------|---------|---------|---------|
@@ -504,9 +621,9 @@ func (h *VersionHandler) CheckVersion(platform, channel, cur string) *VersionInf
 
 ---
 
-## 8. 实战建议
+## 9. 实战建议
 
-### 8.1 服务端开发者必知
+### 9.1 服务端开发者必知
 
 1. **了解客户端限制**：小游戏包体与内存上限、移动端后台挂起行为、Web 平台浏览器限制
 2. **划清三类逻辑边界**：表现归客户端、交互客户端带边界、权威归服务端——用这条标准评审每一个"这块谁来算"的问题
@@ -515,7 +632,7 @@ func (h *VersionHandler) CheckVersion(platform, channel, cur string) *VersionInf
 5. **设计可扩展的协议**：消息 ID 分模块、预留扩展字段、版本兼容设计（第 4 章）
 6. **提供完善的工程配套**：文档自动生成、mock 服务、错误码说明——联调效率是设计出来的
 
-### 8.2 性能优化检查清单
+### 9.2 性能优化检查清单
 
 ```text
 □ 协议优化：Protobuf 优先、消息压缩、一帧内消息合并
@@ -527,7 +644,7 @@ func (h *VersionHandler) CheckVersion(platform, channel, cur string) *VersionInf
 
 ---
 
-## 9. 常见陷阱总结
+## 10. 常见陷阱总结
 
 本章的陷阱大多不在"不会写"，而在"不知道客户端那边会发生什么"：
 
@@ -545,7 +662,7 @@ func (h *VersionHandler) CheckVersion(platform, channel, cur string) *VersionInf
 
 ---
 
-## 10. 小结
+## 11. 小结
 
 | 关键问题 | 答案 |
 |---------|------|

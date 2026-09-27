@@ -516,7 +516,103 @@ Axie Infinity 就是死亡螺旋的典型案例：SLP 代币从最高 $0.36 跌�
 
 ---
 
-## 11. 服务端开发 Checklist
+## 11. 代码示例：一套可对账的经济管线
+
+本章从属性计算讲到货币流水，代码分散在各节里。这一节把经济系统最要紧的一条纪律——**流水先行**——组装成一个最小闭环：任何资产变更先留下证据行（6.3 节），幂等键挡住重试与重投，产消比直接从流水聚合（6.2、6.4 节）。示例是本章设计决策的最小 Go 演示实现（非摘自真实项目），小节内代码块合并后可通过 `go vet` 与 `go build` 编译，并受全库代码块回归测试约束。
+
+### 账务闭环：先幂等，再余额，后写流水
+
+```go
+// accountKey：账户主键 = 玩家 × 货币类型
+type accountKey struct {
+    UID      uint64
+    Currency uint8
+}
+
+// CurrencyLog：一行流水 = 一次资产变更的完整证据（6.3 节表结构的精简版）
+type CurrencyLog struct {
+    RefID    string // 幂等键：订单号/活动ID/副本ID，生产落库时加唯一索引
+    UID      uint64
+    Currency uint8
+    Delta    int64  // 正为产出、负为消耗，全程 int64（3.2 节防溢出纪律）
+    Balance  int64  // 变更后余额快照：对账锚点
+    Reason   uint16 // 原因枚举：1=副本奖励 2=商店购买 3=GM补发...
+}
+
+var (
+    ErrDuplicateRef = errors.New("duplicate ref") // 幂等命中
+    ErrInsufficient = errors.New("insufficient balance")
+)
+
+// Ledger：内存演示版。生产中两个 map 换成数据库表，Apply 的校验顺序不变；
+// 整个结构只暴露给玩家的单写者上下文（第 5 章），自身无需加锁
+type Ledger struct {
+    balances map[accountKey]int64
+    seen     map[string]struct{} // RefID 幂等集合（生产为唯一索引）
+    logs     []CurrencyLog
+}
+
+func NewLedger() *Ledger {
+    return &Ledger{
+        balances: make(map[accountKey]int64),
+        seen:     make(map[string]struct{}),
+    }
+}
+
+// Apply：流水先行的货币变更。任何调用方都必须带 refID——
+// 不给幂等键的资产变更，代码评审阶段就该被打回
+func (l *Ledger) Apply(uid uint64, cur uint8, delta int64, reason uint16, refID string) (int64, error) {
+    if _, ok := l.seen[refID]; ok {
+        return 0, ErrDuplicateRef // 网络重试/消息重投在这里被吸收
+    }
+    key := accountKey{UID: uid, Currency: cur}
+    next := l.balances[key] + delta
+    if next < 0 {
+        return 0, ErrInsufficient // 余额不为负是账务不变式，不依赖调用方自觉
+    }
+    l.seen[refID] = struct{}{}
+    l.balances[key] = next
+    l.logs = append(l.logs, CurrencyLog{
+        RefID: refID, UID: uid, Currency: cur,
+        Delta: delta, Balance: next, Reason: reason,
+    })
+    return next, nil
+}
+```
+
+三个纪律都落在这一个函数里。**幂等在前**：`RefID` 查重是第一道闸，同一订单号的重复请求在这里被吸收，网络重试、消息重复投递都不会变成重复发放；**余额校验在中**：扣减前置检查保证「余额永不为负」这条不变式；**流水与余额一起变更**：生产实现里这两步是同一数据库事务（第 8 章），内存演示版把顺序写清楚就够了——先记 `seen`、再改余额、追加流水，中途任何失败都不会出现「钱变了但没有证据行」的中间态。
+
+### 产消比：不另做埋点，聚合流水就是权威口径
+
+```go
+// produceConsumeRatio：某货币的消耗/产出比（6.2 节健康区间 0.8-1.2）。
+// 不做埋点：按 Delta 正负聚合流水就是权威口径，Reason 留作下钻维度
+func produceConsumeRatio(logs []CurrencyLog, cur uint8) float64 {
+    var produced, consumed int64
+    for _, e := range logs {
+        if e.Currency != cur {
+            continue
+        }
+        if e.Delta > 0 {
+            produced += e.Delta
+        } else {
+            consumed -= e.Delta // 负数取绝对值累加
+        }
+    }
+    if produced == 0 {
+        return 0 // 无产出的货币无从谈比值，交由上层按异常数据排查
+    }
+    return float64(consumed) / float64(produced)
+}
+```
+
+6.2 节的健康区间与 6.4 节的通胀早期信号，全部建立在「产消数据可信」之上。这段代码的意义在于**统计口径的唯一性**：按 `Currency` 过滤、按 `Delta` 正负聚合，产出与消耗各算各的，`Reason` 字段留作下一层下钻的维度（哪个玩法在放水）。客户端埋点会被弱网丢包、被脚本污染，服务端流水不会——这正是 6.3 节说「按 Reason + Delta 正负聚合流水就是权威经济数据」的落地形态。
+
+这套管线的扩展方向都不动摇结构：接数据库事务只是把 `seen` 换成唯一索引、把顺序写换成同事务写；接 GM 补发只是多一个 `Reason` 枚举值；接对账系统只是离线扫 `logs` 核对 `Balance` 快照链。经济监控（6.4 节）与反作弊（第 18 章）共享的正是这张流水表。
+
+---
+
+## 12. 服务端开发 Checklist
 
 接到策划需求时，先问这 10 个问题：
 
@@ -546,7 +642,7 @@ Axie Infinity 就是死亡螺旋的典型案例：SLP 代币从最高 $0.36 跌�
 
 ---
 
-## 12. 小结
+## 13. 小结
 
 | 关键问题 | 答案 |
 |---------|------|
