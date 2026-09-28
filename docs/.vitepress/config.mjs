@@ -29,7 +29,7 @@ export default {
     ],
 
     // 两套内容、两个侧边栏：
-    // - /24-game-types-architecture/ 入门到实战教程（18 讲）
+    // - /24-game-types-architecture/ 入门到实战教程（21 讲）
     // - / 其余路径为知识库主线（方法论 → 问题模型 → … → 稳定性 + 附录）
     sidebar: {
       '/24-game-types-architecture/': [
