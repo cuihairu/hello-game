@@ -6,54 +6,26 @@ sidebar: false
 <script setup>
 import config from './.vitepress/config.mjs'
 import { withBase } from 'vitepress'
+import {
+  buildKbChapters,
+  buildTutorialGroups,
+  chunk3,
+  homepageStats
+} from './.vitepress/theme/data/homepage.mjs'
 
 const tutorial = config.themeConfig.sidebar['/24-game-types-architecture/']
 const kb = config.themeConfig.sidebar['/']
 
-const allLinks = (groups) =>
-  groups.flatMap(g => [
-    ...(g.link ? [g.link] : []),
-    ...(g.items ?? []).map(it => it.link)
-  ])
+// 教程目录：分组展示，组级链接（如选型对照总览）作为各组首行
+const tutorialGroups = buildTutorialGroups(tutorial)
 
-// 教程目录：分组展示，组级链接（如选型对照总览）作为各组首行；
-// 组标题剥掉 emoji 前缀，与图纸标注的克制语言一致
-const tutorialGroups = tutorial.map(g => ({
-  text: g.text.replace(/^\S+\s/, ''),
-  link: g.link ?? null,
-  items: (g.items ?? []).map(it => ({
-    num: (it.text.match(/(\d{2})/) ?? [])[1] ?? '+',
-    title: it.text.replace(/^\d{2}\s*/, ''),
-    link: it.link
-  }))
-}))
+// 知识库目录：每组取章主页；编号取自分组标题（导读 00、总索引 A，其余如「A1.」取自标题）
+const kbChapters = buildKbChapters(kb)
 
-// 知识库目录：每组取章主页；编号取自分组标题（导读 00、附录 A 系、总索引 A）
-const KB_NUM_SPECIAL = { 导读: '00', 附录与横向索引: 'A' }
-const kbChapters = kb
-  .filter(g => g.items?.length)
-  .map(g => {
-    const home = g.items[0]
-    return {
-      num: KB_NUM_SPECIAL[g.text] ?? (g.text.match(/(?:^|\s)(A?\d+)[.\s]/) ?? [])[1] ?? '+',
-      title: home.text,
-      link: home.link
-    }
-  })
+// 知识库章级入口拆 3 栏
+const kbChunks = chunk3(kbChapters)
 
-// 精确锚定教程目录前缀：/\/\d{2}-/ 会误命中「24-」
-const lectureCount = allLinks(tutorial).filter(l => /^\/24-game-types-architecture\/\d{2}-/.test(l)).length
-
-// 知识库 24 个章级入口拆 3 栏
-const kbChunkSize = Math.ceil(kbChapters.length / 3)
-const kbChunks = [
-  kbChapters.slice(0, kbChunkSize),
-  kbChapters.slice(kbChunkSize, kbChunkSize * 2),
-  kbChapters.slice(kbChunkSize * 2)
-]
-const kbChapterCount = kb.filter(g => /^\d+\.\s/.test(g.text)).length
-const appendixCount = kb.filter(g => /^附录 A\d/.test(g.text)).length
-const pageCount = allLinks(tutorial).length + allLinks(kb).length
+const { lectureCount, kbChapterCount, appendixCount, pageCount } = homepageStats(tutorial, kb)
 </script>
 
 <div class="bp-hero">
