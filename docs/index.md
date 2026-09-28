@@ -130,7 +130,7 @@ const pageCount = allLinks(tutorial).length + allLinks(kb).length
   </li>
   <li>
     <h3><a :href="withBase('/24-game-types-architecture/expansion')">看站点扩展规划</a></h3>
-    <p>站点正从游戏后端知识体系扩展为完整的游戏开发知识体系——客户端架构、测试质量、美术音频管线的补齐路线图。</p>
+    <p>站点正从游戏知识体系扩展为完整的游戏开发知识体系——客户端架构、测试质量、美术音频管线的补齐路线图。</p>
   </li>
 </ol>
 
