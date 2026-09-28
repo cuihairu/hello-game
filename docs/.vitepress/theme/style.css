@@ -605,3 +605,183 @@ body {
     display: none;
   }
 }
+
+/* ---------- 游戏库：卡片网格与筛选 ---------- */
+
+.lib-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem 1.2rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 10px;
+  background: var(--vp-c-bg-soft);
+  margin: 1.2rem 0;
+}
+
+.lib-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.86rem;
+  color: var(--vp-c-text-2);
+}
+
+.lib-filter select {
+  font-family: var(--vp-font-mono);
+  font-size: 0.84rem;
+  color: var(--vp-c-text-1);
+  background: var(--vp-c-bg);
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  padding: 0.25rem 0.4rem;
+}
+
+.lib-count {
+  margin-left: auto;
+  font-family: var(--vp-font-mono);
+  font-size: 0.82rem;
+  color: var(--vp-c-text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.lib-empty {
+  padding: 1.2rem;
+  border: 1px dashed var(--vp-c-border);
+  border-radius: 10px;
+  color: var(--vp-c-text-2);
+  font-size: 0.92rem;
+}
+
+.lib-reset {
+  font-family: inherit;
+  font-size: 0.86rem;
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-brand-soft);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 0.2rem 0.7rem;
+  cursor: pointer;
+}
+
+.lib-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.1rem;
+}
+
+.lib-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 12px;
+  background: var(--vp-c-bg-soft);
+  padding: 1.1rem 1.2rem;
+  transition: border-color 0.15s;
+}
+
+.lib-card:hover {
+  border-color: var(--vp-c-text-3);
+}
+
+.lib-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.lib-badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 8px;
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand-1);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.lib-name {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.lib-sub {
+  margin: 0.1rem 0 0;
+  font-family: var(--vp-font-mono);
+  font-size: 0.76rem;
+  color: var(--vp-c-text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.lib-blurb {
+  margin: 0.7rem 0;
+  font-size: 0.9rem;
+  color: var(--vp-c-text-2);
+}
+
+.lib-tech {
+  margin: 0;
+  border-top: 1px dashed var(--vp-c-border);
+  font-size: 0.84rem;
+}
+
+.lib-tech-row {
+  display: grid;
+  grid-template-columns: 6.2rem minmax(0, 1fr);
+  gap: 0.6rem;
+  padding: 0.32rem 0;
+  border-bottom: 1px dotted var(--vp-c-border);
+}
+
+.lib-tech-row dt {
+  font-family: var(--vp-font-mono);
+  font-size: 0.76rem;
+  color: var(--vp-c-text-3);
+  padding-top: 0.15rem;
+}
+
+.lib-tech-row dd {
+  margin: 0;
+  color: var(--vp-c-text-2);
+  line-height: 1.6;
+}
+
+.lib-tags {
+  margin: 0.7rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.lib-tag {
+  font-family: var(--vp-font-mono);
+  font-size: 0.74rem;
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-brand-soft);
+  border-radius: 999px;
+  padding: 0.12rem 0.6rem;
+  text-decoration: none;
+}
+
+.lib-tag:hover {
+  color: var(--vp-c-brand-2);
+}
+
+@media (max-width: 768px) {
+  .lib-grid {
+    grid-template-columns: 1fr;
+  }
+  .lib-count {
+    margin-left: 0;
+  }
+}
