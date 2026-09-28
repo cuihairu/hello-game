@@ -386,7 +386,136 @@ TTL 方案的好处是**离线判定不需要任何清理任务**——连接异
 
 ---
 
-## 9. 设计决策指南
+## 9. 代码示例：状态上报的乱序防御与好友推送的最小骨架
+
+7.2 节算过一笔账：100 万在线、人均 50 个好友，一次状态变化就是千万级推送——所以合并推送、按需订阅、推送侧黑名单不是优化项，是生存项；8.3 节的陷阱又要求状态变更带版本号、乱序旧样本直接丢弃。这一节把这两件事装进最小 Go 演示实现（非摘自真实项目）：一个带版本防御的状态中心，一个把变化攒起来批量扇出的好友推送器。示例是本章设计决策的最小演示（非摘自真实项目），小节内代码块合并后可通过 `go vet` 与 `go build` 编译，并受全库代码块回归测试约束。
+
+### 状态中心：版本号丢弃乱序样本
+
+```go
+// 状态中心：关键状态转换由对局服带版本号上报（8.3 节的纪律），
+// 版本号不前进的上报一律丢弃——迟到与重试不会让状态回退
+type PresenceHub struct {
+    mu     sync.RWMutex
+    state  map[uint64]string
+    ver    map[uint64]uint32
+}
+
+var ErrStaleReport = errors.New("stale presence report")
+
+// Report：上报玩家状态。ver 必须由上报方单调递增（如对局序号）
+func (p *PresenceHub) Report(playerID uint64, ver uint32, state string) error {
+    p.mu.Lock()
+    defer p.mu.Unlock()
+    if cur, ok := p.ver[playerID]; ok && ver <= cur {
+        return ErrStaleReport // 乱序/重复样本：丢弃，状态不被旧值回退
+    }
+    p.ver[playerID] = ver
+    p.state[playerID] = state
+    return nil
+}
+
+// Snapshot：读某玩家当前状态（好友列表展示等读路径）
+func (p *PresenceHub) Snapshot(playerID uint64) (string, bool) {
+    p.mu.RLock()
+    defer p.mu.RUnlock()
+    s, ok := p.state[playerID]
+    return s, ok
+}
+```
+
+### 好友推送器：合并扇出 + 推送侧黑名单
+
+```go
+// FriendNotifier：把状态变化攒进缓冲，定期批量扇出（7.2 节的状态合并推送）；
+// 拉黑过滤发生在推送侧——被拉黑者的变化根本不进对方的待推送集合，
+// 而不是等对方查询时再拒绝（避免借「查询不报错」反推在线）
+type FriendNotifier struct {
+    mu      sync.Mutex
+    subs    map[uint64]map[uint64]struct{} // playerID → 订阅者集合
+    blocked map[uint64]map[uint64]struct{} // 订阅者 → 拉黑名单
+    pending map[uint64]map[uint64]string   // 订阅者 → 待推送 {playerID: 最新状态}
+    flush   func(observer uint64, updates map[uint64]string) // 投递出口（测试桩/网关队列）
+}
+
+func NewFriendNotifier(flush func(uint64, map[uint64]string)) *FriendNotifier {
+    return &FriendNotifier{
+        subs:    make(map[uint64]map[uint64]struct{}),
+        blocked: make(map[uint64]map[uint64]struct{}),
+        pending: make(map[uint64]map[uint64]string),
+        flush:   flush,
+    }
+}
+
+// Subscribe：订阅者关注某玩家的状态变化
+func (n *FriendNotifier) Subscribe(observer, playerID uint64) {
+    n.mu.Lock()
+    defer n.mu.Unlock()
+    if n.subs[playerID] == nil {
+        n.subs[playerID] = make(map[uint64]struct{})
+    }
+    n.subs[playerID][observer] = struct{}{}
+}
+
+// Blacklist：observer 拉黑 target——target 的状态变化从此不再推给 observer
+func (n *FriendNotifier) Blacklist(observer, target uint64) {
+    n.mu.Lock()
+    defer n.mu.Unlock()
+    if n.blocked[observer] == nil {
+        n.blocked[observer] = make(map[uint64]struct{})
+    }
+    n.blocked[observer][target] = struct{}{}
+}
+
+// Change：状态中心收到变化后编入各订阅者的待推送缓冲。
+// 同一玩家短时间多次变化，缓冲里只保留最新一份——这正是「合并」的含义
+func (n *FriendNotifier) Change(playerID uint64, state string) {
+    n.mu.Lock()
+    defer n.mu.Unlock()
+    for observer := range n.subs[playerID] {
+        if n.isBlocked(observer, playerID) {
+            continue
+        }
+        if n.pending[observer] == nil {
+            n.pending[observer] = make(map[uint64]string)
+        }
+        n.pending[observer][playerID] = state
+    }
+}
+
+func (n *FriendNotifier) isBlocked(observer, playerID uint64) bool {
+    b := n.blocked[observer]
+    if b == nil {
+        return false
+    }
+    _, hit := b[playerID]
+    return hit
+}
+
+// Flush：定期（如每 5 秒）批量投递，返回本轮实际推送的变更条数。
+// 大多数订阅场景（好友列表的小绿点）对秒级延迟不敏感——5 秒一批，
+// 推送量从「每次变化 × 好友数」降为「订阅界面数 × 批次数」
+func (n *FriendNotifier) Flush() int {
+    n.mu.Lock()
+    defer n.mu.Unlock()
+    total := 0
+    for observer, updates := range n.pending {
+        if len(updates) == 0 {
+            continue
+        }
+        n.flush(observer, updates)
+        total += len(updates)
+        delete(n.pending, observer)
+    }
+    return total
+}
+```
+
+两段合起来看：`PresenceHub` 只负责「状态可信」（版本防御），`FriendNotifier` 只负责「投递经济」（合并 + 黑名单）——状态中心不关心谁订阅，推送器不裁决状态真假，边界与第 1 节的分工表一致。
+
+---
+
+## 10. 设计决策指南
 
 **何时选择 Elo vs Glicko-2**
 
@@ -418,7 +547,7 @@ TTL 方案的好处是**离线判定不需要任何清理任务**——连接异
 
 ---
 
-## 10. 常见陷阱总结
+## 11. 常见陷阱总结
 
 | 陷阱 | 表现 | 根本原因 | 解决方案 |
 |------|------|---------|---------|

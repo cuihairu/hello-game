@@ -548,7 +548,79 @@ AI 辅助在这一环节的合理定位是"初稿生成器"：归纳玩家反馈
 
 ---
 
-## 11. 数据安全与合规
+## 11. 代码示例：埋点去重与显著性检验的最小骨架
+
+2.3 节强调 `seq_id` 是所有下游去重的前提——客户端重试、队列重放都会把同一条事件送上来两次；7.2 节的 z 检验片段则留了一个没给实现的 `normalCDF`。这一节把这两块拼图补齐，装进最小 Go 演示实现（非摘自真实项目）：一个双窗口幂等去重的接收侧，一个完整的显著性计算。小节内代码块合并后可通过 `go vet` 与 `go build` 编译，并受全库代码块回归测试约束。
+
+### 接收侧：seq_id 双窗口幂等去重
+
+```go
+// EventHub：埋点接收侧的 seq_id 幂等去重（2.3 节）。
+// 难点不是「判重」而是「记住多少」：seen 集合无限增长会拖垮内存。
+// 双窗口：当前窗口记新事件，上一窗口保留作过渡期——
+// 跨窗口重试（客户端积压几分钟后重发）落在过渡期里，仍能挡住
+type EventHub struct {
+    mu       sync.Mutex
+    active   map[string]struct{}
+    draining map[string]struct{}
+    observed uint64 // 窗口轮换节奏计数
+}
+
+var ErrDuplicate = errors.New("duplicate event")
+
+const windowSize = 10000
+
+func NewEventHub() *EventHub {
+    return &EventHub{
+        active:   make(map[string]struct{}),
+        draining: make(map[string]struct{}),
+    }
+}
+
+// Accept：返回 nil 表示首次收到，事件进入下游流水；
+// 返回 ErrDuplicate 表示重复上报，直接丢弃
+func (h *EventHub) Accept(seqID string) error {
+    h.mu.Lock()
+    defer h.mu.Unlock()
+
+    if _, seen := h.active[seqID]; seen {
+        return ErrDuplicate
+    }
+    if _, seen := h.draining[seqID]; seen {
+        return ErrDuplicate
+    }
+    h.active[seqID] = struct{}{}
+
+    h.observed++
+    if h.observed%windowSize == 0 { // 每 windowSize 条轮换一次窗口
+        h.draining = h.active
+        h.active = make(map[string]struct{})
+    }
+    return nil
+}
+```
+
+真实系统里，窗口大小按「客户端最长重试间隔」折算，超长积压交给落库后的唯一索引兜底（2.4 节的双端一致性对账）——内存窗口求快，数据库唯一键求最终正确，两层各管一段。
+
+### 显著性：补全 normalCDF
+
+```go
+// normalCDF：标准正态累积分布函数，用误差函数表示——
+// Φ(x) = ½·[1 + erf(x/√2)]，math 包原生提供 Erf
+func normalCDF(x float64) float64 {
+    return 0.5 * (1 + math.Erf(x/math.Sqrt2))
+}
+
+// pValueOf：双侧 p 值。由 z 值算「比观察更极端」的概率，
+// 与 7.2 节的 z 检验拼起来就是完整的显著性链路
+func pValueOf(z float64) float64 {
+    return 2 * (1 - normalCDF(math.Abs(z)))
+}
+```
+
+---
+
+## 12. 数据安全与合规
 
 ### 11.1 安全原则
 

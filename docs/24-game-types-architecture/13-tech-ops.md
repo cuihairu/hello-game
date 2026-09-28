@@ -413,7 +413,139 @@
 
 ---
 
-## 8. 设计决策指南
+## 8. 代码示例：日志风暴防御与在线突降告警的最小骨架
+
+3.3 节的陷阱（日志风暴）与 3.1 节的建议（在线人数突降是故障第一信号）都是「写的时候一句话，做的时候一层皮」。这一节把它们装进最小 Go 演示实现（非摘自真实项目）：一个带限流与 ERROR 去重的日志闸门，一个滑窗检测在线突降的哨兵。小节内代码块合并后可通过 `go vet` 与 `go build` 编译，并受全库代码块回归测试约束。
+
+### 日志闸门：限流 + ERROR 去重
+
+```go
+// LogGate：日志风暴防御（3.3 节陷阱）。
+// 两道闸：每秒总量限流（超限丢弃并计数）+ ERROR 指纹去重
+// （同一错误一分钟内只落一条，其余次数累计）。
+// 时间用注入函数提供，测试可控
+type LogGate struct {
+    mu        sync.Mutex
+    now       func() int64
+    budget    int     // 本秒剩余配额
+    sec       int64   // 当前时间片
+    lastKey   string  // 最近一条 ERROR 的指纹
+    lastSec   int64   // 该 ERROR 落日志的时间片
+    errRepeat int     // 同指纹未落日志的累计次数
+    dropped   uint64  // 被限流丢弃的条数（应被监控采集——丢弃量跳变本身是信号）
+    emit      func(level, line string)
+}
+
+const perSecondLimit = 1000
+
+func NewLogGate(now func() int64, emit func(level, line string)) *LogGate {
+    return &LogGate{now: now, budget: perSecondLimit, emit: emit}
+}
+
+func (g *LogGate) Write(level, line string) {
+    g.mu.Lock()
+    defer g.mu.Unlock()
+
+    sec := g.now()
+    if sec != g.sec { // 跨秒：配额恢复
+        g.sec = sec
+        g.budget = perSecondLimit
+    }
+
+    if level == "ERROR" {
+        key := errorFingerprint(line)
+        if key == g.lastKey && sec-g.lastSec < 60 {
+            g.errRepeat++ // 同一错误一分钟内：只计数，不落日志
+            return
+        }
+        if key == g.lastKey && g.errRepeat > 0 {
+            // 窗口结束后的同指纹错误：把上一分钟的重复次数补记进本条
+            line = fmt.Sprintf("%s (repeated %d times in last minute)", line, g.errRepeat+1)
+            g.errRepeat = 0
+        }
+        g.lastKey, g.lastSec = key, sec
+    }
+
+    if g.budget <= 0 {
+        g.dropped++
+        return
+    }
+    g.budget--
+    g.emit(level, line)
+}
+
+// errorFingerprint：演示版取首 32 字节作指纹；
+// 真实实现应做归一化（剥离时间戳/ID 等可变段），否则同一错误变体绕过去重
+func errorFingerprint(line string) string {
+    if len(line) > 32 {
+        return line[:32]
+    }
+    return line
+}
+```
+
+### 在线哨兵：滑窗突降告警
+
+```go
+// OnlineGuard：在线人数突降告警（3.1 节——比任何技术告警都早的第一信号）。
+// 维护最近 N 个采样的环形窗口：当前值较窗口内峰值跌幅超阈值即触发。
+// 窗口未满不告警——避免服务冷启动阶段的误报
+type OnlineGuard struct {
+    mu        sync.Mutex
+    window    []int64
+    head      int
+    size      int
+    threshold float64 // 跌幅阈值，0.3 表示跌 30%
+    alert     func(cur, peak int64)
+}
+
+func NewOnlineGuard(capacity int, threshold float64, alert func(cur, peak int64)) *OnlineGuard {
+    return &OnlineGuard{
+        window:    make([]int64, capacity),
+        threshold: threshold,
+        alert:     alert,
+    }
+}
+
+// Observe：每次在线人数采样调用一次（如每 30 秒）
+func (w *OnlineGuard) Observe(online int64) {
+    w.mu.Lock()
+    defer w.mu.Unlock()
+
+    peak := w.peak()
+    if w.size == len(w.window) && peak > 0 {
+        if drop := float64(peak-online) / float64(peak); drop >= w.threshold {
+            w.alert(online, peak)
+            // 同一故障会连续触发——真实实现要配静默窗口（3.4 节的聚合与抑制）
+        }
+    }
+
+    w.window[w.head] = online
+    w.head = (w.head + 1) % len(w.window)
+    if w.size < len(w.window) {
+        w.size++
+    }
+}
+
+func (w *OnlineGuard) peak() int64 {
+    if w.size == 0 {
+        return 0
+    }
+    max := w.window[0]
+    for i := 1; i < w.size; i++ {
+        if w.window[i] > max {
+            max = w.window[i]
+        }
+    }
+    return max
+}
+```
+
+两段共享同一个设计取向：防御逻辑独立于业务写入路径（`emit`、`alert` 都是注入的出口），风暴被挡在闸门外、告警只认数据——这正是第 7 节运维自动化「先让系统自己说话」的微缩版。
+
+---
+
+## 9. 设计决策指南
 
 **何时选择云服务 vs 自建机房**
 
@@ -441,7 +573,7 @@
 
 ---
 
-## 9. 常见陷阱总结
+## 10. 常见陷阱总结
 
 | 陷阱 | 表现 | 根本原因 | 解决方案 |
 |------|------|---------|---------|
