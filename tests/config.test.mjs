@@ -44,8 +44,8 @@ describe('site config', () => {
     ])
   })
 
-  it('导航含 8 项且无站外文字链接（GitHub 去重走 socialLinks 图标）', () => {
-    expect(config.themeConfig.nav).toHaveLength(8)
+  it('导航含 9 项且无站外文字链接（GitHub 去重走 socialLinks 图标）', () => {
+    expect(config.themeConfig.nav).toHaveLength(9)
     const external = config.themeConfig.nav.filter(n => n.link.startsWith('http'))
     expect(external).toHaveLength(0)
   })

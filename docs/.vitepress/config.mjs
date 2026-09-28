@@ -23,6 +23,7 @@ export default {
       { text: '网络', link: '/24-game-types-architecture/04-network' },
       { text: '实现', link: '/24-game-types-architecture/09-programming-patterns' },
       { text: '运维', link: '/24-game-types-architecture/13-tech-ops' },
+      { text: '历史线', link: '/history/' },
       { text: '知识库', link: '/00-reading-guide/' }
     ],
 
