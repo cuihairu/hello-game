@@ -1,7 +1,7 @@
 import { defineConfig } from "vitepress"
 export default defineConfig({
-  title: '游戏后端知识体系',
-  description: '系统化的游戏服务器开发知识库',
+  title: '游戏知识体系',
+  description: '系统化的游戏开发知识体系——后端为主场，覆盖引擎与客户端、网络同步、数据运营与安全',
   lang: 'zh-CN',
   base: '/hello-game/',
   cleanUrls: true,
@@ -12,7 +12,7 @@ export default defineConfig({
 
   themeConfig: {
     logo: '/logo.svg',
-    siteTitle: '游戏后端知识体系',
+    siteTitle: '游戏知识体系',
 
     nav: [
       { text: '首页', link: '/' },
@@ -22,8 +22,7 @@ export default defineConfig({
       { text: '网络', link: '/24-game-types-architecture/04-network' },
       { text: '实现', link: '/24-game-types-architecture/09-programming-patterns' },
       { text: '运维', link: '/24-game-types-architecture/13-tech-ops' },
-      { text: '知识库', link: '/00-reading-guide/' },
-      { text: 'GitHub', link: 'https://github.com/cuihairu/hello-game' }
+      { text: '知识库', link: '/00-reading-guide/' }
     ],
 
     // 两套内容、两个侧边栏：
@@ -83,7 +82,8 @@ export default defineConfig({
             { text: '15 学习资源', link: '/24-game-types-architecture/15-references' },
             { text: '16 脚本热更新', link: '/24-game-types-architecture/16-scripting-hotfix' },
             { text: '17 版本发布与配置', link: '/24-game-types-architecture/17-versioning-release' },
-            { text: '18 安全与风控合规', link: '/24-game-types-architecture/18-security-compliance' }
+            { text: '18 安全与风控合规', link: '/24-game-types-architecture/18-security-compliance' },
+            { text: '章节扩展规划', link: '/24-game-types-architecture/expansion' }
           ]
         }
       ],
@@ -414,7 +414,7 @@ export default defineConfig({
     ],
 
     footer: {
-      message: '游戏后端知识体系',
+      message: '游戏知识体系',
       copyright: '© 2025 cuihairu'
     },
 

@@ -28,8 +28,10 @@ function linkToFile(link) {
 
 describe('site config', () => {
   it('基础站点元信息', () => {
-    expect(config.title).toBe('游戏后端知识体系')
-    expect(config.description).toBe('系统化的游戏服务器开发知识库')
+    expect(config.title).toBe('游戏知识体系')
+    expect(config.description).toBe(
+      '系统化的游戏开发知识体系——后端为主场，覆盖引擎与客户端、网络同步、数据运营与安全'
+    )
     expect(config.lang).toBe('zh-CN')
     expect(config.base).toBe('/hello-game/')
     expect(config.cleanUrls).toBe(true)
@@ -42,11 +44,10 @@ describe('site config', () => {
     ])
   })
 
-  it('导航含 9 项且站外链接仅 GitHub', () => {
-    expect(config.themeConfig.nav).toHaveLength(9)
+  it('导航含 8 项且无站外文字链接（GitHub 去重走 socialLinks 图标）', () => {
+    expect(config.themeConfig.nav).toHaveLength(8)
     const external = config.themeConfig.nav.filter(n => n.link.startsWith('http'))
-    expect(external).toHaveLength(1)
-    expect(external[0].link).toBe('https://github.com/cuihairu/hello-game')
+    expect(external).toHaveLength(0)
   })
 
   it('双书结构：sidebar 有教程与知识库两个入口', () => {
@@ -59,7 +60,8 @@ describe('site config', () => {
   it('教程 sidebar 覆盖 18 讲且每个链接对应真实文件', () => {
     const tutorial = config.themeConfig.sidebar['/24-game-types-architecture/']
     const links = collectLinks(tutorial)
-    const lectures = links.filter(l => /\/\d{2}-/.test(l))
+    // 精确锚定目录前缀：/\d{2}- 会误命中「24-game-types-architecture」的「24-」
+    const lectures = links.filter(l => /^\/24-game-types-architecture\/\d{2}-/.test(l))
     expect(lectures).toHaveLength(18)
     for (const link of collectLinks(tutorial)) {
       expect(existsSync(linkToFile(link)), `缺失文件: ${link}`).toBe(true)
@@ -98,7 +100,7 @@ describe('site config', () => {
 
   it('页脚与社交链接', () => {
     expect(config.themeConfig.footer).toEqual({
-      message: '游戏后端知识体系',
+      message: '游戏知识体系',
       copyright: '© 2025 cuihairu'
     })
     expect(config.themeConfig.socialLinks).toEqual([
