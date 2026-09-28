@@ -1,5 +1,6 @@
-import { defineConfig } from "vitepress"
-export default defineConfig({
+// 站点配置导出普通对象（defineConfig 仅为类型辅助）；
+// 首页 index.md 会把本文件作为数据源引入 client bundle，故不 import vitepress 包。
+export default {
   title: '游戏知识体系',
   description: '系统化的游戏开发知识体系——后端为主场，覆盖引擎与客户端、网络同步、数据运营与安全',
   lang: 'zh-CN',
@@ -456,4 +457,4 @@ export default defineConfig({
   markdown: {
     lineNumbers: false
   }
-})
+}
