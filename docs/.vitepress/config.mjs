@@ -88,6 +88,13 @@ export default {
             { text: '18 安全与风控合规', link: '/24-game-types-architecture/18-security-compliance' },
             { text: '章节扩展规划', link: '/24-game-types-architecture/expansion' }
           ]
+        },
+        {
+          text: '🟣 扩展',
+          collapsed: false,
+          items: [
+            { text: '19 客户端架构与性能基础', link: '/24-game-types-architecture/19-client-architecture' }
+          ]
         }
       ],
 
