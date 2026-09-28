@@ -92,7 +92,7 @@ export const GAMES = [
       transport: 'UDP',
       storage: '本地存档为主，服务器保存积分与配置',
       antiCheat: '服务端权威命中判定（早期形态）',
-      social: ' clans（战队）文化与 Mod/WAD 生态'
+      social: 'clans（战队）文化与 Mod/WAD 生态'
     }),
   game('反恐精英', 1999, ['PC'], ['FPS/TPS'], ['服务端权威', '匹配服务', '反作弊', '排行榜'],
     '从 Half-Life Mod 起家的竞技标杆；tick 服务器与竞技匹配体系随 CS:GO 成熟。',
@@ -176,7 +176,7 @@ export const GAMES = [
     {
       server: '数据中心 → 世界（分片）→ 副本实例，区域负载拆分',
       sync: '状态同步 + AoI，技能判定服务端裁决',
-      matchmaking: '-duty finder 副本跨世界匹配',
+      matchmaking: 'Duty Finder 副本跨世界匹配',
       transport: 'TCP',
       storage: '角色与服务端权威存档（云存档体系，细节未公开）',
       antiCheat: '服务端行为校验（细节未公开）',
