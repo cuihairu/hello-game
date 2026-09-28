@@ -93,7 +93,8 @@ export default {
           text: '🟣 扩展',
           collapsed: false,
           items: [
-            { text: '19 客户端架构与性能基础', link: '/24-game-types-architecture/19-client-architecture' }
+            { text: '19 客户端架构与性能基础', link: '/24-game-types-architecture/19-client-architecture' },
+            { text: '20 游戏测试与质量保障', link: '/24-game-types-architecture/20-game-testing' }
           ]
         }
       ],

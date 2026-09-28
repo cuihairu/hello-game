@@ -57,12 +57,12 @@ describe('site config', () => {
     ])
   })
 
-  it('教程 sidebar 覆盖 19 讲且每个链接对应真实文件', () => {
+  it('教程 sidebar 覆盖 20 讲且每个链接对应真实文件', () => {
     const tutorial = config.themeConfig.sidebar['/24-game-types-architecture/']
     const links = collectLinks(tutorial)
     // 精确锚定目录前缀：/\d{2}- 会误命中「24-game-types-architecture」的「24-」
     const lectures = links.filter(l => /^\/24-game-types-architecture\/\d{2}-/.test(l))
-    expect(lectures).toHaveLength(19)
+    expect(lectures).toHaveLength(20)
     for (const link of collectLinks(tutorial)) {
       expect(existsSync(linkToFile(link)), `缺失文件: ${link}`).toBe(true)
     }
