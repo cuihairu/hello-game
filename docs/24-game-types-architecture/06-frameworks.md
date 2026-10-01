@@ -32,13 +32,13 @@ HTTP Server → Netty → Skynet → Pitaya → Photon → KBEngine → BigWorld
 
 | 重量级 | 框架 | 语言 | 核心模型 | 学习曲线 | 生产力 |
 |-------|------|------|---------|---------|-------|
-| 🪶 轻 | HTTP Server | 任意 | 请求-响应 | ⭐ | ⭐⭐ |
-| 📦 中轻 | Netty | Java | Reactor | ⭐⭐ | ⭐⭐⭐ |
-| 🎯 中 | Skynet | C + Lua | Actor | ⭐⭐⭐ | ⭐⭐⭐ |
-| 🚀 中 | Pitaya | Go | Actor + Cluster | ⭐⭐ | ⭐⭐⭐⭐ |
-| 💼 中重 | Photon Server | C# | Actor + 状态机 | ⭐⭐⭐ | ⭐⭐⭐⭐ |
-| 🏗️ 重 | KBEngine | C++ + Python | Entity + Cell | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| 🏔️ 最重 | BigWorld | C++ + Python | Entity + Space | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| 轻 | HTTP Server | 任意 | 请求-响应 | ⭐ | ⭐⭐ |
+| 中轻 | Netty | Java | Reactor | ⭐⭐ | ⭐⭐⭐ |
+| 中 | Skynet | C + Lua | Actor | ⭐⭐⭐ | ⭐⭐⭐ |
+| 中 | Pitaya | Go | Actor + Cluster | ⭐⭐ | ⭐⭐⭐⭐ |
+| 中重 | Photon Server | C# | Actor + 状态机 | ⭐⭐⭐ | ⭐⭐⭐⭐ |
+| 重 | KBEngine | C++ + Python | Entity + Cell | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| 最重 | BigWorld | C++ + Python | Entity + Space | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
 
 > **《百万在线》启示**：选择框架时要关注的不是"它能做什么"，而是"它在什么规模下开始出问题"。小框架在低并发时简单高效，但到了万级在线就会遇到瓶颈；大框架在万级以上游刃有余，但启动一个最小可用系统就需要大量配置。
 

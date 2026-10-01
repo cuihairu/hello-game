@@ -33,16 +33,16 @@ export default {
     // - / 其余路径为知识库主线（方法论 → 问题模型 → … → 稳定性 + 附录）
     sidebar: {
       '/24-game-types-architecture/': [
-        { text: '📌 游戏类型与架构选型对照', link: '/24-game-types-architecture/' },
+        { text: '游戏类型与架构选型对照', link: '/24-game-types-architecture/' },
         {
-          text: '🟢 入门',
+          text: '入门',
           collapsed: false,
           items: [
             { text: '01 游戏后端技术全景', link: '/24-game-types-architecture/01-entry' }
           ]
         },
         {
-          text: '🔵 基础',
+          text: '基础',
           collapsed: false,
           items: [
             { text: '02 数值与经济系统', link: '/24-game-types-architecture/02-game-design' },
@@ -50,7 +50,7 @@ export default {
           ]
         },
         {
-          text: '🔷 架构',
+          text: '架构',
           collapsed: false,
           items: [
             { text: '04 通信协议设计', link: '/24-game-types-architecture/04-network' },
@@ -61,7 +61,7 @@ export default {
           ]
         },
         {
-          text: '🟡 实现',
+          text: '实现',
           collapsed: false,
           items: [
             { text: '09 游戏编程模式', link: '/24-game-types-architecture/09-programming-patterns' },
@@ -70,7 +70,7 @@ export default {
           ]
         },
         {
-          text: '🟠 运营',
+          text: '运营',
           collapsed: false,
           items: [
             { text: '12 游戏数据分析', link: '/24-game-types-architecture/12-data-analytics' },
@@ -79,7 +79,7 @@ export default {
           ]
         },
         {
-          text: '🔴 专题',
+          text: '专题',
           collapsed: false,
           items: [
             { text: '15 学习资源', link: '/24-game-types-architecture/15-references' },
@@ -90,7 +90,7 @@ export default {
           ]
         },
         {
-          text: '🟣 扩展',
+          text: '扩展',
           collapsed: false,
           items: [
             { text: '19 客户端架构与性能基础', link: '/24-game-types-architecture/19-client-architecture' },
