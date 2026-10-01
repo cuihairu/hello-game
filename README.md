@@ -1,6 +1,16 @@
+<div align="center">
+
+<img src="docs/public/logo.svg" width="96" alt="hello-game logo" />
+
 # 游戏知识体系
 
-一个系统化的游戏开发知识体系，涵盖从入门到实战的完整技术谱系——后端是主场，但不是全部。
+**一个系统化的游戏开发知识体系**，涵盖从入门到实战的完整技术谱系——后端是主场，但不是全部。
+
+[快速开始](#本地开发) · [目录结构](#目录结构) · [在线阅读](https://cuihairu.github.io/hello-game/)
+
+</div>
+
+---
 
 ## 定位
 

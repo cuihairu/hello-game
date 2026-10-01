@@ -1,16 +1,16 @@
 /* ============================================================
-   游戏知识体系 · 蓝图（blueprint）
+   游戏知识体系 · 奖台（podium green on blueprint paper）
    世界：软件架构先是一张图纸——网格纸、制图线、等宽标注、一枚制图蓝。
-   色彩策略：Committed。制图蓝承载身份；冷纸面/墨面中性底；无第二强调色。
+   色彩策略：Committed。奖台绿承载身份——取自 logo 底座 fill（#284331，面积最大且为三处品牌资产唯一公共色）；冷纸面/墨面中性底；无第二强调色。
    标注语言：编号 / meta / kicker 一律等宽，如图纸标注；标题取无衬线重字重。
    ============================================================ */
 
 :root {
-  /* 制图蓝 */
-  --vp-c-brand-1: #1f5fa8;
-  --vp-c-brand-2: #17497f;
-  --vp-c-brand-3: #1f5fa8;
-  --vp-c-brand-soft: rgba(31, 95, 168, 0.08);
+  /* 奖台绿（logo 底座 #284331） */
+  --vp-c-brand-1: #284331;
+  --vp-c-brand-2: #1c2f22;
+  --vp-c-brand-3: #284331;
+  --vp-c-brand-soft: rgba(40, 67, 49, 0.08);
 
   /* 冷纸面 */
   --vp-c-bg: #f6f8fb;
@@ -32,17 +32,17 @@
   --vp-font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
 
   /* 图纸语言 */
-  --bp-grid-line: rgba(31, 95, 168, 0.05);
-  --bp-spine: #c3cedb;
-  --bp-spine-node: #1f5fa8;
+  --bp-grid-line: rgba(40, 67, 49, 0.05);
+  --bp-spine: #b9c9bd;
+  --bp-spine-node: #284331;
 
   /* 阅读进度条取色（ReadingProgress.vue 按变量名取色，勿改名） */
-  --mb-progress-1: #1f5fa8;
-  --mb-progress-2: #5b9dd9;
-  --mb-progress-track: rgba(31, 95, 168, 0.12);
+  --mb-progress-1: #284331;
+  --mb-progress-2: #5d8a6d;
+  --mb-progress-track: rgba(40, 67, 49, 0.12);
 
   /* 组件覆写 */
-  --vp-c-sponsor: #1f5fa8;
+  --vp-c-sponsor: #284331;
   --vp-home-hero-name-color: transparent;
   --vp-sidebar-bg-color: var(--vp-c-bg-alt);
   --vp-nav-bg-color: var(--vp-c-bg);
@@ -60,17 +60,17 @@
   --vp-c-text-1: #d9e2ec;
   --vp-c-text-2: #9cadbf;
   --vp-c-text-3: #62788e;
-  --vp-c-brand-1: #61a3e8;
-  --vp-c-brand-2: #7fb9f0;
-  --vp-c-brand-3: #61a3e8;
-  --vp-c-brand-soft: rgba(97, 163, 232, 0.12);
+  --vp-c-brand-1: #6fb58a;
+  --vp-c-brand-2: #8fc9a6;
+  --vp-c-brand-3: #6fb58a;
+  --vp-c-brand-soft: rgba(111, 181, 138, 0.12);
   --vp-nav-bg-color: var(--vp-c-bg);
   --vp-code-block-bg: #0d1420;
-  --bp-grid-line: rgba(97, 163, 232, 0.06);
-  --bp-spine: #2a3a4d;
-  --bp-spine-node: #61a3e8;
-  --mb-progress-1: #61a3e8;
-  --mb-progress-2: #8cc2f2;
+  --bp-grid-line: rgba(111, 181, 138, 0.06);
+  --bp-spine: #2c4034;
+  --bp-spine-node: #6fb58a;
+  --mb-progress-1: #6fb58a;
+  --mb-progress-2: #93cfa9;
   --mb-progress-track: rgba(255, 255, 255, 0.1);
 }
 
@@ -94,15 +94,15 @@
 body {
   font-family: var(--vp-font-body);
   font-size: 16.5px;
-  line-height: 1.85;
+  line-height: 1.78;
   text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: rgba(31, 95, 168, 0.2);
+  background: rgba(40, 67, 49, 0.2);
 }
 .dark ::selection {
-  background: rgba(97, 163, 232, 0.28);
+  background: rgba(111, 181, 138, 0.28);
 }
 
 /* 浏览器表面（滚动条、焦点环属于设计） */
@@ -163,11 +163,33 @@ body {
 }
 
 .vp-doc p {
-  margin: 1.1em 0;
+  margin: 1.15em 0;
+}
+
+/* 中文正文首行缩进 2em：只作用于文档页正文段落；
+   引用、列表、表格、提示块与代码容器内不缩进 */
+.VPDoc .vp-doc p {
+  text-indent: 2em;
+}
+.VPDoc .vp-doc blockquote p,
+.VPDoc .vp-doc li p,
+.VPDoc .vp-doc td p,
+.VPDoc .vp-doc th p,
+.VPDoc .vp-doc .custom-block p {
+  text-indent: 0;
 }
 
 .vp-doc li + li {
   margin-top: 0.4em;
+}
+
+/* 标题与表格的呼吸感：h3 抬头、表格上下留白 */
+.vp-doc h3 {
+  margin-top: 2.2rem;
+}
+
+.vp-doc table {
+  margin: 1.4rem 0;
 }
 
 /* 有侧栏时正文行宽：表格与代码较宽，46rem 保持舒适行长 */
@@ -180,7 +202,7 @@ body {
 .vp-doc :not(h1, h2, h3, h4, h5, h6) a {
   color: var(--vp-c-brand-1);
   text-decoration: underline;
-  text-decoration-color: rgba(31, 95, 168, 0.35);
+  text-decoration-color: rgba(40, 67, 49, 0.35);
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
 }
@@ -238,10 +260,10 @@ body {
   background: var(--vp-c-bg-soft);
 }
 .vp-doc tbody tr:hover {
-  background: rgba(31, 95, 168, 0.05);
+  background: rgba(40, 67, 49, 0.05);
 }
 .dark .vp-doc tbody tr:hover {
-  background: rgba(97, 163, 232, 0.05);
+  background: rgba(111, 181, 138, 0.05);
 }
 
 /* ---------- 代码 ---------- */
