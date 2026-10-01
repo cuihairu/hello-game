@@ -235,9 +235,10 @@ describe('站内链接与内容清单核对入档（expansion 第 6 节）', () 
     expect(Number(claim[2])).toBe(kbTests.length)
     expect(kbCase.length).toBe(kbTests.length)
     // 每个 kb-case 用例都指向一个真有案例的知识库页，且逐字命中该页案例标题
+    // 注：按完整相对路径匹配——不同章存在同名页（如 04/05 章都有 05.md），按文件名子串 find 会误命中
     for (const t of kbTests) {
       const src = readFileSync(resolve(root, 'tests', t), 'utf8')
-      const hit = kbCase.find(f => src.includes(relative(docs, f).split('/').slice(1).join('/')))
+      const hit = kbCase.find(f => src.includes(relative(docs, f)))
       expect(hit, `${t} 未指向有案例的知识库页`).toBeTruthy()
       const heading = src.match(/'(## 实战案例：[^']+)'/)
       expect(heading, `${t} 未声明所测案例标题`).toBeTruthy()
