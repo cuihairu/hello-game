@@ -221,4 +221,27 @@ describe('站内链接与内容清单核对入档（expansion 第 6 节）', () 
     expect(sec.includes('（**14** 条）')).toBe(true)
     expect(sec.includes('tests/site-links.test.mjs')).toBe(true)
   })
+
+  it('知识库实战案例口径：案例节 ↔ kb-case 用例一一对应，数量与入档一致', () => {
+    // 知识库页（00–23 章 + 附录）内案例节；教程与两个横向入口不计入
+    const kbFiles = mdFiles.filter(f => {
+      const top = relative(docs, f).split('/')[0]
+      return !top.startsWith('24-game-types-architecture') && top !== 'history' && top !== 'games'
+    })
+    const kbCase = kbFiles.filter(f => /^##+ .*实战案例：/m.test(readFileSync(f, 'utf8')))
+    const kbTests = readdirSync(resolve(root, 'tests')).filter(f => /^kb-case-.*\.test\.mjs$/.test(f))
+    const claim = grab(/当前知识库共 \*\*(\d+)\*\* 个案例节 ↔ \*\*(\d+)\*\* 个 `kb-case-` 用例文件/, '知识库案例数')
+    expect(Number(claim[1])).toBe(kbCase.length)
+    expect(Number(claim[2])).toBe(kbTests.length)
+    expect(kbCase.length).toBe(kbTests.length)
+    // 每个 kb-case 用例都指向一个真有案例的知识库页，且逐字命中该页案例标题
+    for (const t of kbTests) {
+      const src = readFileSync(resolve(root, 'tests', t), 'utf8')
+      const hit = kbCase.find(f => src.includes(relative(docs, f).split('/').slice(1).join('/')))
+      expect(hit, `${t} 未指向有案例的知识库页`).toBeTruthy()
+      const heading = src.match(/'(## 实战案例：[^']+)'/)
+      expect(heading, `${t} 未声明所测案例标题`).toBeTruthy()
+      expect(readFileSync(hit, 'utf8')).toContain(heading[1])
+    }
+  })
 })
