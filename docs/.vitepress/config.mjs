@@ -363,6 +363,21 @@ export default {
           ]
         },
         {
+          text: '20. 策划与数值体系',
+          collapsed: true,
+          items: [
+            { text: '策划与数值体系', link: '/26-design-numerics/' },
+            { text: '数值策划的工作与口径', link: '/26-design-numerics/01' },
+            { text: '战斗数值与伤害公式族', link: '/26-design-numerics/02' },
+            { text: '成长曲线模型', link: '/26-design-numerics/03' },
+            { text: '经济循环与产出消耗', link: '/26-design-numerics/04' },
+            { text: '掉落与概率设计', link: '/26-design-numerics/05' },
+            { text: '商业化数值示例模型', link: '/26-design-numerics/06' },
+            { text: '关卡难度与新手节奏', link: '/26-design-numerics/07' },
+            { text: '数值书单与资料', link: '/26-design-numerics/08' }
+          ]
+        },
+        {
           text: '附录与横向索引',
           collapsed: true,
           items: [
