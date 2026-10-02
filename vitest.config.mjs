@@ -18,7 +18,10 @@ export default defineConfig({
         'docs/.vitepress/theme/components/ReadingProgress.vue',
         'docs/.vitepress/theme/components/renderDiagram.js',
         'docs/.vitepress/theme/data/games.mjs',
-        'docs/.vitepress/theme/data/homepage.mjs'
+        'docs/.vitepress/theme/data/homepage.mjs',
+        'docs/.vitepress/theme/data/timeline.mjs',
+        'docs/.vitepress/theme/components/HistoryAxis.vue',
+        'docs/.vitepress/theme/components/HistoryTimeline.vue'
       ],
       thresholds: {
         statements: 100,

@@ -2,6 +2,8 @@ import { h } from 'vue'
 import DefaultTheme from 'vitepress/theme'
 import MermaidDiagram from './components/MermaidDiagram.vue'
 import ReadingProgress from './components/ReadingProgress.vue'
+import HistoryAxis from './components/HistoryAxis.vue'
+import HistoryTimeline from './components/HistoryTimeline.vue'
 import './style.css'
 
 export default {
@@ -14,5 +16,7 @@ export default {
   },
   enhanceApp({ app }) {
     app.component('MermaidDiagram', MermaidDiagram)
+    app.component('HistoryAxis', HistoryAxis)
+    app.component('HistoryTimeline', HistoryTimeline)
   }
 }

@@ -5,6 +5,12 @@ vi.mock('vitepress/theme', () => ({ default: FakeDefaultTheme }))
 vi.mock('../docs/.vitepress/theme/components/MermaidDiagram.vue', () => ({
   default: { name: 'MermaidDiagram', render: () => null }
 }))
+vi.mock('../docs/.vitepress/theme/components/HistoryAxis.vue', () => ({
+  default: { name: 'HistoryAxis', render: () => null }
+}))
+vi.mock('../docs/.vitepress/theme/components/HistoryTimeline.vue', () => ({
+  default: { name: 'HistoryTimeline', render: () => null }
+}))
 vi.mock('../docs/.vitepress/theme/style.css', () => ({}))
 
 import theme from '../docs/.vitepress/theme/index.js'
@@ -17,10 +23,12 @@ describe('theme', () => {
   it('enhanceApp 全局注册 MermaidDiagram 组件', () => {
     const app = { component: vi.fn() }
     theme.enhanceApp({ app })
-    expect(app.component).toHaveBeenCalledTimes(1)
+    expect(app.component).toHaveBeenCalledTimes(3)
     const [name, comp] = app.component.mock.calls[0]
     expect(name).toBe('MermaidDiagram')
     expect(comp.name).toBe('MermaidDiagram')
+    expect(app.component.mock.calls[1][0]).toBe('HistoryAxis')
+    expect(app.component.mock.calls[2][0]).toBe('HistoryTimeline')
   })
 
   it('Layout 覆盖默认主题并把阅读进度条挂进 layout-bottom 插槽', () => {
