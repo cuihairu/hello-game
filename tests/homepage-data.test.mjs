@@ -119,10 +119,10 @@ describe('homepage 数据层（真实 config 集成）', () => {
     }
   })
 
-  it('知识库目录：18 章 + 5 附录，章级链接全部对应真实文件', () => {
+  it('知识库目录：19 章 + 5 附录，章级链接全部对应真实文件', () => {
     const chapters = buildKbChapters(kb)
     expect(chapters[0]).toEqual({ num: '00', title: '如何阅读这套知识库', link: '/00-reading-guide/' })
-    expect(homepageStats(tutorial, kb).kbChapterCount).toBe(18)
+    expect(homepageStats(tutorial, kb).kbChapterCount).toBe(19)
     expect(homepageStats(tutorial, kb).appendixCount).toBe(5)
     // 附录编号从分组标题取「A1」…「A5」
     const appendixNums = chapters.filter(c => /^A\d/.test(c.num)).map(c => c.num)

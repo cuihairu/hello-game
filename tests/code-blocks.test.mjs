@@ -60,7 +60,7 @@ export function extractFences(filePath) {
 const KNOWN_LANGS = new Set([
   'go', 'text', 'python', 'lua', 'java', 'sql', 'mermaid', 'yaml', 'cpp',
   'bash', 'protobuf', 'json', 'c', 'xml', 'nginx', 'markdown', 'dockerfile',
-  'csharp'
+  'csharp', 'js', 'html', 'ts', 'glsl'
 ])
 
 const mdFiles = walkMd(docsDir)

@@ -350,6 +350,19 @@ export default {
           ]
         },
         {
+          text: '19. Web 游戏前端体系',
+          collapsed: true,
+          items: [
+            { text: 'Web 游戏前端体系', link: '/25-web-frontend/' },
+            { text: 'H5 与 Canvas 2D 渲染基础', link: '/25-web-frontend/01' },
+            { text: 'WebGL 与三维渲染入门', link: '/25-web-frontend/02' },
+            { text: '游戏引擎与 Cocos Creator', link: '/25-web-frontend/03' },
+            { text: '游戏 UI 体系', link: '/25-web-frontend/04' },
+            { text: '小游戏平台与浏览器环境', link: '/25-web-frontend/05' },
+            { text: '客户端内部分层：渲染、逻辑与资源', link: '/25-web-frontend/06' }
+          ]
+        },
+        {
           text: '附录与横向索引',
           collapsed: true,
           items: [
