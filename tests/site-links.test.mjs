@@ -193,7 +193,7 @@ describe('站内链接与内容清单核对入档（expansion 第 6 节）', () 
     expect(archive.includes('一次『主从切换回档』后的充值补账排查')).toBe(true)
   })
 
-  it('覆盖率口径入档与实测一致：coverage.include 8 文件 = theme 7 源码 + config.mjs，门槛 100', () => {
+  it('覆盖率口径入档与实测一致：coverage.include 11 文件 = theme 10 源码 + config.mjs，门槛 100', () => {
     const vcfg = readFileSync(resolve(root, 'vitest.config.mjs'), 'utf8')
     const covBlock = vcfg.slice(vcfg.indexOf('coverage:'))
     const include = [...covBlock.match(/include:\s*\[([^\]]*?)\]/)[1].matchAll(/'([^']+)'/g)].map(m => m[1])
@@ -208,12 +208,12 @@ describe('站内链接与内容清单核对入档（expansion 第 6 节）', () 
     // include = theme 源码 + config.mjs
     expect(include.length).toBe(themeSources.length + 1)
     expect(include).toContain('docs/.vitepress/config.mjs')
-    // 门槛按实测达成值（历史线八轨新增文件含 GSAP 导入等难覆盖边界）
+    // 门槛 100：历史线八轨新增文件（GSAP 导入、Math.min/max 边界）已全分支覆盖
     const th = covBlock.match(/thresholds:\s*\{([^}]*)\}/)[1]
-    expect(th).toMatch(/statements:\s*94/)
-    expect(th).toMatch(/branches:\s*86/)
-    expect(th).toMatch(/functions:\s*95/)
-    expect(th).toMatch(/lines:\s*95/)
+    expect(th).toMatch(/statements:\s*100/)
+    expect(th).toMatch(/branches:\s*100/)
+    expect(th).toMatch(/functions:\s*100/)
+    expect(th).toMatch(/lines:\s*100/)
     // 入档关键口径句在位
     expect(sec.includes('No files with missing coverage')).toBe(true)
     expect(sec.includes('覆盖率四项均达标')).toBe(true)

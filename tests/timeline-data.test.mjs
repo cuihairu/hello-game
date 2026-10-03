@@ -173,6 +173,11 @@ describe('timeline data', () => {
     }
   })
 
+  it('helpers：itemsIn 未知年代返回空轨道集合', () => {
+    expect(itemsIn('1950s')).toEqual({ tracks: [] })
+    expect(itemsIn('nope')).toEqual({ tracks: [] })
+  })
+
   it('store：toggleFocus 切换与恢复', () => {
     expect(store.focus).toBeNull()
     toggleFocus('games')
@@ -226,13 +231,15 @@ describe('timeline data', () => {
     const el = document.createElement('div')
     el.innerHTML = '<div data-tl-card></div><div data-tl-card></div>'
     const fakeGsap = { from: vi.fn(() => ({})) }
-    const fakeST = { getAll: vi.fn(() => []), create: vi.fn() }
+    const stObj = { kill: vi.fn() }
+    const fakeST = { getAll: vi.fn(() => [stObj]), create: vi.fn() }
     const cleanup = await fadeCardsOnScroll(el, {
       reduced: false,
       load: vi.fn().mockResolvedValue({ gsap: fakeGsap, ScrollTrigger: fakeST })
     })
     expect(typeof cleanup).toBe('function')
     await cleanup()
+    expect(stObj.kill).toHaveBeenCalled() // 清理逐个 kill 全部 ScrollTrigger
   })
 
   it('fadeCardsOnScroll：load reject 不抛错', async () => {
@@ -271,6 +278,10 @@ describe('timeline data', () => {
       load: vi.fn().mockResolvedValue({ gsap: fakeGsap, ScrollTrigger: fakeST })
     })
     expect(typeof cleanup).toBe('function')
+    // onUpdate 回调随滚动进度推进游标位置
+    const cfg = fakeST.create.mock.calls[0][0]
+    cfg.onUpdate({ progress: 0.5 })
+    expect(axisEl.querySelector('.tl-cursor').style.transform).toContain('translateX(50%)')
     await cleanup()
   })
 

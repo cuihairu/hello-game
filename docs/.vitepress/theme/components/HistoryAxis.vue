@@ -143,7 +143,7 @@ function onWheel(e) {
   if (!overviewEl.value) return
   e.preventDefault()
   const rect = overviewEl.value.getBoundingClientRect()
-  const ratio = (e.clientX - rect.left) / rect.width
+  const ratio = (e.clientX - rect.left) / (rect.width || 1)
   const span = viewSpan.value
   const newSpan = Math.min(AXIS.maxSpan, Math.max(AXIS.minSpan, span - e.deltaY * 0.5))
   const center = viewStart.value + span * ratio
@@ -171,8 +171,9 @@ function onMouseMove(e) {
   const totalSpan = AXIS.maxYear - AXIS.minYear
   const yearPerPx = totalSpan / rect.width
   const deltaYears = Math.round(dx * yearPerPx)
+  const span = viewSpan.value
   viewStart.value = dragStartViewStart - deltaYears
-  viewEnd.value = viewStart.value + viewSpan.value
+  viewEnd.value = viewStart.value + span
   clampView()
   emitCursorUpdate()
 }
@@ -182,16 +183,6 @@ function onMouseUp() {
   document.removeEventListener('mousemove', onMouseMove)
   document.removeEventListener('mouseup', onMouseUp)
   overviewEl.value?.classList.remove('is-dragging')
-}
-
-function updateActiveDecade() {
-  const center = viewStart.value + viewSpan.value / 2
-  for (const seg of segments) {
-    if (center >= seg.from && center <= seg.to) {
-      activeDecade.value = seg.id
-      break
-    }
-  }
 }
 
 watch(() => store.focus, () => {

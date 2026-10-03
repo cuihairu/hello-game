@@ -195,4 +195,13 @@ describe('HistoryTimeline.vue', () => {
     const cards = wrapper.findAll('[data-tl-card]')
     expect(cards.length).toBeGreaterThan(0)
   })
+
+  it('timelineEl 失效时 triggerFade 直接返回', async () => {
+    const wrapper = mount(HistoryTimeline, { props: { decade: '1970s' } })
+    vi.mocked(fadeCardsOnScroll).mockClear()
+    vi.mocked(prefersReduced).mockReturnValueOnce(false)
+    wrapper.vm.timelineEl = null
+    wrapper.vm.triggerFade()
+    expect(fadeCardsOnScroll).not.toHaveBeenCalled()
+  })
 })
