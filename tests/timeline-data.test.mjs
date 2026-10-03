@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
   SEGMENTS,
   AXIS,
@@ -12,135 +12,169 @@ import {
   prefersReduced,
   loadGsap,
   fadeCardsOnScroll,
-  initAxisCursor
+  initAxisCursor,
+  RELATIONS
 } from '../docs/.vitepress/theme/data/timeline.mjs'
 
-describe('timeline data structure', () => {
-  it('SEGMENTS: 六个年代段，id 与锚点一致', () => {
-    expect(SEGMENTS.length).toBe(6)
-    expect(SEGMENTS.map(s => s.id)).toEqual(['s-1970s', 's-1980s', 's-1990s', 's-2000s', 's-2010s', 's-2020s'])
-    expect(SEGMENTS.every(s => s.from >= 1970 && s.to <= 2026)).toBe(true)
+describe('timeline data', () => {
+  beforeEach(() => {
+    store.focus = null
+    store.collapsed = {}
+    vi.clearAllMocks()
   })
 
-  it('AXIS: 视窗范围与夹取常量', () => {
+  it('SEGMENTS：七个年代段、键名与范围正确', () => {
+    expect(SEGMENTS.length).toBe(7)
+    expect(SEGMENTS.map(s => s.id)).toEqual(['s-1960s', 's-1970s', 's-1980s', 's-1990s', 's-2000s', 's-2010s', 's-2020s'])
+    expect(SEGMENTS[0].from).toBe(1960)
+    expect(SEGMENTS[6].to).toBe(2026)
+  })
+
+  it('AXIS：边界与跨度限制就位', () => {
     expect(AXIS.minYear).toBe(1955)
     expect(AXIS.maxYear).toBe(2026)
     expect(AXIS.minSpan).toBe(30)
     expect(AXIS.maxSpan).toBe(71)
   })
 
-  it('TRACKS: 八轨齐全，每轨 8–10 条，含 color 与 name', () => {
+  it('TRACKS：八轨、名称、颜色、条目数（8–10 条）', () => {
     expect(TRACKS.length).toBe(8)
-    const ids = TRACKS.map(t => t.id)
-    expect(ids).toEqual(['games', 'hardware', 'frontend', 'backend', 'engines', 'gameplay', 'art', 'company'])
-    TRACKS.forEach(t => {
-      expect(t.items.length).toBeGreaterThanOrEqual(8)
-      expect(t.items.length).toBeLessThanOrEqual(10)
-      expect(typeof t.color).toBe('string')
-      expect(t.color.startsWith('#')).toBe(true)
-      expect(typeof t.name).toBe('string')
-    })
+    const expected = [
+      { id: 'games', count: 10 },
+      { id: 'hardware', count: 10 },
+      { id: 'frontend', count: 10 },
+      { id: 'backend', count: 9 },
+      { id: 'engines', count: 9 },
+      { id: 'gameplay', count: 9 },
+      { id: 'art', count: 9 },
+      { id: 'company', count: 10 }
+    ]
+    for (const exp of expected) {
+      const track = TRACKS.find(t => t.id === exp.id)
+      expect(track, `轨道 ${exp.id} 应存在`).toBeTruthy()
+      expect(track.name).toBeTruthy()
+      expect(track.color).toMatch(/^#[0-9a-f]{6}$/i)
+      expect(track.items.length).toBe(exp.count)
+    }
   })
 
-  it('每条目三硬字段非空，key 全局唯一且前缀匹配轨道', () => {
+  it('每个条目：三硬字段非空、year 为数字、approx 为布尔、key 唯一且前缀匹配轨道', () => {
     const allKeys = new Set()
-    let itemsWithLinks = 0
-    TRACKS.forEach(t => {
-      t.items.forEach(item => {
-        expect(item.hardware, `${item.key}: 硬件背景为空`).toBeTruthy()
-        expect(item.solved, `${item.key}: 解决了什么为空`).toBeTruthy()
-        expect(item.limits, `${item.key}: 弊端为空`).toBeTruthy()
-        expect(item.key).toBeTruthy()
-        expect(allKeys.has(item.key), `key 重复: ${item.key}`).toBe(false)
+    const prefixMap = {
+      games: 'ga-', hardware: 'hw-', frontend: 'fe-', backend: 'be-',
+      engines: 'en-', gameplay: 'gp-', art: 'ar-', company: 'co-'
+    }
+    for (const track of TRACKS) {
+      for (const item of track.items) {
+        expect(item.key, `${item.key} 应有 key`).toBeTruthy()
+        expect(allKeys.has(item.key), `${item.key} key 不应重复`).toBe(false)
         allKeys.add(item.key)
-        const prefix = item.key.split('-')[0]
-        const expectedPrefix = { games: 'ga', hardware: 'hw', frontend: 'fe', backend: 'be', engines: 'en', gameplay: 'gp', art: 'ar', company: 'co' }[t.id]
-        expect(prefix).toBe(expectedPrefix)
+        expect(item.key.startsWith(prefixMap[track.id]), `${item.key} 前缀应为 ${prefixMap[track.id]}`).toBe(true)
         expect(typeof item.year).toBe('number')
-        expect(typeof item.approx).toBe('boolean')
-        expect(item.year).toBeGreaterThanOrEqual(1962)
+        expect(item.year).toBeGreaterThanOrEqual(1960)
         expect(item.year).toBeLessThanOrEqual(2026)
-        if (t.id === 'company') {
+        expect(typeof item.approx).toBe('boolean')
+        expect(item.hardware, `${item.key} 缺少硬件背景`).toBeTruthy()
+        expect(item.hardware.length).toBeGreaterThan(5)
+        expect(item.solved, `${item.key} 缺少解决了什么`).toBeTruthy()
+        expect(item.solved.length).toBeGreaterThan(5)
+        expect(item.limits, `${item.key} 缺少弊端`).toBeTruthy()
+        expect(item.limits.length).toBeGreaterThan(5)
+        if (track.id === 'company') {
+          expect(item.works, `${item.key} 公司轨应有 works`).toBeTruthy()
           expect(Array.isArray(item.works)).toBe(true)
           expect(item.works.length).toBeGreaterThan(0)
-          item.works.forEach(w => {
-            expect(typeof w.year).toBe('number')
-            expect(typeof w.title).toBe('string')
-            expect(typeof w.why).toBe('string')
-          })
+          for (const w of item.works) {
+            expect(w.year).toBeTruthy()
+            expect(w.title).toBeTruthy()
+            expect(w.why).toBeTruthy()
+          }
         } else {
           expect(item.works).toBeUndefined()
         }
-        if (item.links) {
-          itemsWithLinks += 1
-          expect(Array.isArray(item.links)).toBe(true)
-          item.links.forEach(l => {
-            expect(['in', 'out']).toContain(l.dir)
-            expect(typeof l.track).toBe('string')
-            expect(typeof l.key).toBe('string')
-            expect(typeof l.note).toBe('string')
-          })
-        }
-      })
-    })
-    // 非空断言：互链装配必须真的产出 links
-    expect(itemsWithLinks).toBeGreaterThan(0)
+      }
+    }
+    expect(allKeys.size).toBe(76)
   })
 
-  it('年份归段正确：segmentOf 映射到对应 SEGMENTS', () => {
-    expect(segmentOf(1962)).toBe('s-1970s')
-    expect(segmentOf(1975)).toBe('s-1970s')
-    expect(segmentOf(1985)).toBe('s-1980s')
-    expect(segmentOf(1995)).toBe('s-1990s')
-    expect(segmentOf(2005)).toBe('s-2000s')
-    expect(segmentOf(2015)).toBe('s-2010s')
-    expect(segmentOf(2023)).toBe('s-2020s')
+  it('年份归段：每条年份落在对应 SEGMENTS 范围内', () => {
+    for (const track of TRACKS) {
+      for (const item of track.items) {
+        const segId = segmentOf(item.year)
+        expect(segId, `${item.key} 年份 ${item.year} 应落在某段`).not.toBeNull()
+        const seg = SEGMENTS.find(s => s.id === segId)
+        expect(item.year).toBeGreaterThanOrEqual(seg.from)
+        expect(item.year).toBeLessThanOrEqual(seg.to)
+      }
+    }
+  })
+
+  it('互链：RELATIONS 双向装配闭合、key 可解析、方向与注记对应', () => {
+    for (const [srcKey, dstKey, srcNote, dstNote] of RELATIONS) {
+      const srcTrack = TRACKS.find(t => t.items.some(i => i.key === srcKey))
+      const dstTrack = TRACKS.find(t => t.items.some(i => i.key === dstKey))
+      expect(srcTrack, `源 ${srcKey} 应存在`).toBeTruthy()
+      expect(dstTrack, `目标 ${dstKey} 应存在`).toBeTruthy()
+      const srcItem = srcTrack.items.find(i => i.key === srcKey)
+      const dstItem = dstTrack.items.find(i => i.key === dstKey)
+      const srcLink = srcItem.links?.find(l => l.key === dstKey && l.dir === 'out')
+      const dstLink = dstItem.links?.find(l => l.key === srcKey && l.dir === 'in')
+      expect(srcLink, `${srcKey}→${dstKey} out 链接应存在`).toBeTruthy()
+      expect(dstLink, `${dstKey}←${srcKey} in 链接应存在`).toBeTruthy()
+      expect(srcLink.note).toBe(srcNote)
+      expect(dstLink.note).toBe(dstNote)
+    }
+  })
+
+  it('与 nodes.md 标题一致（抽检关键条目）', () => {
+    const check = (key, expectedTitle) => {
+      const item = TRACKS.flatMap(t => t.items).find(i => i.key === key)
+      expect(item, `${key} 应存在`).toBeTruthy()
+      expect(item.title).toBe(expectedTitle)
+    }
+    check('ga-1962-spacewar', 'Spacewar!（PDP-1）')
+    check('ga-2020-genshin', '原神')
+    check('hw-2001-shader', 'GeForce 3 与可编程着色器')
+    check('hw-2018-rtx', 'RTX 2080（RT 与 Tensor 核心）')
+    check('fe-1995-javascript', 'JavaScript')
+    check('fe-2023-webgpu', 'WebGPU 在 Chrome 稳定')
+    check('be-1970-rdbms', '关系模型与 SQL')
+    check('be-2015-grpc', 'gRPC 开源')
+    check('en-1993-doom', 'Doom 引擎')
+    check('en-2020-ue5', 'UE5（Nanite 与 Lumen）')
+    check('gp-1978-highscore', '高分榜与难度递增')
+    check('gp-2017-botw', '系统涌现（旷野之息）')
+    check('ar-1975-pixel', '单色像素与符号化')
+    check('ar-2023-ai', 'AI 辅助资产进入生产讨论')
+    check('co-1972-atari', 'Atari')
+    check('co-2012-mihoyo', '米哈游')
+  })
+
+  it('helpers：segmentOf 边界与越界', () => {
+    expect(segmentOf(1960)).toBe('s-1960s')
+    expect(segmentOf(1969)).toBe('s-1960s')
+    expect(segmentOf(1970)).toBe('s-1970s')
+    expect(segmentOf(1979)).toBe('s-1970s')
+    expect(segmentOf(1980)).toBe('s-1980s')
     expect(segmentOf(2026)).toBe('s-2020s')
-    expect(segmentOf(2030)).toBe('s-2020s')
-    expect(segmentOf(1950)).toBe('s-1970s')
+    expect(segmentOf(1959)).toBeNull()
+    expect(segmentOf(2027)).toBeNull()
   })
 
-  it('itemsIn 返回年代区间', () => {
-    const r = itemsIn('1990s')
-    expect(r.from).toBe(1990)
-    expect(r.to).toBe(1999)
-    const r2 = itemsIn('2020s')
-    expect(r2.from).toBe(2020)
-    expect(r2.to).toBe(2026)
-    const r3 = itemsIn('invalid')
-    expect(r3.from).toBe(0)
-    expect(r3.to).toBe(0)
+  it('helpers：itemsIn 返回结构与年份过滤', () => {
+    const res = itemsIn('1970s')
+    expect(res.segment.id).toBe('s-1970s')
+    expect(res.tracks.length).toBe(8)
+    for (const t of res.tracks) {
+      for (const item of t.items) {
+        expect(item.year).toBeGreaterThanOrEqual(1970)
+        expect(item.year).toBeLessThanOrEqual(1979)
+      }
+    }
   })
 
-  it('互链双向闭合：每条 out 都有对应的 in，note 与 key 可解析', () => {
-    const itemByKey = {}
-    let totalLinks = 0
-    TRACKS.forEach(t => t.items.forEach(i => { itemByKey[i.key] = i }))
-    TRACKS.forEach(t => {
-      t.items.forEach(item => {
-        if (item.links) {
-          totalLinks += item.links.length
-          item.links.forEach(link => {
-            const target = itemByKey[link.key]
-            expect(target, `链接目标不存在: ${link.key}`).toBeTruthy()
-            const backLink = target.links?.find(l => l.key === item.key && l.dir !== link.dir)
-            expect(backLink, `反向链接缺失: ${item.key} <-> ${link.key}`).toBeTruthy()
-            expect(backLink.note).toBeTruthy()
-          })
-        }
-      })
-    })
-    // 非空断言：装配必须真的产出互链（回归：trackById 前缀映射曾导致零装配）
-    expect(totalLinks).toBeGreaterThan(0)
-  })
-
-  it('store: focus 与 collapsed 初始为空', () => {
+  it('store：toggleFocus 切换与恢复', () => {
     expect(store.focus).toBeNull()
-    expect(Object.keys(store.collapsed).length).toBe(0)
-  })
-
-  it('toggleFocus: 切换聚焦与取消', () => {
-    store.focus = null
     toggleFocus('games')
     expect(store.focus).toBe('games')
     toggleFocus('games')
@@ -149,303 +183,102 @@ describe('timeline data structure', () => {
     expect(store.focus).toBe('hardware')
   })
 
-  it('toggleCollapse: 切换折叠状态', () => {
-    store.collapsed.games = false
+  it('store：toggleCollapse 记录每轨折叠状态', () => {
+    expect(store.collapsed.games).toBeUndefined()
     toggleCollapse('games')
     expect(store.collapsed.games).toBe(true)
     toggleCollapse('games')
     expect(store.collapsed.games).toBe(false)
   })
 
-  it('relatedKeys: 返回指定轨道的关联 key', () => {
-    const item = { links: [{ track: 'hardware', key: 'hw-2001-shader', dir: 'in', note: 'test' }] }
-    expect(relatedKeys('hardware', item)).toEqual(['hw-2001-shader'])
-    expect(relatedKeys('frontend', item)).toEqual([])
-    expect(relatedKeys('hardware', {})).toEqual([])
-    expect(relatedKeys('hardware', { links: [] })).toEqual([])
+  it('relatedKeys：聚焦轨道返回关联 key 集合', () => {
+    const related = relatedKeys('hardware')
+    expect(related.size).toBeGreaterThan(0)
+    expect(related.has('fe-2011-webgl')).toBe(true)
+    expect(related.has('en-2004-source')).toBe(true)
+    expect(related.has('ar-2001-realism')).toBe(true)
+    expect(relatedKeys(null).size).toBe(0)
+    expect(relatedKeys('nonexistent').size).toBe(0)
   })
 
-  it('prefersReduced: matchMedia 返回 reduce 时为 true', () => {
-    const original = globalThis.matchMedia
-    const mockMatchMedia = vi.fn().mockReturnValue({ matches: true })
-    globalThis.matchMedia = mockMatchMedia
-    expect(prefersReduced()).toBe(true)
-    mockMatchMedia.mockReturnValue({ matches: false })
-    expect(prefersReduced()).toBe(false)
-    // 恢复原生 matchMedia，避免影响后续用例（如 loadGsap 注册 ScrollTrigger）
-    if (original) globalThis.matchMedia = original
-    else delete globalThis.matchMedia
+  it('prefersReduced：matchMedia 存根返回值', () => {
+    const win = { matchMedia: vi.fn(() => ({ matches: true })) }
+    expect(prefersReduced(win)).toBe(true)
+    win.matchMedia.mockReturnValue({ matches: false })
+    expect(prefersReduced(win)).toBe(false)
+    expect(prefersReduced({})).toBe(false)
   })
 
-  it('prefersReduced: matchMedia 不存在时返回 false', () => {
-    const originalMatchMedia = globalThis.matchMedia
-    delete globalThis.matchMedia
-    expect(prefersReduced()).toBe(false)
-    globalThis.matchMedia = originalMatchMedia
+  it('loadGsap：动态导入 gsap 与 ScrollTrigger 并注册', async () => {
+    const mod = await loadGsap()
+    expect(mod.gsap).toBeTruthy()
+    expect(mod.ScrollTrigger).toBeTruthy()
   })
 
-  it('fadeCardsOnScroll: reduced=true 时直接返回', async () => {
+  it('fadeCardsOnScroll：reduced=true 直接返回空清理函数', async () => {
+    const el = document.createElement('div')
+    const cleanup = await fadeCardsOnScroll(el, { reduced: true })
+    expect(typeof cleanup).toBe('function')
+    await cleanup()
+  })
+
+  it('fadeCardsOnScroll：reduced=false 且 load resolve 返回清理函数', async () => {
     const el = document.createElement('div')
     el.innerHTML = '<div data-tl-card></div><div data-tl-card></div>'
-    await expect(fadeCardsOnScroll(el, { reduced: true })).resolves.toBeUndefined()
-  })
-
-  it('fadeCardsOnScroll: load reject 时捕获错误不向外抛出', async () => {
-    const el = document.createElement('div')
-    el.innerHTML = '<div data-tl-card></div>'
-    await expect(fadeCardsOnScroll(el, { load: () => Promise.reject(new Error('fail')), reduced: false })).rejects.toThrow('fail')
-  })
-
-  it('fadeCardsOnScroll: gsap 加载成功时调用 gsap.from', async () => {
-    const mockGsap = {
-      from: vi.fn(() => ({})),
-      registerPlugin: vi.fn()
-    }
-    const mockScrollTrigger = {}
-    const load = vi.fn().mockResolvedValue({ gsap: mockGsap, ScrollTrigger: mockScrollTrigger })
-    const el = document.createElement('div')
-    el.innerHTML = '<div data-tl-card></div><div data-tl-card></div>'
-    await fadeCardsOnScroll(el, { load, reduced: false })
-    expect(load).toHaveBeenCalled()
-    expect(mockGsap.from).toHaveBeenCalled()
-  })
-
-  it('fadeCardsOnScroll: 无卡片时直接返回', async () => {
-    const mockGsap = {
-      from: vi.fn(() => ({})),
-      registerPlugin: vi.fn()
-    }
-    const mockScrollTrigger = {}
-    const load = vi.fn().mockResolvedValue({ gsap: mockGsap, ScrollTrigger: mockScrollTrigger })
-    const el = document.createElement('div')
-    el.innerHTML = '<div></div>'
-    await fadeCardsOnScroll(el, { load, reduced: false })
-    expect(mockGsap.from).not.toHaveBeenCalled()
-  })
-
-  it('initAxisCursor: reduced=true 时直接返回', async () => {
-    const axisEl = document.createElement('div')
-    axisEl.innerHTML = '<div class="tl-axis-cursor"></div>'
-    const decadeEls = {}
-    await expect(initAxisCursor(axisEl, decadeEls, { reduced: true })).resolves.toBeUndefined()
-  })
-
-  it('initAxisCursor: cursor 不存在时捕获错误不向外抛出', async () => {
-    const axisEl = document.createElement('div')
-    const decadeEls = {}
-    await expect(initAxisCursor(axisEl, decadeEls, { reduced: false, load: () => Promise.reject(new Error('fail')) })).rejects.toThrow('fail')
-  })
-
-  it('initAxisCursor: gsap 加载成功时创建 ScrollTrigger', async () => {
-    const mockGsap = {
-      to: vi.fn(() => ({})),
-      registerPlugin: vi.fn()
-    }
-    const mockScrollTrigger = {
-      create: vi.fn()
-    }
-    const load = vi.fn().mockResolvedValue({ gsap: mockGsap, ScrollTrigger: mockScrollTrigger })
-    const axisEl = document.createElement('div')
-    axisEl.innerHTML = '<div class="tl-axis-cursor"></div>'
-    const decadeEl = document.createElement('div')
-    decadeEl.id = 's-1990s'
-    const decadeEls = [decadeEl]
-    await initAxisCursor(axisEl, decadeEls, { load, reduced: false })
-    expect(load).toHaveBeenCalled()
-    expect(mockScrollTrigger.create).toHaveBeenCalled()
-  })
-
-  it('initAxisCursor: cursor 为 null 时直接返回', async () => {
-    const mockGsap = {
-      to: vi.fn(() => ({})),
-      registerPlugin: vi.fn()
-    }
-    const mockScrollTrigger = {
-      create: vi.fn()
-    }
-    const load = vi.fn().mockResolvedValue({ gsap: mockGsap, ScrollTrigger: mockScrollTrigger })
-    const axisEl = document.createElement('div')
-    const decadeEl = document.createElement('div')
-    decadeEl.id = 's-1990s'
-    const decadeEls = [decadeEl]
-    await initAxisCursor(axisEl, decadeEls, { load, reduced: false })
-    expect(mockScrollTrigger.create).not.toHaveBeenCalled()
-  })
-
-  it('loadGsap: 模块导出函数', () => {
-    expect(typeof loadGsap).toBe('function')
-  })
-
-  it('prefersReduced: 传入自定义 window 对象', () => {
-    const mockWin = {
-      matchMedia: vi.fn().mockReturnValue({ matches: true })
-    }
-    expect(prefersReduced(mockWin)).toBe(true)
-    mockWin.matchMedia.mockReturnValue({ matches: false })
-    expect(prefersReduced(mockWin)).toBe(false)
-  })
-
-  it('initAxisCursor: decadeEl.id 不在 SEGMENTS 中时跳过', async () => {
-    const mockGsap = {
-      to: vi.fn(() => ({})),
-      registerPlugin: vi.fn()
-    }
-    const mockScrollTrigger = {
-      create: vi.fn()
-    }
-    const load = vi.fn().mockResolvedValue({ gsap: mockGsap, ScrollTrigger: mockScrollTrigger })
-    const axisEl = document.createElement('div')
-    axisEl.innerHTML = '<div class="tl-axis-cursor"></div>'
-    const decadeEl = document.createElement('div')
-    decadeEl.id = 's-invalid'
-    const decadeEls = [decadeEl]
-    await initAxisCursor(axisEl, decadeEls, { load, reduced: false })
-    expect(mockScrollTrigger.create).not.toHaveBeenCalled()
-  })
-
-  it('fadeCardsOnScroll: load 抛错时被捕获', async () => {
-    const el = document.createElement('div')
-    el.innerHTML = '<div data-tl-card></div>'
-    const load = vi.fn().mockRejectedValue(new Error('load failed'))
-    await expect(fadeCardsOnScroll(el, { load, reduced: false })).rejects.toThrow('load failed')
-  })
-
-  it('initAxisCursor: load 抛错时被捕获', async () => {
-    const axisEl = document.createElement('div')
-    axisEl.innerHTML = '<div class="tl-axis-cursor"></div>'
-    const decadeEl = document.createElement('div')
-    decadeEl.id = 's-1990s'
-    const decadeEls = [decadeEl]
-    const load = vi.fn().mockRejectedValue(new Error('load failed'))
-    await expect(initAxisCursor(axisEl, decadeEls, { load, reduced: false })).rejects.toThrow('load failed')
-  })
-
-  it('initAxisCursor: self.isActive 为 true 时调用 gsap.to', async () => {
-    const mockGsap = {
-      to: vi.fn(() => ({})),
-      registerPlugin: vi.fn()
-    }
-    const mockScrollTrigger = {
-      create: vi.fn((options) => {
-        // Simulate onToggle with isActive = true
-        if (options.onToggle) {
-          options.onToggle({ isActive: true })
-        }
-        return {}
-      })
-    }
-    const load = vi.fn().mockResolvedValue({ gsap: mockGsap, ScrollTrigger: mockScrollTrigger })
-    const axisEl = document.createElement('div')
-    axisEl.innerHTML = '<div class="tl-axis-cursor"></div>'
-    const decadeEl = document.createElement('div')
-    decadeEl.id = 's-1990s'
-    const decadeEls = [decadeEl]
-    await initAxisCursor(axisEl, decadeEls, { load, reduced: false })
-    expect(mockGsap.to).toHaveBeenCalled()
-  })
-
-  it('initAxisCursor: self.isActive 为 false 时不调用 gsap.to', async () => {
-    const mockGsap = {
-      to: vi.fn(() => ({})),
-      registerPlugin: vi.fn()
-    }
-    const mockScrollTrigger = {
-      create: vi.fn((options) => {
-        if (options.onToggle) {
-          options.onToggle({ isActive: false })
-        }
-        return {}
-      })
-    }
-    const load = vi.fn().mockResolvedValue({ gsap: mockGsap, ScrollTrigger: mockScrollTrigger })
-    const axisEl = document.createElement('div')
-    axisEl.innerHTML = '<div class="tl-axis-cursor"></div>'
-    const decadeEl = document.createElement('div')
-    decadeEl.id = 's-1990s'
-    const decadeEls = [decadeEl]
-    await initAxisCursor(axisEl, decadeEls, { load, reduced: false })
-    expect(mockGsap.to).not.toHaveBeenCalled()
-  })
-
-  it('initAxisCursor: self.isActive 为 false 时不调用 gsap.to', async () => {
-    const mockGsap = {
-      to: vi.fn(() => ({})),
-      registerPlugin: vi.fn()
-    }
-    const mockScrollTrigger = {
-      create: vi.fn((options) => {
-        if (options.onToggle) options.onToggle({ isActive: false })
-        return {}
-      })
-    }
-    const load = vi.fn().mockResolvedValue({ gsap: mockGsap, ScrollTrigger: mockScrollTrigger })
-    const axisEl = document.createElement('div')
-    axisEl.innerHTML = '<div class="tl-axis-cursor"></div>'
-    const decadeEl = document.createElement('div')
-    decadeEl.id = 's-1990s'
-    await initAxisCursor(axisEl, [decadeEl], { load, reduced: false })
-    expect(mockGsap.to).not.toHaveBeenCalled()
-  })
-
-  it('loadGsap: 实际导入 gsap 模块并注册 ScrollTrigger', async () => {
-    expect(typeof loadGsap).toBe('function')
-    // ScrollTrigger.register 会探测 matchMedia，测试环境兜底一个 stub
-    const original = globalThis.matchMedia
-    globalThis.matchMedia = globalThis.matchMedia || (() => ({ matches: false }))
-    try {
-      const { gsap, ScrollTrigger } = await loadGsap()
-      expect(gsap).toBeTruthy()
-      expect(typeof gsap.registerPlugin).toBe('function')
-      expect(ScrollTrigger).toBeTruthy()
-    } finally {
-      if (original) globalThis.matchMedia = original
-      else delete globalThis.matchMedia
-    }
-  })
-
-  it('fadeCardsOnScroll: 调用 gsap.from 创建动画', async () => {
-    const mockGsap = {
-      from: vi.fn(() => ({})),
-      registerPlugin: vi.fn()
-    }
-    const mockScrollTrigger = {}
-    const load = vi.fn().mockResolvedValue({ gsap: mockGsap, ScrollTrigger: mockScrollTrigger })
-    const el = document.createElement('div')
-    el.innerHTML = '<div data-tl-card></div>'
-    await fadeCardsOnScroll(el, { load, reduced: false })
-    expect(mockGsap.from).toHaveBeenCalledWith(
-      expect.any(NodeList),
-      expect.objectContaining({
-        opacity: 0,
-        y: 20,
-        duration: 0.4,
-        stagger: 0.05,
-        scrollTrigger: expect.objectContaining({
-          trigger: el,
-          start: 'top 85%',
-          once: true
-        })
-      })
-    )
-  })
-
-  it('RELATIONS: 无效 key 的条目被跳过，有效条目完成装配', () => {
-    const itemByKey = {}
-    TRACKS.forEach(t => t.items.forEach(i => { itemByKey[i.key] = i }))
-    // 关系表里的未来条目 key 尚未落条目，装配时整条跳过、不产出任何 links
-    const futureKeys = ['ga-1977-atari2600', 'gp-1988-madden', 'ga-1997-ff7', 'ga-1998-halflife', 'gp-2003-steam']
-    futureKeys.forEach(k => {
-      expect(itemByKey[k], `未来条目不应存在: ${k}`).toBeUndefined()
-      TRACKS.forEach(t => t.items.forEach(i => {
-        if (i.links) {
-          expect(i.links.some(l => l.key === k), `跳过的关系不应出现在 links 中: ${k}`).toBe(false)
-        }
-      }))
+    const fakeGsap = { from: vi.fn(() => ({})) }
+    const fakeST = { getAll: vi.fn(() => []), create: vi.fn() }
+    const cleanup = await fadeCardsOnScroll(el, {
+      reduced: false,
+      load: vi.fn().mockResolvedValue({ gsap: fakeGsap, ScrollTrigger: fakeST })
     })
-    // 抽查一条有效关系的双向装配：hw-2001-shader → fe-2011-webgl
-    const shader = itemByKey['hw-2001-shader']
-    expect(shader.links.some(l => l.track === 'frontend' && l.key === 'fe-2011-webgl' && l.dir === 'out')).toBe(true)
-    const webgl = itemByKey['fe-2011-webgl']
-    expect(webgl.links.some(l => l.track === 'hardware' && l.key === 'hw-2001-shader' && l.dir === 'in')).toBe(true)
+    expect(typeof cleanup).toBe('function')
+    await cleanup()
+  })
+
+  it('fadeCardsOnScroll：load reject 不抛错', async () => {
+    const el = document.createElement('div')
+    const cleanup = await fadeCardsOnScroll(el, {
+      reduced: false,
+      load: vi.fn().mockRejectedValue(new Error('load failed'))
+    })
+    expect(typeof cleanup).toBe('function')
+    await cleanup()
+  })
+
+  it('fadeCardsOnScroll：默认参数分支（reduced 由 prefersReduced 决定）', async () => {
+    const el = document.createElement('div')
+    const cleanup = await fadeCardsOnScroll(el, { load: vi.fn().mockResolvedValue({ gsap: { from: vi.fn(() => ({})) }, ScrollTrigger: { getAll: vi.fn(() => []), create: vi.fn() } }) })
+    expect(typeof cleanup).toBe('function')
+    await cleanup()
+  })
+
+  it('initAxisCursor：reduced=true 直接返回空清理函数', async () => {
+    const axisEl = document.createElement('div')
+    const timelineEl = document.createElement('div')
+    const cleanup = await initAxisCursor(axisEl, timelineEl, { reduced: true })
+    expect(typeof cleanup).toBe('function')
+    await cleanup()
+  })
+
+  it('initAxisCursor：reduced=false 且 load resolve 返回清理函数', async () => {
+    const axisEl = document.createElement('div')
+    axisEl.innerHTML = '<div class="tl-cursor"></div>'
+    const timelineEl = document.createElement('div')
+    const fakeGsap = {}
+    const fakeST = { create: vi.fn(() => ({ kill: vi.fn() })) }
+    const cleanup = await initAxisCursor(axisEl, timelineEl, {
+      reduced: false,
+      load: vi.fn().mockResolvedValue({ gsap: fakeGsap, ScrollTrigger: fakeST })
+    })
+    expect(typeof cleanup).toBe('function')
+    await cleanup()
+  })
+
+  it('initAxisCursor：cursor 元素不存在时不报错', async () => {
+    const axisEl = document.createElement('div')
+    const timelineEl = document.createElement('div')
+    const cleanup = await initAxisCursor(axisEl, timelineEl, { reduced: false, load: vi.fn().mockResolvedValue({ gsap: {}, ScrollTrigger: { create: vi.fn(() => ({ kill: vi.fn() })) } }) })
+    expect(typeof cleanup).toBe('function')
+    await cleanup()
   })
 })

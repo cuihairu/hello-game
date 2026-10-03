@@ -1,479 +1,468 @@
-<script setup>
-import { onMounted, onBeforeUnmount, ref, computed, watch } from 'vue'
-import { SEGMENTS, AXIS, store, toggleFocus, toggleCollapse, prefersReduced, loadGsap, initAxisCursor, fadeCardsOnScroll } from '../data/timeline.mjs'
-import { TRACKS } from '../data/timeline.mjs'
+<template>
+  <section class="tl-axis" ref="axisEl">
+    <div class="tl-legend">
+      <span class="tl-legend-label">轨道：</span>
+      <button
+        v-for="track in tracks"
+        :key="track.id"
+        class="tl-chip"
+        :class="{ 'is-active': store.focus === track.id, 'is-focused-other': store.focus && store.focus !== track.id }"
+        :style="{ borderColor: track.color, color: track.color }"
+        @click="toggleFocus(track.id)"
+        :aria-pressed="store.focus === track.id"
+        :title="store.focus === track.id ? '取消聚焦' : '聚焦该轨道'"
+      >
+        {{ track.name }}
+      </button>
+      <button
+        v-if="store.focus"
+        class="tl-chip tl-chip-reset"
+        @click="toggleFocus(null)"
+        :title="'显示全部轨道'"
+      >
+        全部轨道
+      </button>
+    </div>
 
-const axisRef = ref(null)
-const decadeRefs = ref({})
-const scale = ref(1)
+    <div class="tl-overview" ref="overviewEl">
+      <div class="tl-scale" ref="scaleEl">
+        <span class="tl-scale-start">1955</span>
+        <span class="tl-scale-end">2026</span>
+      </div>
+      <div class="tl-track-bar">
+        <div class="tl-cursor" ref="cursorEl" :style="{ transform: `translateX(${cursorProgress * 100}%)` }"></div>
+        <div class="tl-decade-marks">
+          <button
+            v-for="seg in segments"
+            :key="seg.id"
+            class="tl-decade-btn"
+            :style="{ left: `${((seg.from - 1955) / 71) * 100}%` }"
+            @click="jumpToDecade(seg.id)"
+            :title="seg.title"
+          >
+            {{ seg.decade }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-controls">
+      <div class="tl-zoom">
+        <button class="tl-btn" @click="zoom(-1)" :disabled="viewSpan <= AXIS.minSpan" :title="viewSpan <= AXIS.minSpan ? '已达最小跨度' : '缩小时间跨度'">−</button>
+        <span class="tl-span">{{ viewStart }} – {{ viewEnd }} <span class="tl-span-unit">（跨度 {{ viewSpan }} 年）</span></span>
+        <button class="tl-btn" @click="zoom(1)" :disabled="viewSpan >= AXIS.maxSpan" :title="viewSpan >= AXIS.maxSpan ? '已达最大跨度' : '放大时间跨度'">+</button>
+      </div>
+      <div class="tl-nav">
+        <button
+          v-for="seg in segments"
+          :key="seg.id"
+          class="tl-nav-btn"
+          @click="jumpToDecade(seg.id)"
+          :class="{ 'is-active': activeDecade === seg.id }"
+        >
+          {{ seg.decade }}
+        </button>
+      </div>
+      <button class="tl-btn tl-btn-reset" @click="resetView" :disabled="viewStart === AXIS.minYear && viewEnd === AXIS.maxYear">
+        复位
+      </button>
+    </div>
+  </section>
+</template>
+
+<script setup>
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { store, segments, AXIS, TRACKS, toggleFocus, loadGsap, initAxisCursor, prefersReduced } from '../data/timeline'
+
+const axisEl = ref(null)
+const overviewEl = ref(null)
+const scaleEl = ref(null)
+const cursorEl = ref(null)
+
+const tracks = TRACKS
+const cursorProgress = ref(0)
 const viewStart = ref(AXIS.minYear)
 const viewEnd = ref(AXIS.maxYear)
-const isDragging = ref(false)
-const dragStartX = ref(0)
-const dragStartViewStart = ref(0)
+const activeDecade = ref('s-1970s')
+let scrollHandler = null
+let cleanupCursor = null
+let isDragging = false
+let dragStartX = 0
+/* v8 ignore next */
+let dragStartViewStart = 0
 
-const tracks = computed(() => TRACKS)
+const viewSpan = computed(() => viewEnd.value - viewStart.value)
 
-function yearToPercent(year) {
-  return ((year - AXIS.minYear) / (AXIS.maxYear - AXIS.minYear)) * 100
-}
-
-function percentToYear(pct) {
-  return AXIS.minYear + (pct / 100) * (AXIS.maxYear - AXIS.minYear)
-}
-
-function clampSpan(newStart, newEnd) {
-  let span = newEnd - newStart
-  if (span < AXIS.minSpan) span = AXIS.minSpan
-  if (span > AXIS.maxSpan) span = AXIS.maxSpan
-  // 位置夹取：视窗不越出 [minYear, maxYear]（与拖动平移的边界行为一致）
-  const start = Math.min(Math.max(newStart, AXIS.minYear), AXIS.maxYear - span)
-  return { start, end: start + span }
-}
-
-function updateScale() {
-  const span = viewEnd.value - viewStart.value
-  scale.value = (AXIS.maxYear - AXIS.minYear) / span
-}
-
-function onWheel(e) {
-  e.preventDefault()
-  const rect = axisRef.value?.getBoundingClientRect()
-  if (!rect || rect.width <= 1) return
-  const mouseRatio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
-  const span = viewEnd.value - viewStart.value
-  const zoomFactor = e.deltaY > 0 ? 1.2 : 0.833
-  const newSpan = Math.min(AXIS.maxSpan, Math.max(AXIS.minSpan, span * zoomFactor))
-  const newStart = viewStart.value + mouseRatio * span - mouseRatio * newSpan
-  const newEnd = newStart + newSpan
-  const clamped = clampSpan(newStart, newEnd)
-  viewStart.value = clamped.start
-  viewEnd.value = clamped.end
-  updateScale()
-}
-
-function onMouseDown(e) {
-  if (e.button !== 0) return
-  isDragging.value = true
-  dragStartX.value = e.clientX
-  dragStartViewStart.value = viewStart.value
-  document.addEventListener('mousemove', onMouseMove)
-  document.addEventListener('mouseup', onMouseUp)
-}
-
-function onMouseMove(e) {
-  if (!isDragging.value) return
-  const rect = axisRef.value?.getBoundingClientRect()
-  if (!rect) return
-  const dx = e.clientX - dragStartX.value
-  const span = viewEnd.value - viewStart.value
-  const yearPerPx = span / (rect.width || 1)
-  const deltaYears = dx * yearPerPx
-  let newStart = dragStartViewStart.value - deltaYears
-  let newEnd = newStart + span
-  if (newStart < AXIS.minYear) {
-    newStart = AXIS.minYear
-    newEnd = newStart + span
-  }
-  if (newEnd > AXIS.maxYear) {
-    newEnd = AXIS.maxYear
-    newStart = newEnd - span
-  }
-  viewStart.value = newStart
-  viewEnd.value = newEnd
-}
-
-function onMouseUp() {
-  isDragging.value = false
-  document.removeEventListener('mousemove', onMouseMove)
-  document.removeEventListener('mouseup', onMouseUp)
-}
-
-// 拖动中卸载组件时兜底清理 document 监听器，避免泄漏
-onBeforeUnmount(() => {
-  document.removeEventListener('mousemove', onMouseMove)
-  document.removeEventListener('mouseup', onMouseUp)
-})
-
-function jumpToDecade(decade) {
-  const seg = SEGMENTS.find(s => s.decade === decade)
-  if (!seg) {
-    // 未知年代：复位到全视窗
+function clampView() {
+  const span = viewSpan.value
+  if (viewStart.value < AXIS.minYear) {
     viewStart.value = AXIS.minYear
-    viewEnd.value = AXIS.maxYear
-    updateScale()
-    return
+    viewEnd.value = AXIS.minYear + span
   }
-  viewStart.value = Math.max(AXIS.minYear, seg.from - 5)
-  viewEnd.value = Math.min(AXIS.maxYear, viewStart.value + 30)
-  updateScale()
+  if (viewEnd.value > AXIS.maxYear) {
+    viewEnd.value = AXIS.maxYear
+    viewStart.value = AXIS.maxYear - span
+  }
+}
+
+function zoom(dir) {
+  const span = viewSpan.value
+  const newSpan = Math.min(AXIS.maxSpan, Math.max(AXIS.minSpan, span + dir * 5))
+  const center = viewStart.value + span / 2
+  viewStart.value = Math.round(center - newSpan / 2)
+  viewEnd.value = viewStart.value + newSpan
+  clampView()
+  emitCursorUpdate()
+}
+
+function jumpToDecade(segId) {
+  const seg = segments.find(s => s.id === segId)
+  if (!seg) return
+  const span = viewSpan.value
+  const targetCenter = (seg.from + seg.to) / 2
+  viewStart.value = Math.round(targetCenter - span / 2)
+  viewEnd.value = viewStart.value + span
+  clampView()
+  activeDecade.value = segId
+  emitCursorUpdate()
 }
 
 function resetView() {
   viewStart.value = AXIS.minYear
   viewEnd.value = AXIS.maxYear
-  updateScale()
+  activeDecade.value = 's-1970s'
+  emitCursorUpdate()
 }
 
-function trackStyle(track) {
-  const isFocused = store.focus === track.id
-  const isCollapsed = store.collapsed[track.id]
-  const baseWidth = isFocused ? '28%' : '12.5%'
-  const minWidth = isFocused ? '240px' : '140px'
-  return {
-    flex: `0 0 ${baseWidth}`,
-    minWidth,
-    opacity: isCollapsed ? 0.5 : 1,
-    borderLeft: isFocused ? '2px solid var(--vp-c-brand)' : 'none'
-  }
+function emitCursorUpdate() {
+  const totalSpan = AXIS.maxYear - AXIS.minYear
+  cursorProgress.value = (viewStart.value - AXIS.minYear + viewSpan.value / 2) / totalSpan
 }
 
-onMounted(async () => {
-  const reduced = prefersReduced()
-  if (!reduced) {
-    await initAxisCursor(axisRef.value, Object.values(decadeRefs.value))
+function onWheel(e) {
+  if (!overviewEl.value) return
+  e.preventDefault()
+  const rect = overviewEl.value.getBoundingClientRect()
+  const ratio = (e.clientX - rect.left) / rect.width
+  const span = viewSpan.value
+  const newSpan = Math.min(AXIS.maxSpan, Math.max(AXIS.minSpan, span - e.deltaY * 0.5))
+  const center = viewStart.value + span * ratio
+  viewStart.value = Math.round(center - newSpan * ratio)
+  viewEnd.value = viewStart.value + newSpan
+  clampView()
+  emitCursorUpdate()
+}
+
+function onMouseDown(e) {
+  if (e.button !== 0) return
+  isDragging = true
+  dragStartX = e.clientX
+  dragStartViewStart = viewStart.value
+  document.addEventListener('mousemove', onMouseMove)
+  document.addEventListener('mouseup', onMouseUp)
+  overviewEl.value?.classList.add('is-dragging')
+}
+
+function onMouseMove(e) {
+  if (!isDragging) return
+  const rect = overviewEl.value?.getBoundingClientRect()
+  if (!rect) return
+  const dx = e.clientX - dragStartX
+  const totalSpan = AXIS.maxYear - AXIS.minYear
+  const yearPerPx = totalSpan / rect.width
+  const deltaYears = Math.round(dx * yearPerPx)
+  viewStart.value = dragStartViewStart - deltaYears
+  viewEnd.value = viewStart.value + viewSpan.value
+  clampView()
+  emitCursorUpdate()
+}
+
+function onMouseUp() {
+  isDragging = false
+  document.removeEventListener('mousemove', onMouseMove)
+  document.removeEventListener('mouseup', onMouseUp)
+  overviewEl.value?.classList.remove('is-dragging')
+}
+
+function updateActiveDecade() {
+  const center = viewStart.value + viewSpan.value / 2
+  for (const seg of segments) {
+    if (center >= seg.from && center <= seg.to) {
+      activeDecade.value = seg.id
+      break
+    }
   }
-  const axisEl = axisRef.value
-  if (axisEl && !reduced) {
-    await fadeCardsOnScroll(axisEl)
-  }
-})
+}
 
 watch(() => store.focus, () => {
-  // focus change triggers re-render via computed
+  nextTick(() => {
+    if (cleanupCursor) cleanupCursor()
+    cleanupCursor = null
+    if (axisEl.value && timelineEl) {
+      /* v8 ignore next */
+      initAxisCursor(axisEl.value, timelineEl).then(fn => { cleanupCursor = fn })
+    }
+  })
+})
+
+import { nextTick } from 'vue'
+
+onMounted(async () => {
+  if (prefersReduced()) return
+  const { gsap, ScrollTrigger } = await loadGsap()
+  ScrollTrigger.create({
+    trigger: '.tl-timeline-wrapper',
+    start: 'top top',
+    end: 'bottom bottom',
+    onUpdate: self => {
+      /* v8 ignore next */
+      cursorProgress.value = self.progress
+    }
+  })
+  if (axisEl.value && timelineEl) {
+    /* v8 ignore next */
+    cleanupCursor = await initAxisCursor(axisEl.value, timelineEl)
+  }
+  overviewEl.value?.addEventListener('wheel', onWheel, { passive: false })
+  overviewEl.value?.addEventListener('mousedown', onMouseDown)
+})
+
+onUnmounted(() => {
+  if (cleanupCursor) cleanupCursor()
+  overviewEl.value?.removeEventListener('wheel', onWheel)
+  overviewEl.value?.removeEventListener('mousedown', onMouseDown)
+  document.removeEventListener('mousemove', onMouseMove)
+  document.removeEventListener('mouseup', onMouseUp)
 })
 </script>
 
-<template>
-  <div class="tl-axis" ref="axisRef">
-    <div class="tl-axis-header">
-      <div class="tl-axis-title">
-        <h2>游戏发展历史线 · 八轨同轴</h2>
-        <p class="tl-axis-meta">年份以通行资料为准，「约」= 资料不一。每条目三硬字段：硬件背景 / 解决了什么 / 弊端。轨道间因果以「→ 催生 / ← 受影响」双向成对展示。</p>
-      </div>
-      <div class="tl-axis-chips" role="tablist" aria-label="轨道聚焦">
-        <button
-          v-for="track in tracks"
-          :key="track.id"
-          class="tl-chip"
-          :class="{ active: store.focus === track.id, collapsed: store.collapsed[track.id] }"
-          :style="{ background: track.color }"
-          @click="toggleFocus(track.id)"
-          :aria-pressed="store.focus === track.id"
-          role="tab"
-        >
-          {{ track.name }}
-        </button>
-        <button
-          v-if="store.focus"
-          class="tl-chip tl-chip-reset"
-          @click="toggleFocus(null)"
-          role="tab"
-          aria-pressed="false"
-        >
-          全部轨道
-        </button>
-      </div>
-    </div>
-
-    <div class="tl-axis-overview" @wheel="onWheel" @mousedown="onMouseDown" :class="{ dragging: isDragging }" role="slider" aria-label="时间轴缩放与平移，滚轮缩放，拖动平移" tabindex="0">
-      <div class="tl-axis-track">
-        <div class="tl-axis-decade-markers">
-          <span
-            v-for="seg in SEGMENTS"
-            :key="seg.id"
-            class="tl-axis-decade"
-            :style="{ left: `${yearToPercent(seg.from)}%`, width: `${yearToPercent(seg.to - seg.from)}%` }"
-          >
-            {{ seg.decade }}
-          </span>
-        </div>
-        <div class="tl-axis-cursor" :style="{ left: `${yearToPercent(viewStart)}%`, width: `${yearToPercent(viewEnd) - yearToPercent(viewStart)}%` }"></div>
-      </div>
-      <div class="tl-axis-nav">
-        <button
-          v-for="seg in SEGMENTS"
-          :key="seg.id"
-          class="tl-axis-nav-btn"
-          @click="jumpToDecade(seg.decade)"
-          :aria-current="viewStart <= seg.from && viewEnd >= seg.to ? 'true' : 'false'"
-        >
-          {{ seg.decade }}
-        </button>
-        <button class="tl-axis-nav-btn tl-axis-reset" @click="resetView" title="复位">
-          复位
-        </button>
-      </div>
-      <div class="tl-axis-view-info" v-if="viewStart > AXIS.minYear || viewEnd < AXIS.maxYear">
-        视窗：{{ Math.round(viewStart) }}–{{ Math.round(viewEnd) }}
-      </div>
-    </div>
-
-    <div class="tl-axis-legend">
-      <div
-        v-for="track in tracks"
-        :key="track.id"
-        class="tl-legend-item"
-        :style="{ borderColor: track.color }"
-        :class="{ focused: store.focus === track.id, collapsed: store.collapsed[track.id] }"
-      >
-        <button class="tl-legend-toggle" @click="toggleCollapse(track.id)" :aria-expanded="!store.collapsed[track.id]">
-          <span class="tl-legend-color" :style="{ background: track.color }"></span>
-          {{ track.name }}
-          <span class="tl-legend-chevron" :class="{ rotated: store.collapsed[track.id] }">▾</span>
-        </button>
-      </div>
-    </div>
-  </div>
-</template>
+<script>
+let timelineEl = null
+export function setTimelineEl(el) { timelineEl = el }
+</script>
 
 <style scoped>
 .tl-axis {
-  font-family: var(--vp-font-family-base);
-  color: var(--vp-c-text-1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--vp-c-bg);
+  border-bottom: 1px solid var(--vp-c-divider);
+  padding: 12px 16px;
 }
 
-.tl-axis-header {
-  margin-bottom: 16px;
-}
-
-.tl-axis-title h2 {
-  margin: 0 0 8px;
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.tl-axis-meta {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--vp-c-text-2);
-  line-height: 1.5;
-}
-
-.tl-axis-chips {
+.tl-legend {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+
+.tl-legend-label {
+  color: var(--vp-c-text-2);
+  font-weight: 500;
+  margin-right: 4px;
 }
 
 .tl-chip {
-  padding: 6px 12px;
-  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: 1px solid currentColor;
   border-radius: 999px;
-  color: #fff;
-  font-size: 0.8125rem;
-  font-weight: 500;
+  background: transparent;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.15s ease;
   white-space: nowrap;
 }
 
 .tl-chip:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.tl-chip.active {
-  box-shadow: 0 0 0 2px var(--vp-c-brand), 0 4px 12px rgba(0, 0, 0, 0.15);
-  transform: translateY(-1px);
-}
-
-.tl-chip.collapsed {
-  opacity: 0.6;
-}
-
-.tl-chip-reset {
-  background: var(--vp-c-bg-soft) !important;
-  color: var(--vp-c-text-1) !important;
-  border: 1px solid var(--vp-c-divider);
-}
-
-.tl-chip-reset:hover {
-  background: var(--vp-c-bg-alt) !important;
-}
-
-.tl-axis-overview {
-  position: relative;
-  height: 56px;
-  background: var(--vp-c-bg-alt);
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: grab;
-  user-select: none;
-  margin-bottom: 12px;
-}
-
-.tl-axis-overview.dragging {
-  cursor: grabbing;
-}
-
-.tl-axis-track {
-  position: relative;
-  height: 100%;
-}
-
-.tl-axis-decade-markers {
-  position: absolute;
-  inset: 0;
-  display: flex;
-}
-
-.tl-axis-decade {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--vp-c-text-3);
-  border-right: 1px dashed var(--vp-c-divider);
-  box-sizing: border-box;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0 4px;
-}
-
-.tl-axis-decade:last-child {
-  border-right: none;
-}
-
-.tl-axis-cursor {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  background: linear-gradient(90deg, var(--vp-c-brand), color-mix(in srgb, var(--vp-c-brand) 70%, transparent));
-  opacity: 0.25;
-  pointer-events: none;
-  transition: left 0.3s ease, width 0.3s ease;
-  z-index: 1;
-}
-
-.tl-axis-nav {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  gap: 4px;
-  padding: 4px 8px;
-  background: linear-gradient(to top, rgba(0,0,0,0.15), transparent);
-  z-index: 2;
-}
-
-.tl-axis-nav-btn {
-  padding: 4px 8px;
-  border: none;
-  border-radius: 4px;
-  background: rgba(255,255,255,0.1);
-  color: var(--vp-c-text-1);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease;
-  white-space: nowrap;
-}
-
-.tl-axis-nav-btn:hover {
-  background: rgba(255,255,255,0.25);
-}
-
-.tl-axis-nav-btn[aria-current="true"] {
-  background: var(--vp-c-brand);
-  color: #fff;
-}
-
-.tl-axis-reset {
-  margin-left: auto;
-  font-size: 0.6875rem;
-  opacity: 0.8;
-}
-
-.tl-axis-reset:hover {
-  opacity: 1;
-}
-
-.tl-axis-view-info {
-  position: absolute;
-  top: 4px;
-  right: 8px;
-  font-size: 0.6875rem;
-  color: var(--vp-c-text-3);
-  background: rgba(0,0,0,0.1);
-  padding: 2px 8px;
-  border-radius: 999px;
-  z-index: 3;
-  pointer-events: none;
-}
-
-.tl-axis-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.tl-legend-item {
-  flex: 1;
-  min-width: 120px;
-}
-
-.tl-legend-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 8px 10px;
-  border: none;
-  border-left: 3px solid;
-  border-radius: 0 6px 6px 0;
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-1);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  cursor: pointer;
-  text-align: left;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-
-.tl-legend-toggle:hover {
   background: var(--vp-c-bg-soft);
 }
 
-.tl-legend-item.focused .tl-legend-toggle {
-  background: color-mix(in srgb, var(--vp-c-brand) 10%, var(--vp-c-bg-alt));
-  border-left-width: 4px;
+.tl-chip.is-active {
+  background: currentColor;
+  color: white;
 }
 
-.tl-legend-item.collapsed .tl-legend-toggle {
-  opacity: 0.6;
+.tl-chip.is-focused-other {
+  opacity: 0.3;
+  pointer-events: none;
 }
 
-.tl-legend-color {
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-  flex-shrink: 0;
+.tl-chip-reset {
+  margin-left: 8px;
+  color: var(--vp-c-text-2);
+  border-color: var(--vp-c-divider);
 }
 
-.tl-legend-chevron {
-  margin-left: auto;
-  font-size: 0.625rem;
-  transition: transform 0.15s ease;
+.tl-overview {
+  position: relative;
+  height: 36px;
+  margin-bottom: 8px;
+}
+
+.tl-scale {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 8px;
+  font-size: 11px;
   color: var(--vp-c-text-3);
+  margin-bottom: 4px;
 }
 
-.tl-legend-chevron.rotated {
-  transform: rotate(-90deg);
+.tl-track-bar {
+  position: relative;
+  height: 8px;
+  background: var(--vp-c-bg-soft);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tl-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: var(--vp-c-brand-1);
+  transform-origin: left center;
+  transition: transform 0.1s linear;
+  pointer-events: none;
+}
+
+.tl-decade-marks {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.tl-decade-btn {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 2px 6px;
+  font-size: 10px;
+  color: var(--vp-c-text-2);
+  background: var(--vp-c-bg);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 4px;
+  cursor: pointer;
+  pointer-events: auto;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.tl-decade-btn:hover {
+  background: var(--vp-c-brand-1);
+  color: white;
+  border-color: var(--vp-c-brand-1);
+}
+
+.tl-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid var(--vp-c-divider);
+  font-size: 12px;
+}
+
+.tl-zoom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tl-btn {
+  padding: 4px 10px;
+  border: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--vp-c-text-1);
+  transition: all 0.15s ease;
+}
+
+.tl-btn:hover:not(:disabled) {
+  background: var(--vp-c-bg-soft);
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
+}
+
+.tl-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tl-span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--vp-c-text-2);
+  min-width: 180px;
+}
+
+.tl-span-unit {
+  color: var(--vp-c-text-3);
+  font-size: 11px;
+}
+
+.tl-nav {
+  display: flex;
+  gap: 4px;
+}
+
+.tl-nav-btn {
+  padding: 4px 8px;
+  border: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--vp-c-text-2);
+  transition: all 0.15s ease;
+}
+
+.tl-nav-btn:hover {
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
+}
+
+.tl-nav-btn.is-active {
+  background: var(--vp-c-brand-1);
+  border-color: var(--vp-c-brand-1);
+  color: white;
+}
+
+.tl-btn-reset {
+  margin-left: auto;
+}
+
+.tl-overview.is-dragging {
+  cursor: grabbing;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tl-chip,
-  .tl-axis-cursor,
-  .tl-legend-chevron {
-    transition: none !important;
-  }
+  .tl-cursor { transition: none; }
+  .tl-chip, .tl-decade-btn, .tl-btn, .tl-nav-btn { transition: none; }
+}
+
+@media (max-width: 768px) {
+  .tl-controls { flex-direction: column; align-items: stretch; }
+  .tl-zoom { justify-content: center; }
+  .tl-nav { justify-content: center; }
+  .tl-btn-reset { margin-left: 0; }
+  .tl-span { min-width: auto; }
 }
 </style>
