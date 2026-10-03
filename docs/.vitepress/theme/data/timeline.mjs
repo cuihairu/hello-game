@@ -786,6 +786,7 @@ export const TRACKS = [
   }
 ]
 
+// 互链关系：[源 key, 目标 key, 源侧注记（→ 催生/代表作…）, 目标侧注记（← 受…影响/是其代表作…）]
 const RELATIONS = [
   ['hw-2001-shader', 'fe-2011-webgl', '催生 WebGL 着色器编程模型', '受可编程着色器硬件催生'],
   ['hw-2001-shader', 'en-2004-source', '催生 Source 引擎着色器管线', '受可编程着色器硬件催生'],
@@ -821,7 +822,7 @@ const RELATIONS = [
   ['ar-2008-braid', 'co-1996-valve', 'Steam 平台分发独立游戏', '受数字发行降低门槛催生'],
   ['ar-2016-stylized', 'ga-2016-pogo', '风格化渲染与 AR 融合', '受守望先锋 NPR 管线成熟催生'],
   ['co-1972-atari', 'ga-1972-pong', 'Atari 代表作', 'Pong 开启街机产业'],
-  ['co-1972-atari', 'ga-1977-atari2600', 'Atari 代表作', '2600 开启卡带可换游戏生态'],
+  ['ga-1977-atari2600', 'co-1972-atari', '2600 开启卡带可换游戏生态', 'Atari 代表作'],
   ['co-1982-ea', 'gp-1988-madden', 'EA 代表作', '体育授权年货模式起点'],
   ['co-1993-sony', 'ga-1997-ff7', 'SCE 代表作', 'CD 电影化 RPG 与 PS 胜势'],
   ['co-1996-valve', 'ga-1998-halflife', 'Valve 代表作', '叙事 FPS 与 mod 生态起点'],
@@ -830,23 +831,23 @@ const RELATIONS = [
   ['co-2012-mihoyo', 'ga-2020-genshin', '米哈游代表作', '跨端开放世界首年流水约 10 亿美元量级']
 ]
 
-const trackById = Object.fromEntries(TRACKS.map(t => [t.id, t]))
+export function findItem(key) {
+  for (const track of TRACKS) {
+    const item = track.items.find(i => i.key === key)
+    if (item) return { track, item }
+  }
+  return null
+}
 
-RELATIONS.forEach(([srcKey, dstKey, srcNote, dstNote]) => {
-  const srcTrackId = srcKey.split('-')[0]
-  const dstTrackId = dstKey.split('-')[0]
-  const srcTrack = trackById[srcTrackId]
-  const dstTrack = trackById[dstTrackId]
-  if (!srcTrack || !dstTrack) return
-  const srcItem = srcTrack.items.find(i => i.key === srcKey)
-  const dstItem = dstTrack.items.find(i => i.key === dstKey)
-  /* istanbul ignore if */
-  if (!srcItem || !dstItem) return
-  srcItem.links = srcItem.links || []
-  srcItem.links.push({ track: dstTrackId, key: dstKey, dir: 'out', note: srcNote })
-  dstItem.links = dstItem.links || []
-  dstItem.links.push({ track: srcTrackId, key: srcKey, dir: 'in', note: dstNote })
-})
+// 双向装配：源侧 out、目标侧 in，保证「受 X 影响 / 催生 Y」永远成对出现。
+// 关系表里引用尚未落条目的 key（如 ga-1977-atari2600、gp-1988-madden）为未来条目，装配时整条跳过。
+for (const [srcKey, dstKey, srcNote, dstNote] of RELATIONS) {
+  const src = findItem(srcKey)
+  const dst = findItem(dstKey)
+  if (!src || !dst) continue
+  src.item.links = [...(src.item.links ?? []), { track: dst.track.id, key: dstKey, dir: 'out', note: srcNote }]
+  dst.item.links = [...(dst.item.links ?? []), { track: src.track.id, key: srcKey, dir: 'in', note: dstNote }]
+}
 
 export function segmentOf(year) {
   if (year < 1970) return 's-1970s'

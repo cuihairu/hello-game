@@ -15,6 +15,13 @@ vi.mock('../docs/.vitepress/theme/data/timeline.mjs', async (importOriginal) => 
   }
 })
 
+// happy-dom 的 WheelEvent 构造不透传 clientX：用 MouseEvent 派发 wheel 类型，再手动补 deltaY
+function wheelEvent(deltaY, clientX) {
+  const e = new MouseEvent('wheel', { clientX, bubbles: true })
+  e.deltaY = deltaY
+  return e
+}
+
 describe('HistoryAxis.vue', () => {
   beforeEach(() => {
     store.focus = null
@@ -62,17 +69,22 @@ describe('HistoryAxis.vue', () => {
       attachTo: document.body
     })
     const overview = wrapper.find('.tl-axis-overview')
-    const originalRect = overview.element.getBoundingClientRect
-    overview.element.getBoundingClientRect = () => ({ width: 800, left: 0, top: 0, right: 800, bottom: 56, height: 56, x: 0, y: 0, toJSON: () => {} })
-    const wheelEvent = new WheelEvent('wheel', { deltaY: -100, clientX: 400, bubbles: true })
-    await overview.element.dispatchEvent(wheelEvent)
+    // onWheel 读取的是 axisRef（.tl-axis）的 rect，stub 必须打在同一个元素上
+    const axisEl = wrapper.find('.tl-axis')
+    const originalRect = axisEl.element.getBoundingClientRect
+    axisEl.element.getBoundingClientRect = () => ({ width: 800, left: 0, top: 0, right: 800, bottom: 56, height: 56, x: 0, y: 0, toJSON: () => {} })
+    // happy-dom 的 WheelEvent 不透传 clientX，用 MouseEvent 补 deltaY
+    await overview.element.dispatchEvent(wheelEvent(-100, 400))
     await wrapper.vm.$nextTick()
-    expect(wrapper.vm.viewStart).toBeLessThan(1955 + 71)
-    expect(wrapper.vm.viewEnd).toBeGreaterThan(2026 - 71)
-    const wheelEventOut = new WheelEvent('wheel', { deltaY: 100, clientX: 400, bubbles: true })
-    await overview.element.dispatchEvent(wheelEventOut)
+    // 向内缩放：跨距变小且视窗不再贴边
+    expect(wrapper.vm.viewEnd - wrapper.vm.viewStart).toBeLessThan(71)
+    expect(wrapper.vm.viewStart).toBeGreaterThan(1955)
+    await overview.element.dispatchEvent(wheelEvent(100, 400))
     await wrapper.vm.$nextTick()
-    overview.element.getBoundingClientRect = originalRect
+    // 向外放大：视窗回到贴边
+    expect(wrapper.vm.viewStart).toBeLessThan(1956)
+    expect(wrapper.vm.viewEnd).toBeGreaterThan(2025)
+    axisEl.element.getBoundingClientRect = originalRect
   })
 
   it('概览轴拖动平移：mousedown -> mousemove -> mouseup', async () => {
@@ -95,10 +107,21 @@ describe('HistoryAxis.vue', () => {
     expect(wrapper.vm.isDragging).toBe(false)
   })
 
-  it('无按下的 mousemove 被忽略', async () => {
+  it('onMouseMove: 未按下时直接返回（isDragging=false 分支）', () => {
     const wrapper = mount(HistoryAxis)
-    await document.dispatchEvent(new MouseEvent('mousemove', { clientX: 300, bubbles: true }))
-    expect(wrapper.vm.isDragging).toBe(false)
+    const vm = wrapper.vm
+    vm.onMouseMove({ clientX: 300 })
+    expect(vm.isDragging).toBe(false)
+    expect(vm.viewStart).toBe(AXIS.minYear)
+  })
+
+  it('onMouseMove: getBoundingClientRect 返回 undefined 时直接返回（!rect 分支）', () => {
+    const wrapper = mount(HistoryAxis)
+    const vm = wrapper.vm
+    vm.isDragging = true
+    wrapper.find('.tl-axis').element.getBoundingClientRect = () => undefined
+    vm.onMouseMove({ clientX: 300 })
+    expect(vm.viewStart).toBe(AXIS.minYear)
   })
 
   it('年代导航按钮跳转', async () => {
@@ -149,13 +172,15 @@ describe('HistoryAxis.vue', () => {
       attachTo: document.body
     })
     const overview = wrapper.find('.tl-axis-overview')
-    const originalRect = overview.element.getBoundingClientRect
-    overview.element.getBoundingClientRect = () => ({ width: 0, left: 0, top: 0, right: 0, bottom: 0, height: 0, x: 0, y: 0, toJSON: () => {} })
-    const wheelEvent = new WheelEvent('wheel', { deltaY: -100, clientX: 400, bubbles: true })
-    await overview.element.dispatchEvent(wheelEvent)
+    const axisEl = wrapper.find('.tl-axis')
+    const originalRect = axisEl.element.getBoundingClientRect
+    axisEl.element.getBoundingClientRect = () => ({ width: 0, left: 0, top: 0, right: 0, bottom: 0, height: 0, x: 0, y: 0, toJSON: () => {} })
+    await overview.element.dispatchEvent(wheelEvent(-100, 400))
     await wrapper.vm.$nextTick()
-    expect(wrapper.vm.viewStart).toBeDefined()
-    overview.element.getBoundingClientRect = originalRect
+    // rect 无效时直接跳过，视窗保持不变
+    expect(wrapper.vm.viewStart).toBe(1955)
+    expect(wrapper.vm.viewEnd).toBe(2026)
+    axisEl.element.getBoundingClientRect = originalRect
   })
 
   it('缩放边界：不超过 minYear/maxYear', async () => {
@@ -166,14 +191,14 @@ describe('HistoryAxis.vue', () => {
     wrapper.vm.viewEnd = 1985
     await wrapper.vm.$nextTick()
     const overview = wrapper.find('.tl-axis-overview')
-    const originalRect = overview.element.getBoundingClientRect
-    overview.element.getBoundingClientRect = () => ({ width: 800, left: 0, top: 0, right: 800, bottom: 56, height: 56, x: 0, y: 0, toJSON: () => {} })
-    const wheelEvent = new WheelEvent('wheel', { deltaY: 100, clientX: 200, bubbles: true })
-    await overview.element.dispatchEvent(wheelEvent)
+    const axisEl = wrapper.find('.tl-axis')
+    const originalRect = axisEl.element.getBoundingClientRect
+    axisEl.element.getBoundingClientRect = () => ({ width: 800, left: 0, top: 0, right: 800, bottom: 56, height: 56, x: 0, y: 0, toJSON: () => {} })
+    await overview.element.dispatchEvent(wheelEvent(100, 200))
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.viewStart).toBeGreaterThanOrEqual(1955)
     expect(wrapper.vm.viewEnd).toBeLessThanOrEqual(2026)
-    overview.element.getBoundingClientRect = originalRect
+    axisEl.element.getBoundingClientRect = originalRect
   })
 
   it('yearToPercent 与 percentToYear 函数', () => {
@@ -228,6 +253,9 @@ describe('HistoryAxis.vue', () => {
     await vm.jumpToDecade('2020s')
     expect(vm.viewStart).toBeLessThanOrEqual(2020)
     expect(vm.viewEnd).toBeGreaterThanOrEqual(2026)
+    const before = vm.viewStart
+    await vm.jumpToDecade('1890s')
+    expect(vm.viewStart).toBe(before)
   })
 
   it('resetView 恢复完整视窗', () => {
@@ -273,7 +301,8 @@ describe('HistoryAxis.vue', () => {
   })
 
   it('onMounted 当非 reduced 时初始化动画', async () => {
-    // Create a fresh component without the mock to test non-reduced path
+    // 先清空模块注册表，doMock 才会作用于随后的动态 import
+    vi.resetModules()
     vi.doMock('../docs/.vitepress/theme/data/timeline.mjs', async (importOriginal) => {
       const mod = await importOriginal()
       return {
@@ -288,7 +317,6 @@ describe('HistoryAxis.vue', () => {
     const { default: HistoryAxisFresh } = await import('../docs/.vitepress/theme/components/HistoryAxis.vue')
     const wrapper = mount(HistoryAxisFresh)
     expect(wrapper.exists()).toBe(true)
-    vi.resetModules()
   })
 
   it('onMouseMove 拖动超出 minYear 边界', async () => {
@@ -326,17 +354,16 @@ describe('HistoryAxis.vue', () => {
       attachTo: document.body
     })
     const overview = wrapper.find('.tl-axis-overview')
-    const originalRect = overview.element.getBoundingClientRect
-    overview.element.getBoundingClientRect = () => ({ width: 800, left: 100, top: 0, right: 900, bottom: 56, height: 56, x: 100, y: 0, toJSON: () => {} })
+    const axisEl = wrapper.find('.tl-axis')
+    const originalRect = axisEl.element.getBoundingClientRect
+    axisEl.element.getBoundingClientRect = () => ({ width: 800, left: 100, top: 0, right: 900, bottom: 56, height: 56, x: 100, y: 0, toJSON: () => {} })
     // clientX < rect.left -> mouseRatio < 0 -> clamped to 0
-    const wheelEventLeft = new WheelEvent('wheel', { deltaY: -100, clientX: 50, bubbles: true })
-    await overview.element.dispatchEvent(wheelEventLeft)
+    await overview.element.dispatchEvent(wheelEvent(-100, 50))
     await wrapper.vm.$nextTick()
     // clientX > rect.right -> mouseRatio > 1 -> clamped to 1
-    const wheelEventRight = new WheelEvent('wheel', { deltaY: -100, clientX: 950, bubbles: true })
-    await overview.element.dispatchEvent(wheelEventRight)
+    await overview.element.dispatchEvent(wheelEvent(-100, 950))
     await wrapper.vm.$nextTick()
-    overview.element.getBoundingClientRect = originalRect
+    axisEl.element.getBoundingClientRect = originalRect
   })
 
   it('clampSpan: span < minSpan 时扩展到 minSpan', () => {
@@ -354,6 +381,7 @@ describe('HistoryAxis.vue', () => {
   })
 
   it('onMounted 非 reduced 路径执行', async () => {
+    vi.resetModules()
     vi.doMock('../docs/.vitepress/theme/data/timeline.mjs', async (importOriginal) => {
       const mod = await importOriginal()
       return {
@@ -368,6 +396,5 @@ describe('HistoryAxis.vue', () => {
     const { default: HistoryAxisFresh } = await import('../docs/.vitepress/theme/components/HistoryAxis.vue')
     const wrapper = mount(HistoryAxisFresh)
     expect(wrapper.exists()).toBe(true)
-    vi.resetModules()
   })
 })

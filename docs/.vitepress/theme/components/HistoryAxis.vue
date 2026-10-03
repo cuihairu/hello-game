@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, computed, watch } from 'vue'
+import { onMounted, onBeforeUnmount, ref, computed, watch } from 'vue'
 import { SEGMENTS, AXIS, store, toggleFocus, toggleCollapse, prefersReduced, loadGsap, initAxisCursor, fadeCardsOnScroll } from '../data/timeline.mjs'
 import { TRACKS } from '../data/timeline.mjs'
 
@@ -23,18 +23,12 @@ function percentToYear(pct) {
 }
 
 function clampSpan(newStart, newEnd) {
-  const span = newEnd - newStart
-  if (span < AXIS.minSpan) {
-    const mid = (newStart + newEnd) / 2
-    newStart = Math.max(AXIS.minYear, mid - AXIS.minSpan / 2)
-    newEnd = Math.min(AXIS.maxYear, newStart + AXIS.minSpan)
-  }
-  if (span > AXIS.maxSpan) {
-    const mid = (newStart + newEnd) / 2
-    newStart = Math.max(AXIS.minYear, mid - AXIS.maxSpan / 2)
-    newEnd = Math.min(AXIS.maxYear, newStart + AXIS.maxSpan)
-  }
-  return { start: newStart, end: newEnd }
+  let span = newEnd - newStart
+  if (span < AXIS.minSpan) span = AXIS.minSpan
+  if (span > AXIS.maxSpan) span = AXIS.maxSpan
+  // 位置夹取：视窗不越出 [minYear, maxYear]（与拖动平移的边界行为一致）
+  const start = Math.min(Math.max(newStart, AXIS.minYear), AXIS.maxYear - span)
+  return { start, end: start + span }
 }
 
 function updateScale() {
@@ -95,9 +89,21 @@ function onMouseUp() {
   document.removeEventListener('mouseup', onMouseUp)
 }
 
+// 拖动中卸载组件时兜底清理 document 监听器，避免泄漏
+onBeforeUnmount(() => {
+  document.removeEventListener('mousemove', onMouseMove)
+  document.removeEventListener('mouseup', onMouseUp)
+})
+
 function jumpToDecade(decade) {
   const seg = SEGMENTS.find(s => s.decade === decade)
-  if (!seg) return
+  if (!seg) {
+    // 未知年代：复位到全视窗
+    viewStart.value = AXIS.minYear
+    viewEnd.value = AXIS.maxYear
+    updateScale()
+    return
+  }
   viewStart.value = Math.max(AXIS.minYear, seg.from - 5)
   viewEnd.value = Math.min(AXIS.maxYear, viewStart.value + 30)
   updateScale()

@@ -74,24 +74,23 @@ describe('HistoryTimeline.vue', () => {
   it('互链徽标渲染：out 与 in 方向', () => {
     const wrapper = mount(HistoryTimeline, { props: { decade: '2000s' } })
     const badges = wrapper.findAll('.tl-link-badge')
-    if (badges.length > 0) {
-      badges.forEach(badge => {
-        expect(['out', 'in']).toContain(badge.classes().find(c => c === 'out' || c === 'in'))
-      })
-    } else {
-      expect(true).toBe(true)
-    }
+    expect(badges.length).toBeGreaterThan(0)
+    badges.forEach(badge => {
+      expect(['out', 'in']).toContain(badge.classes().find(c => c === 'out' || c === 'in'))
+    })
   })
 
   it('聚焦态：聚焦轨全量展示，其他轨仅保留关联条目', async () => {
     store.focus = 'hardware'
     const wrapper = mount(HistoryTimeline, { props: { decade: '1990s' } })
     const hwColumn = wrapper.findAll('.tl-track-column')[1]
-    const feColumn = wrapper.findAll('.tl-track-column')[2]
+    const artColumn = wrapper.findAll('.tl-track-column')[6]
     const hwCards = hwColumn.findAll('.tl-card')
-    const feCards = feColumn.findAll('.tl-card')
+    const artCards = artColumn.findAll('.tl-card')
     expect(hwCards.length).toBeGreaterThan(0)
-    feCards.forEach(card => {
+    // 1990s 硬件轨的 Voodoo 指向美术轨的低多边形，关联条目必须保留且带 related 标记
+    expect(artCards.length).toBeGreaterThan(0)
+    artCards.forEach(card => {
       expect(card.classes()).toContain('related')
     })
   })
@@ -102,16 +101,17 @@ describe('HistoryTimeline.vue', () => {
     const feColumn = wrapper.findAll('.tl-track-column')[2]
     const hint = feColumn.find('.tl-track-hint')
     expect(hint.exists()).toBe(true)
-    expect(hint.text()).toContain('无关联')
+    expect(hint.text()).toBe('无关联')
   })
 
-  it('聚焦硬件轨 1990s：前端轨有关联条目显示"关联"', () => {
+  it('聚焦硬件轨 1990s：美术轨有关联条目显示"关联"', () => {
     store.focus = 'hardware'
     const wrapper = mount(HistoryTimeline, { props: { decade: '1990s' } })
-    const feColumn = wrapper.findAll('.tl-track-column')[2]
-    const hint = feColumn.find('.tl-track-hint')
+    const artColumn = wrapper.findAll('.tl-track-column')[6]
+    const hint = artColumn.find('.tl-track-hint')
     expect(hint.exists()).toBe(true)
-    expect(hint.text()).toContain('关联')
+    expect(hint.text()).toBe('关联')
+    expect(artColumn.findAll('.tl-card').length).toBeGreaterThan(0)
   })
 
   it('折叠轨道：仅显示列头与折叠标签', async () => {
@@ -182,8 +182,10 @@ describe('HistoryTimeline.vue', () => {
   it('focusedItems 返回聚焦相关条目', () => {
     store.focus = 'hardware'
     const wrapper = mount(HistoryTimeline, { props: { decade: '1990s' } })
-    const feTrack = wrapper.vm.tracks.find(t => t.id === 'frontend')
-    const focused = wrapper.vm.focusedItems(feTrack)
+    // 1990s 硬件轨的 Voodoo 与 GeForce 分别指向美术轨与引擎轨
+    const artTrack = wrapper.vm.tracks.find(t => t.id === 'art')
+    const focused = wrapper.vm.focusedItems(artTrack)
+    expect(focused.length).toBeGreaterThan(0)
     focused.forEach(item => {
       expect(item.links).toBeTruthy()
       const related = item.links.some(l => l.track === 'hardware')
@@ -245,6 +247,14 @@ describe('HistoryTimeline.vue', () => {
     expect(wrapper.vm.segment).toBeUndefined()
   })
 
+  it('focusedItems: focus 指向不存在的轨道时返回空数组', () => {
+    store.focus = 'nonexistent-track'
+    const wrapper = mount(HistoryTimeline, { props: { decade: '1990s' } })
+    const track = wrapper.vm.tracks.find(t => t.id === 'games')
+    expect(wrapper.vm.focusedItems(track)).toEqual([])
+    store.focus = null
+  })
+
   it('focusedItems: 无 focus 时返回全部条目', () => {
     store.focus = null
     const wrapper = mount(HistoryTimeline, { props: { decade: '1990s' } })
@@ -273,6 +283,8 @@ describe('HistoryTimeline.vue', () => {
   })
 
   it('onMounted 当非 reduced 时调用 fadeCardsOnScroll', async () => {
+    // 先清空模块注册表，doMock 才会作用于随后的动态 import
+    vi.resetModules()
     vi.doMock('../docs/.vitepress/theme/data/timeline.mjs', async (importOriginal) => {
       const mod = await importOriginal()
       return {
@@ -285,15 +297,15 @@ describe('HistoryTimeline.vue', () => {
     const { default: HistoryTimelineFresh } = await import('../docs/.vitepress/theme/components/HistoryTimeline.vue')
     const wrapper = mount(HistoryTimelineFresh, { props: { decade: '1990s' } })
     expect(wrapper.exists()).toBe(true)
-    vi.resetModules()
   })
 
   it('focusedItems: 有链接时过滤关联条目', () => {
     store.focus = 'hardware'
     const wrapper = mount(HistoryTimeline, { props: { decade: '2000s' } })
-    const feTrack = wrapper.vm.tracks.find(t => t.id === 'frontend')
-    const focused = wrapper.vm.focusedItems(feTrack)
-    // Should only return items that have links to hardware
+    // 2000s 硬件轨的 Shader 指向引擎轨的 Source，关联条目必须保留
+    const enTrack = wrapper.vm.tracks.find(t => t.id === 'engines')
+    const focused = wrapper.vm.focusedItems(enTrack)
+    expect(focused.length).toBeGreaterThan(0)
     focused.forEach(item => {
       expect(item.links).toBeTruthy()
       const hasHwLink = item.links.some(l => l.track === 'hardware')
@@ -313,19 +325,19 @@ describe('HistoryTimeline.vue', () => {
   it('link badges 渲染: 有 links 的条目显示徽标', () => {
     const wrapper = mount(HistoryTimeline, { props: { decade: '2000s' } })
     const badges = wrapper.findAll('.tl-link-badge')
-    if (badges.length > 0) {
-      badges.forEach(badge => {
-        expect(['out', 'in']).toContain(badge.classes().find(c => c === 'out' || c === 'in'))
-      })
-    }
+    expect(badges.length).toBeGreaterThan(0)
+    badges.forEach(badge => {
+      expect(['out', 'in']).toContain(badge.classes().find(c => c === 'out' || c === 'in'))
+    })
   })
 
   it('focusedItems: filter 和 forEach 执行路径', () => {
     store.focus = 'hardware'
     const wrapper = mount(HistoryTimeline, { props: { decade: '2000s' } })
-    const feTrack = wrapper.vm.tracks.find(t => t.id === 'frontend')
-    const focused = wrapper.vm.focusedItems(feTrack)
-    // Verify the filter/forEach logic executed
+    const enTrack = wrapper.vm.tracks.find(t => t.id === 'engines')
+    const focused = wrapper.vm.focusedItems(enTrack)
+    // filter/forEach 逻辑执行后应返回非空数组
     expect(Array.isArray(focused)).toBe(true)
+    expect(focused.length).toBeGreaterThan(0)
   })
 })
