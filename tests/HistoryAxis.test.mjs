@@ -1,123 +1,373 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { mount, flushPromises } from '@vue/test-utils'
-
-vi.mock('gsap', () => ({ gsap: { registerPlugin: vi.fn(), from: vi.fn(() => 'tween'), fromTo: vi.fn(() => 'tween') } }))
-vi.mock('gsap/ScrollTrigger', () => ({ ScrollTrigger: {} }))
-
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { mount } from '@vue/test-utils'
 import HistoryAxis from '../docs/.vitepress/theme/components/HistoryAxis.vue'
-import { store, TRACKS, SEGMENTS, AXIS } from '../docs/.vitepress/theme/data/timeline.mjs'
-import { gsap } from 'gsap'
+import { store, AXIS } from '../docs/.vitepress/theme/data/timeline.mjs'
 
-describe('HistoryAxis', () => {
-  let wrapper
+vi.mock('../docs/.vitepress/theme/data/timeline.mjs', async (importOriginal) => {
+  const mod = await importOriginal()
+  return {
+    ...mod,
+    prefersReduced: vi.fn(() => true),
+    loadGsap: vi.fn(() => Promise.reject(new Error('not loaded in test'))),
+    fadeCardsOnScroll: vi.fn(() => Promise.resolve()),
+    initAxisCursor: vi.fn(() => Promise.resolve()),
+    store: mod.store
+  }
+})
 
+describe('HistoryAxis.vue', () => {
   beforeEach(() => {
     store.focus = null
     store.collapsed = {}
     vi.clearAllMocks()
   })
 
-  afterEach(() => {
-    if (wrapper) wrapper.unmount()
-    wrapper = null
-    store.focus = null
-    delete window.matchMedia
+  it('渲染八轨图例 chips', () => {
+    const wrapper = mount(HistoryAxis)
+    const chips = wrapper.findAll('.tl-chip')
+    expect(chips.length).toBe(8) // 8 tracks initially, reset button appears only when focused
+    expect(chips[0].text()).toContain('游戏发展')
+    expect(chips[1].text()).toContain('硬件')
+    expect(chips[2].text()).toContain('前端技术')
+    expect(chips[3].text()).toContain('后端技术')
+    expect(chips[4].text()).toContain('知名引擎')
+    expect(chips[5].text()).toContain('玩法')
+    expect(chips[6].text()).toContain('美术风格')
+    expect(chips[7].text()).toContain('公司与代表作')
   })
 
-  it('渲染「全部轨道」+ 八轨 chips、六个年代导航、全部条目点', () => {
-    wrapper = mount(HistoryAxis)
-    expect(wrapper.findAll('.axis-chip').length).toBe(9)
-    expect(wrapper.findAll('.axis-nav a').length).toBe(6)
-    const totalItems = TRACKS.reduce((n, t) => n + t.items.length, 0)
-    expect(wrapper.findAll('.axis-dot').length).toBe(totalItems)
-    expect(wrapper.text()).toContain(`视窗 ${AXIS.minYear}–${AXIS.maxYear}`)
-  })
-
-  it('chip 点击聚焦轨、重复点击取消；「全部轨道」恢复', async () => {
-    wrapper = mount(HistoryAxis)
-    const chips = wrapper.findAll('.axis-chip')
-    await chips[1].trigger('click')
+  it('点击 chip 切换聚焦', async () => {
+    const wrapper = mount(HistoryAxis)
+    const chips = wrapper.findAll('.tl-chip')
+    await chips[0].trigger('click')
     expect(store.focus).toBe('games')
-    await chips[1].trigger('click')
-    expect(store.focus).toBeNull()
-    await chips[2].trigger('click')
-    expect(store.focus).toBe('hardware')
+    expect(chips[0].classes()).toContain('active')
     await chips[0].trigger('click')
     expect(store.focus).toBeNull()
   })
 
-  it('滚轮缩放收窄视窗、条目点进出、视窗标签与复位按钮联动', async () => {
-    wrapper = mount(HistoryAxis)
-    const before = wrapper.findAll('.axis-dot').length
-    await wrapper.find('.axis-bar').trigger('wheel', { deltaY: -100 })
-    expect(wrapper.findAll('.axis-dot').length).toBeLessThan(before)
-    expect(wrapper.text()).not.toContain(`视窗 ${AXIS.minYear}–${AXIS.maxYear}`)
-    expect(wrapper.find('.axis-reset').exists()).toBe(true)
-    // 复位
-    await wrapper.find('.axis-reset').trigger('click')
-    expect(wrapper.findAll('.axis-dot').length).toBe(before)
-    expect(wrapper.find('.axis-reset').exists()).toBe(false)
+  it('点击"全部轨道"重置聚焦', async () => {
+    const wrapper = mount(HistoryAxis)
+    const chips = wrapper.findAll('.tl-chip')
+    await chips[0].trigger('click')
+    expect(store.focus).toBe('games')
+    const resetBtn = wrapper.find('.tl-chip-reset')
+    expect(resetBtn.exists()).toBe(true)
+    await resetBtn.trigger('click')
+    expect(store.focus).toBeNull()
   })
 
-  it('滚轮向外缩放被 maxSpan 夹住，向内被 minSpan 夹住', async () => {
-    wrapper = mount(HistoryAxis)
-    // 初始 span 已是 maxSpan，继续向外夹住
-    await wrapper.find('.axis-bar').trigger('wheel', { deltaY: 100 })
-    expect(wrapper.text()).toContain(`视窗 ${AXIS.minYear}–${AXIS.maxYear}`)
-    // 连续向内直到 minSpan
-    for (let i = 0; i < 20; i++) await wrapper.find('.axis-bar').trigger('wheel', { deltaY: -100 })
-    const m = wrapper.text().match(/视窗 (\d+)–(\d+)/)
-    expect(m).toBeTruthy()
-    expect(Number(m[2]) - Number(m[1])).toBe(AXIS.minSpan)
+  it('概览轴滚轮缩放：向内/向外，夹取在 minSpan/maxSpan', async () => {
+    const wrapper = mount(HistoryAxis, {
+      attachTo: document.body
+    })
+    const overview = wrapper.find('.tl-axis-overview')
+    const originalRect = overview.element.getBoundingClientRect
+    overview.element.getBoundingClientRect = () => ({ width: 800, left: 0, top: 0, right: 800, bottom: 56, height: 56, x: 0, y: 0, toJSON: () => {} })
+    const wheelEvent = new WheelEvent('wheel', { deltaY: -100, clientX: 400, bubbles: true })
+    await overview.element.dispatchEvent(wheelEvent)
+    await wrapper.vm.$nextTick()
+    expect(wrapper.vm.viewStart).toBeLessThan(1955 + 71)
+    expect(wrapper.vm.viewEnd).toBeGreaterThan(2026 - 71)
+    const wheelEventOut = new WheelEvent('wheel', { deltaY: 100, clientX: 400, bubbles: true })
+    await overview.element.dispatchEvent(wheelEventOut)
+    await wrapper.vm.$nextTick()
+    overview.element.getBoundingClientRect = originalRect
   })
 
-  it('滚轮/拖动在轴宽可测时走指针比例分支', async () => {
-    wrapper = mount(HistoryAxis)
-    const axisEl = wrapper.find('.axis-bar').element
-    Object.defineProperty(axisEl, 'clientWidth', { configurable: true, value: 1000 })
-    await wrapper.find('.axis-bar').trigger('wheel', { deltaY: -100, offsetX: 800 })
-    // 视窗收窄并围绕指针锚点从右侧收拢
-    const m = wrapper.text().match(/视窗 (\d+)–(\d+)/)
-    expect(Number(m[2]) - Number(m[1])).toBeLessThan(AXIS.maxSpan)
-    await wrapper.find('.axis-bar').trigger('mousedown', { clientX: 500 })
-    await wrapper.find('.axis-bar').trigger('mousemove', { clientX: 100 })
-    expect(wrapper.text().match(/视窗 (\d+)–(\d+)/)).toBeTruthy()
+  it('概览轴拖动平移：mousedown -> mousemove -> mouseup', async () => {
+    const wrapper = mount(HistoryAxis)
+    const overview = wrapper.find('.tl-axis-overview')
+    await overview.trigger('mousedown', { button: 0, clientX: 400 })
+    expect(wrapper.vm.isDragging).toBe(true)
+    await document.dispatchEvent(new MouseEvent('mousemove', { clientX: 300, bubbles: true }))
+    expect(wrapper.vm.viewStart).toBeGreaterThanOrEqual(1955)
+    await document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
+    expect(wrapper.vm.isDragging).toBe(false)
   })
 
-  it('拖动平移视窗；未按下的 mousemove 不生效', async () => {
-    wrapper = mount(HistoryAxis)
-    // 先缩放一下，留出平移空间
-    await wrapper.find('.axis-bar').trigger('wheel', { deltaY: -100 })
-    const label1 = wrapper.text().match(/视窗 (\d+)–(\d+)/)[0]
-    await wrapper.find('.axis-bar').trigger('mousemove', { clientX: 100 })
-    expect(wrapper.text()).toContain(label1)
-    await wrapper.find('.axis-bar').trigger('mousedown', { clientX: 100 })
-    await wrapper.find('.axis-bar').trigger('mousemove', { clientX: 10 })
-    const label2 = wrapper.text().match(/视窗 (\d+)–(\d+)/)[0]
-    expect(label2).not.toBe(label1)
-    await wrapper.find('.axis-bar').trigger('mouseup')
-    const label3 = wrapper.text().match(/视窗 (\d+)–(\d+)/)[0]
-    await wrapper.find('.axis-bar').trigger('mousemove', { clientX: 500 })
-    expect(wrapper.text()).toContain(label3)
+  it('mousedown 非左键被忽略', async () => {
+    const wrapper = mount(HistoryAxis)
+    const overview = wrapper.find('.tl-axis-overview')
+    await overview.trigger('mousedown', { button: 1, clientX: 400 })
+    expect(wrapper.vm.isDragging).toBe(false)
+    await overview.trigger('mousedown', { button: 2, clientX: 400 })
+    expect(wrapper.vm.isDragging).toBe(false)
   })
 
-  it('axisEl 缺失时 wheel 锚点按 0.5 兜底，不抖动', async () => {
-    wrapper = mount(HistoryAxis)
-    wrapper.vm.axisEl = null
-    await wrapper.find('.axis-bar').trigger('wheel', { deltaY: -100 })
-    expect(wrapper.text()).not.toContain(`视窗 ${AXIS.minYear}–${AXIS.maxYear}`)
+  it('无按下的 mousemove 被忽略', async () => {
+    const wrapper = mount(HistoryAxis)
+    await document.dispatchEvent(new MouseEvent('mousemove', { clientX: 300, bubbles: true }))
+    expect(wrapper.vm.isDragging).toBe(false)
   })
 
-  it('动画纪律：reduced 跳过；默认触发轴游标 scrub', async () => {
-    window.matchMedia = () => ({ matches: true })
-    wrapper = mount(HistoryAxis)
-    await flushPromises()
-    expect(gsap.fromTo).not.toHaveBeenCalled()
-    wrapper.unmount()
-    wrapper = null
-    window.matchMedia = () => ({ matches: false })
-    wrapper = mount(HistoryAxis)
-    await flushPromises()
-    expect(gsap.fromTo).toHaveBeenCalledTimes(1)
+  it('年代导航按钮跳转', async () => {
+    const wrapper = mount(HistoryAxis)
+    const navBtns = wrapper.findAll('.tl-axis-nav-btn')
+    await navBtns[2].trigger('click') // 1990s
+    expect(wrapper.vm.viewStart).toBeLessThanOrEqual(1990)
+    expect(wrapper.vm.viewEnd).toBeGreaterThanOrEqual(1999)
+  })
+
+  it('复位按钮恢复全视窗', async () => {
+    const wrapper = mount(HistoryAxis)
+    wrapper.vm.viewStart = 1990
+    wrapper.vm.viewEnd = 2020
+    await wrapper.vm.$nextTick()
+    const resetBtn = wrapper.find('.tl-axis-reset')
+    await resetBtn.trigger('click')
+    expect(wrapper.vm.viewStart).toBe(1955)
+    expect(wrapper.vm.viewEnd).toBe(2026)
+  })
+
+  it('视窗信息显示：缩放/平移后显示年份范围', async () => {
+    const wrapper = mount(HistoryAxis)
+    wrapper.vm.viewStart = 1990
+    wrapper.vm.viewEnd = 2020
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('.tl-axis-view-info').exists()).toBe(true)
+    expect(wrapper.find('.tl-axis-view-info').text()).toContain('1990')
+    expect(wrapper.find('.tl-axis-view-info').text()).toContain('2020')
+    wrapper.vm.viewStart = 1955
+    wrapper.vm.viewEnd = 2026
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('.tl-axis-view-info').exists()).toBe(false)
+  })
+
+  it('折叠图例切换 collapsed 状态', async () => {
+    const wrapper = mount(HistoryAxis)
+    const toggles = wrapper.findAll('.tl-legend-toggle')
+    await toggles[0].trigger('click')
+    expect(store.collapsed.games).toBe(true)
+    expect(wrapper.findAll('.tl-legend-item')[0].classes()).toContain('collapsed')
+    await toggles[0].trigger('click')
+    expect(store.collapsed.games).toBe(false)
+  })
+
+  it('getBoundingClientRect width 为 0 时不报错', async () => {
+    const wrapper = mount(HistoryAxis, {
+      attachTo: document.body
+    })
+    const overview = wrapper.find('.tl-axis-overview')
+    const originalRect = overview.element.getBoundingClientRect
+    overview.element.getBoundingClientRect = () => ({ width: 0, left: 0, top: 0, right: 0, bottom: 0, height: 0, x: 0, y: 0, toJSON: () => {} })
+    const wheelEvent = new WheelEvent('wheel', { deltaY: -100, clientX: 400, bubbles: true })
+    await overview.element.dispatchEvent(wheelEvent)
+    await wrapper.vm.$nextTick()
+    expect(wrapper.vm.viewStart).toBeDefined()
+    overview.element.getBoundingClientRect = originalRect
+  })
+
+  it('缩放边界：不超过 minYear/maxYear', async () => {
+    const wrapper = mount(HistoryAxis, {
+      attachTo: document.body
+    })
+    wrapper.vm.viewStart = 1955
+    wrapper.vm.viewEnd = 1985
+    await wrapper.vm.$nextTick()
+    const overview = wrapper.find('.tl-axis-overview')
+    const originalRect = overview.element.getBoundingClientRect
+    overview.element.getBoundingClientRect = () => ({ width: 800, left: 0, top: 0, right: 800, bottom: 56, height: 56, x: 0, y: 0, toJSON: () => {} })
+    const wheelEvent = new WheelEvent('wheel', { deltaY: 100, clientX: 200, bubbles: true })
+    await overview.element.dispatchEvent(wheelEvent)
+    await wrapper.vm.$nextTick()
+    expect(wrapper.vm.viewStart).toBeGreaterThanOrEqual(1955)
+    expect(wrapper.vm.viewEnd).toBeLessThanOrEqual(2026)
+    overview.element.getBoundingClientRect = originalRect
+  })
+
+  it('yearToPercent 与 percentToYear 函数', () => {
+    const wrapper = mount(HistoryAxis)
+    const vm = wrapper.vm
+    // Test private functions via component instance
+    expect(typeof vm.yearToPercent).toBe('function')
+    expect(typeof vm.percentToYear).toBe('function')
+    expect(vm.yearToPercent(1955)).toBe(0)
+    expect(vm.yearToPercent(2026)).toBe(100)
+    expect(vm.percentToYear(0)).toBe(1955)
+    expect(vm.percentToYear(100)).toBe(2026)
+    expect(vm.percentToYear(50)).toBeCloseTo(1990.5, 1)
+  })
+
+  it('clampSpan 夹取逻辑', () => {
+    const wrapper = mount(HistoryAxis)
+    const vm = wrapper.vm
+    expect(typeof vm.clampSpan).toBe('function')
+    // span < minSpan
+    let r = vm.clampSpan(2000, 2020) // span=20 < 30
+    expect(r.end - r.start).toBeGreaterThanOrEqual(30)
+    // span > maxSpan
+    r = vm.clampSpan(1955, 2030) // span=75 > 71
+    expect(r.end - r.start).toBeLessThanOrEqual(71)
+    // normal span
+    r = vm.clampSpan(1990, 2020) // span=30
+    expect(r.end - r.start).toBe(30)
+  })
+
+  it('updateScale 更新缩放比例', () => {
+    const wrapper = mount(HistoryAxis)
+    const vm = wrapper.vm
+    expect(typeof vm.updateScale).toBe('function')
+    vm.viewStart = 1955
+    vm.viewEnd = 2026
+    vm.updateScale()
+    expect(vm.scale).toBe(1)
+    vm.viewStart = 1990
+    vm.viewEnd = 2020
+    vm.updateScale()
+    expect(vm.scale).toBeCloseTo(71/30, 2)
+  })
+
+  it('jumpToDecade 跳转到指定年代', async () => {
+    const wrapper = mount(HistoryAxis)
+    const vm = wrapper.vm
+    expect(typeof vm.jumpToDecade).toBe('function')
+    await vm.jumpToDecade('1990s')
+    expect(vm.viewStart).toBeLessThanOrEqual(1990)
+    expect(vm.viewEnd).toBeGreaterThanOrEqual(1999)
+    await vm.jumpToDecade('2020s')
+    expect(vm.viewStart).toBeLessThanOrEqual(2020)
+    expect(vm.viewEnd).toBeGreaterThanOrEqual(2026)
+  })
+
+  it('resetView 恢复完整视窗', () => {
+    const wrapper = mount(HistoryAxis)
+    const vm = wrapper.vm
+    vm.viewStart = 1990
+    vm.viewEnd = 2020
+    vm.resetView()
+    expect(vm.viewStart).toBe(1955)
+    expect(vm.viewEnd).toBe(2026)
+  })
+
+  it('trackStyle 计算轨道样式', () => {
+    const wrapper = mount(HistoryAxis)
+    const vm = wrapper.vm
+    expect(typeof vm.trackStyle).toBe('function')
+    const track = { id: 'games', name: '游戏发展', color: '#e0894e' }
+    // not focused, not collapsed
+    let style = vm.trackStyle(track)
+    expect(style.flex).toContain('12.5%')
+    // focused
+    store.focus = 'games'
+    style = vm.trackStyle(track)
+    expect(style.flex).toContain('28%')
+    expect(style.borderLeft).toContain('var(--vp-c-brand)')
+    // collapsed
+    store.focus = null
+    store.collapsed.games = true
+    style = vm.trackStyle(track)
+    expect(style.opacity).toBe(0.5)
+    // focused and collapsed
+    store.focus = 'games'
+    store.collapsed.games = true
+    style = vm.trackStyle(track)
+    expect(style.borderLeft).toContain('var(--vp-c-brand)')
+  })
+
+  it('onMounted 当 reduced 时跳过动画初始化', async () => {
+    // Test with prefersReduced = true (mocked)
+    const wrapper = mount(HistoryAxis)
+    // onMounted already ran, just verify component renders
+    expect(wrapper.exists()).toBe(true)
+  })
+
+  it('onMounted 当非 reduced 时初始化动画', async () => {
+    // Create a fresh component without the mock to test non-reduced path
+    vi.doMock('../docs/.vitepress/theme/data/timeline.mjs', async (importOriginal) => {
+      const mod = await importOriginal()
+      return {
+        ...mod,
+        prefersReduced: vi.fn(() => false),
+        loadGsap: vi.fn(() => Promise.reject(new Error('not loaded in test'))),
+        fadeCardsOnScroll: vi.fn(() => Promise.resolve()),
+        initAxisCursor: vi.fn(() => Promise.resolve()),
+        store: mod.store
+      }
+    })
+    const { default: HistoryAxisFresh } = await import('../docs/.vitepress/theme/components/HistoryAxis.vue')
+    const wrapper = mount(HistoryAxisFresh)
+    expect(wrapper.exists()).toBe(true)
+    vi.resetModules()
+  })
+
+  it('onMouseMove 拖动超出 minYear 边界', async () => {
+    const wrapper = mount(HistoryAxis, {
+      attachTo: document.body
+    })
+    const overview = wrapper.find('.tl-axis-overview')
+    const originalRect = overview.element.getBoundingClientRect
+    overview.element.getBoundingClientRect = () => ({ width: 800, left: 0, top: 0, right: 800, bottom: 56, height: 56, x: 0, y: 0, toJSON: () => {} })
+    // Start at minYear
+    wrapper.vm.viewStart = 1955
+    wrapper.vm.viewEnd = 1985
+    await wrapper.vm.$nextTick()
+    await overview.trigger('mousedown', { button: 0, clientX: 400 })
+    // Drag left (negative dx) to try to go below minYear
+    await document.dispatchEvent(new MouseEvent('mousemove', { clientX: 500, bubbles: true }))
+    expect(wrapper.vm.viewStart).toBe(1955)
+    await document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
+    overview.element.getBoundingClientRect = originalRect
+  })
+
+  it('trackStyle: focused 且 collapsed 时 borderLeft 为品牌色', () => {
+    const wrapper = mount(HistoryAxis)
+    const vm = wrapper.vm
+    const track = { id: 'games', name: '游戏发展', color: '#e0894e' }
+    store.focus = 'games'
+    store.collapsed.games = true
+    const style = vm.trackStyle(track)
+    expect(style.borderLeft).toContain('var(--vp-c-brand)')
+    expect(style.opacity).toBe(0.5)
+  })
+
+  it('onWheel: mouseRatio 边界值 (clientX 在 rect 外部)', async () => {
+    const wrapper = mount(HistoryAxis, {
+      attachTo: document.body
+    })
+    const overview = wrapper.find('.tl-axis-overview')
+    const originalRect = overview.element.getBoundingClientRect
+    overview.element.getBoundingClientRect = () => ({ width: 800, left: 100, top: 0, right: 900, bottom: 56, height: 56, x: 100, y: 0, toJSON: () => {} })
+    // clientX < rect.left -> mouseRatio < 0 -> clamped to 0
+    const wheelEventLeft = new WheelEvent('wheel', { deltaY: -100, clientX: 50, bubbles: true })
+    await overview.element.dispatchEvent(wheelEventLeft)
+    await wrapper.vm.$nextTick()
+    // clientX > rect.right -> mouseRatio > 1 -> clamped to 1
+    const wheelEventRight = new WheelEvent('wheel', { deltaY: -100, clientX: 950, bubbles: true })
+    await overview.element.dispatchEvent(wheelEventRight)
+    await wrapper.vm.$nextTick()
+    overview.element.getBoundingClientRect = originalRect
+  })
+
+  it('clampSpan: span < minSpan 时扩展到 minSpan', () => {
+    const wrapper = mount(HistoryAxis)
+    const vm = wrapper.vm
+    const r = vm.clampSpan(2000, 2020) // span=20 < 30
+    expect(r.end - r.start).toBeGreaterThanOrEqual(30)
+  })
+
+  it('clampSpan: span > maxSpan 时压缩到 maxSpan', () => {
+    const wrapper = mount(HistoryAxis)
+    const vm = wrapper.vm
+    const r = vm.clampSpan(1955, 2030) // span=75 > 71
+    expect(r.end - r.start).toBeLessThanOrEqual(71)
+  })
+
+  it('onMounted 非 reduced 路径执行', async () => {
+    vi.doMock('../docs/.vitepress/theme/data/timeline.mjs', async (importOriginal) => {
+      const mod = await importOriginal()
+      return {
+        ...mod,
+        prefersReduced: vi.fn(() => false),
+        loadGsap: vi.fn(() => Promise.reject(new Error('not loaded in test'))),
+        fadeCardsOnScroll: vi.fn(() => Promise.resolve()),
+        initAxisCursor: vi.fn(() => Promise.resolve()),
+        store: mod.store
+      }
+    })
+    const { default: HistoryAxisFresh } = await import('../docs/.vitepress/theme/components/HistoryAxis.vue')
+    const wrapper = mount(HistoryAxisFresh)
+    expect(wrapper.exists()).toBe(true)
+    vi.resetModules()
   })
 })

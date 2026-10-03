@@ -1,19 +1,12 @@
-import { reactive } from 'vue'
-
-// 历史线八轨时间线的数据源：年代分段、概览轴边界、八轨条目、互链装配与可测试的动效助手。
-// 条目三硬字段（hardware/solved/limits）由 tests/timeline-data.test.mjs 逐条断言非空。
-
-// 年代分段：与 /history/ 页面六个 {#s-...} 锚点一一对应；早于 1970 的条目归入 1970s 段
 export const SEGMENTS = [
   { id: 's-1970s', decade: '1970s', from: 1970, to: 1979, title: '多人在场的起点' },
   { id: 's-1980s', decade: '1980s', from: 1980, to: 1989, title: '榜单、存档与虚拟世界雏形' },
   { id: 's-1990s', decade: '1990s', from: 1990, to: 1999, title: '网络同步与持久世界' },
   { id: 's-2000s', decade: '2000s', from: 2000, to: 2009, title: 'MMORPG 浪潮与免费游戏' },
   { id: 's-2010s', decade: '2010s', from: 2010, to: 2019, title: '移动化、长线运营与实时竞技' },
-  { id: 's-2020s', decade: '2020s', from: 2020, to: 2029, title: '云原生、跨平台与自研重估' }
+  { id: 's-2020s', decade: '2020s', from: 2020, to: 2026, title: '云原生、跨平台与自研重估' }
 ]
 
-// 概览轴视窗边界（年）与允许跨距
 export const AXIS = { minYear: 1955, maxYear: 2026, minSpan: 30, maxSpan: 71 }
 
 export const TRACKS = [
@@ -23,61 +16,91 @@ export const TRACKS = [
     color: '#e0894e',
     items: [
       {
-        key: 'ga-1962-spacewar', year: 1962, approx: true, title: 'Spacewar!（PDP-1）',
+        key: 'ga-1962-spacewar',
+        year: 1962,
+        approx: true,
+        title: 'Spacewar!（PDP-1）',
         hardware: '小型机加示波器显示，内存 16KB 级，图形靠手写代码直写显示设备',
         solved: '证明实时交互图形程序可以运行、可以被复制传播，游戏从纸面变成可运行的程序',
         limits: '只存在于实验室与大学，无商用形态；依赖特定机型，几乎无法分发'
       },
       {
-        key: 'ga-1972-pong', year: 1972, approx: false, title: 'Pong 街机',
+        key: 'ga-1972-pong',
+        year: 1972,
+        approx: false,
+        title: 'Pong 街机',
         hardware: 'TTL 分立元件专用街机板，无通用 CPU，画面只有黑白方块与线条',
         solved: '第一个大规模商业成功的电子游戏，证明电子游戏是一门生意',
         limits: '功能焊死在电路上，游戏与硬件一体；克隆泛滥、无内容更新概念'
       },
       {
-        key: 'ga-1978-invaders', year: 1978, approx: false, title: 'Space Invaders（太空侵略者）',
+        key: 'ga-1978-invaders',
+        year: 1978,
+        approx: false,
+        title: 'Space Invaders（太空侵略者）',
         hardware: 'Intel 8080 街机板、单色 CRT、内存以 KB 计',
         solved: '确立高分榜与难度递增的重复可玩性机制，街机黄金时代的商业引擎',
         limits: '小内存硬编码渲染；每帧 sprite 预算固定，敌军数量减少时变快被当成 bug 传世'
       },
       {
-        key: 'ga-1983-crash', year: 1983, approx: false, title: '北美雅达利大崩溃',
+        key: 'ga-1983-crash',
+        year: 1983,
+        approx: true,
+        title: '北美雅达利大崩溃',
         hardware: '2600 十年老架构、卡带 4KB 主流，开发无质量门槛',
         solved: '（事件）质控失守倒逼行业重建：1985 年起任天堂质控公约成为北美市场复苏起点',
         limits: '行业塌方，北美主机市场冰封约两年，大量公司倒闭'
       },
       {
-        key: 'ga-1985-smb', year: 1985, approx: false, title: '超级马里奥兄弟（FC）',
+        key: 'ga-1985-smb',
+        year: 1985,
+        approx: false,
+        title: '超级马里奥兄弟（FC）',
         hardware: '6502@1.79MHz、2KB RAM、54 色，卡带容量决定内容上限',
         solved: '确立横版卷轴关卡设计方法论：教学关、卷轴节奏、隐藏要素的组合范式',
         limits: '卡带容量限内容量，无电池存档，续关成为唯一进度保护'
       },
       {
-        key: 'ga-1996-quake', year: 1996, approx: false, title: 'Quake',
+        key: 'ga-1996-quake',
+        year: 1996,
+        approx: false,
+        title: 'Quake',
         hardware: '486/Pentium 加 Voodoo 加速卡，网络仍在拨号与早期宽带',
         solved: '实时全 3D 与网络对战成为产品现实，客户端/服务端分工被产品验证',
         limits: '高配门槛，软渲染几乎不可玩；对战依赖局域网与专用服务器普及'
       },
       {
-        key: 'ga-2004-wow', year: 2004, approx: false, title: '魔兽世界',
+        key: 'ga-2004-wow',
+        year: 2004,
+        approx: false,
+        title: '魔兽世界',
         hardware: 'PC 普及与宽带入户，家用网络可支撑持续在线',
         solved: '百万级订阅 MMO 与副本实例化范式，长线运营成为主流商业模式',
         limits: '点卡时间投入制带来健康争议，内容消耗速度倒逼产能军备'
       },
       {
-        key: 'ga-2009-minecraft', year: 2009, approx: true, title: 'Minecraft（测试版）',
+        key: 'ga-2009-minecraft',
+        year: 2009,
+        approx: true,
+        title: 'Minecraft（测试版）',
         hardware: 'Java 跨平台，低配 PC 即可运行，网页分发绕开传统渠道',
         solved: '沙盒 UGC 玩法范式，独立团队做出现象级产品的样本',
         limits: 'Java 性能天花板，优化长期欠账；模组生态兼容性问题多'
       },
       {
-        key: 'ga-2016-pogo', year: 2016, approx: false, title: 'Pokémon GO',
+        key: 'ga-2016-pogo',
+        year: 2016,
+        approx: false,
+        title: 'Pokémon GO',
         hardware: '智能手机 SoC、GPS 与 4G 网络普及，陀螺仪与摄像头成标配',
         solved: 'LBS + AR 玩法大众化，位置服务支撑全球规模并发',
         limits: '安全事故与公共场所秩序压力，定位作弊与外挂'
       },
       {
-        key: 'ga-2020-genshin', year: 2020, approx: false, title: '原神',
+        key: 'ga-2020-genshin',
+        year: 2020,
+        approx: false,
+        title: '原神',
         hardware: '手机 GPU 已达上世代主机水平，跨端同一份资产可分发',
         solved: '跨端高品质开放世界加长线版本运营的全球样本',
         limits: '研发成本与持续更新产能压力，抽卡付费争议'
@@ -90,61 +113,91 @@ export const TRACKS = [
     color: '#5b8dd6',
     items: [
       {
-        key: 'hw-1971-4004', year: 1971, approx: true, title: 'Intel 4004',
+        key: 'hw-1971-4004',
+        year: 1971,
+        approx: true,
+        title: 'Intel 4004',
         hardware: '分立逻辑与 SSI/MSI 芯片时代，一块板一个功能',
         solved: '首款商用微处理器，把 CPU 变成可采购的标准件，通用计算起点',
         limits: '4 位数据宽度，需大量外围芯片拼系统，单价高、生态未形成'
       },
       {
-        key: 'hw-1981-ibm-pc', year: 1981, approx: false, title: 'IBM PC 5150',
+        key: 'hw-1981-ibm-pc',
+        year: 1981,
+        approx: false,
+        title: 'IBM PC 5150',
         hardware: '8088@4.77MHz、64KB 内存，操作系统靠软盘',
         solved: 'x86 加开放架构确立 PC 标准，兼容机生态爆发',
         limits: '约 1565 美元起的高价与笨重体积，DOS 命令行门槛'
       },
       {
-        key: 'hw-1985-amiga', year: 1985, approx: false, title: 'Amiga 1000',
+        key: 'hw-1985-amiga',
+        year: 1985,
+        approx: false,
+        title: 'Amiga 1000',
         hardware: '自定义图形与音频芯片（blitter、Paula），多媒体能力远超同代 PC',
         solved: '消费级多媒体能力：硬件合成音、逐帧动画与多任务',
         limits: '平台封闭、价格高，被开放的 PC 兼容机挤出主流'
       },
       {
-        key: 'hw-1989-sound-blaster', year: 1989, approx: false, title: 'Sound Blaster',
+        key: 'hw-1989-sound-blaster',
+        year: 1989,
+        approx: false,
+        title: 'Sound Blaster',
         hardware: 'PC 音频此前只有蜂鸣器，1987 AdLib FM 音乐先行',
         solved: '把音效与音乐采样带进 PC，确立 PC 游戏音频事实标准',
         limits: 'IRQ/DMA 手工配置的兼容地狱，克隆卡差异'
       },
       {
-        key: 'hw-1996-voodoo', year: 1996, approx: false, title: '3dfx Voodoo',
+        key: 'hw-1996-voodoo',
+        year: 1996,
+        approx: false,
+        title: '3dfx Voodoo',
         hardware: 'CPU 软渲染跑不动真 3D，纹理与帧率全靠主频硬扛',
         solved: '消费级 3D 加速：光栅化与纹理过滤进显卡，3D 游戏成为大众品类',
         limits: '需另配 2D 显示卡，专有 Glide API 形成锁定，后续被 DirectX 生态吞掉'
       },
       {
-        key: 'hw-1999-geforce', year: 1999, approx: false, title: 'GeForce 256',
+        key: 'hw-1999-geforce',
+        year: 1999,
+        approx: false,
+        title: 'GeForce 256',
         hardware: '几何变换与光照全在 CPU，显卡只管画三角形',
         solved: '硬件 T&L，「GPU」一词起点，几何管线卸载到显卡',
         limits: '驱动不稳、售价高，过渡期需主副双卡'
       },
       {
-        key: 'hw-2001-shader', year: 2001, approx: false, title: 'GeForce 3 与可编程着色器',
+        key: 'hw-2001-shader',
+        year: 2001,
+        approx: false,
+        title: 'GeForce 3 与可编程着色器',
         hardware: '固定功能图形管线到顶，特效只能靠厂商预置寄存器组合',
         solved: '顶点/像素着色器可编程，材质与特效从预置变成写代码',
         limits: 'Shader 版本碎片化，跨厂商移植成本与编程门槛抬升'
       },
       {
-        key: 'hw-2005-multicore', year: 2005, approx: true, title: '多核普及（Xbox 360 三核 / Core 2 Duo）',
+        key: 'hw-2005-multicore',
+        year: 2005,
+        approx: true,
+        title: '多核普及（Xbox 360 三核 / Core 2 Duo）',
         hardware: '单核主频撞墙（NetBurst 路线失败），功耗与散热到顶',
         solved: '用并行换总性能，游戏与服务端都转向多线程',
         limits: '并行编程复杂度陡增，既有代码重写，收益难榨'
       },
       {
-        key: 'hw-2007-iphone', year: 2007, approx: false, title: 'iPhone',
+        key: 'hw-2007-iphone',
+        year: 2007,
+        approx: false,
+        title: 'iPhone',
         hardware: '触屏 SoC 随身计算，移动网络从 WAP 走向数据流量',
         solved: '移动游戏平台化底座，App Store 分发重塑渠道',
         limits: '功耗散热限制性能，生态封闭与 30% 抽成'
       },
       {
-        key: 'hw-2018-rtx', year: 2018, approx: false, title: 'RTX 2080（RT 与 Tensor 核心）',
+        key: 'hw-2018-rtx',
+        year: 2018,
+        approx: false,
+        title: 'RTX 2080（RT 与 Tensor 核心）',
         hardware: '光栅化管线高度成熟，AI 推理算力开始进消费级显卡',
         solved: '实时光线追踪与超分（DLSS）硬件化，渲染管线多出新一级',
         limits: '价高功耗大，RT 游戏渗透慢，生态与开发门槛同步抬升'
@@ -157,61 +210,91 @@ export const TRACKS = [
     color: '#3fae8f',
     items: [
       {
-        key: 'fe-1991-www', year: 1991, approx: true, title: 'WWW 与 HTML 公开',
+        key: 'fe-1991-www',
+        year: 1991,
+        approx: true,
+        title: 'WWW 与 HTML 公开',
         hardware: 'NeXT/Unix 工作站与拨号网络，文档靠 FTP 与邮件传播',
         solved: '超文本跨机构分发，链接把文档连成网',
         limits: '纯文档，无交互无图形，浏览器最初只是阅读器'
       },
       {
-        key: 'fe-1993-mosaic', year: 1993, approx: false, title: 'Mosaic 浏览器',
+        key: 'fe-1993-mosaic',
+        year: 1993,
+        approx: false,
+        title: 'Mosaic 浏览器',
         hardware: '486 工作站与家用机，图形界面成为 PC 标配',
         solved: '图形化浏览加内嵌图片，Web 走向大众',
         limits: '慢，渲染兼容差，标准跟不上实现'
       },
       {
-        key: 'fe-1995-javascript', year: 1995, approx: false, title: 'JavaScript',
+        key: 'fe-1995-javascript',
+        year: 1995,
+        approx: false,
+        title: 'JavaScript',
         hardware: '浏览器仍按文档阅读器设计，表单校验靠整页刷新',
         solved: '页面交互逻辑有了语言，十天原型撑起前端生态',
         limits: '语言设计仓促的历史坑（this、类型转换、回调地狱）'
       },
       {
-        key: 'fe-1999-xhr', year: 1999, approx: true, title: 'XMLHttpRequest 与 AJAX',
+        key: 'fe-1999-xhr',
+        year: 1999,
+        approx: true,
+        title: 'XMLHttpRequest 与 AJAX',
         hardware: '带宽窄，整页刷新昂贵，富交互应用只能靠插件',
         solved: '局部刷新成为可能，富应用路线打开',
         limits: '无标准实现差异，回调地狱，可访问性差'
       },
       {
-        key: 'fe-2006-jquery', year: 2006, approx: false, title: 'jQuery',
+        key: 'fe-2006-jquery',
+        year: 2006,
+        approx: false,
+        title: 'jQuery',
         hardware: '浏览器大战 IE6 碎片化，DOM 与事件模型各家一套',
         solved: '一行选择器抹平 DOM 与兼容差异，操作门槛大降',
         limits: '选择器滥用与 DOM 操作性能债，抽象掩盖原生能力'
       },
       {
-        key: 'fe-2008-v8', year: 2008, approx: false, title: 'Chrome 与 V8',
+        key: 'fe-2008-v8',
+        year: 2008,
+        approx: false,
+        title: 'Chrome 与 V8',
         hardware: '硬件已够快，JS 引擎仍是解释执行，网页应用卡顿',
         solved: 'JIT 让 JS 进入近原生性能时代，Node.js 生态随之起势',
         limits: '单线程模型遗留至今，重任务仍要 Worker 绕行'
       },
       {
-        key: 'fe-2011-webgl', year: 2011, approx: true, title: 'Three.js 与 WebGL 1.0',
+        key: 'fe-2011-webgl',
+        year: 2011,
+        approx: true,
+        title: 'Three.js 与 WebGL 1.0',
         hardware: 'GPU 可编程着色器（2001）已成熟八年，浏览器却无图形接口',
         solved: '浏览器 3D 开发门槛大降，Web 从文档走向应用与游戏',
         limits: '移动端兼容参差，调试工具原始，性能上限受浏览器制约'
       },
       {
-        key: 'fe-2013-react', year: 2013, approx: false, title: 'React 开源',
+        key: 'fe-2013-react',
+        year: 2013,
+        approx: false,
+        title: 'React 开源',
         hardware: '多核桌面与大内存浏览器，前端应用复杂度爆炸',
         solved: '组件化加虚拟 DOM，声明式 UI 范式与生态工程化',
         limits: '生态复杂、版本迁移成本，状态管理方案分裂'
       },
       {
-        key: 'fe-2017-wasm', year: 2017, approx: false, title: 'WebAssembly MVP',
+        key: 'fe-2017-wasm',
+        year: 2017,
+        approx: false,
+        title: 'WebAssembly MVP',
         hardware: 'CPU 与浏览器引擎成熟，靠近原生的执行环境可用',
         solved: 'C/C++/Rust 近原生进浏览器，游戏与重计算有了 Web 落点',
         limits: '体积、GC 互操作与调试断点，DOM 交互仍绕行'
       },
       {
-        key: 'fe-2023-webgpu', year: 2023, approx: false, title: 'WebGPU 在 Chrome 稳定',
+        key: 'fe-2023-webgpu',
+        year: 2023,
+        approx: true,
+        title: 'WebGPU 在 Chrome 稳定',
         hardware: '现代图形 API（Vulkan/Metal）世代，浏览器安全沙箱收紧',
         solved: '现代 GPU API 统一进 Web，计算与渲染同级暴露',
         limits: '规范仍在演进，跨浏览器支持不齐，学习成本高于 WebGL'
@@ -224,55 +307,82 @@ export const TRACKS = [
     color: '#7c6fd0',
     items: [
       {
-        key: 'be-1970-rdbms', year: 1970, approx: false, title: '关系模型与 SQL',
+        key: 'be-1970-rdbms',
+        year: 1970,
+        approx: false,
+        title: '关系模型与 SQL',
         hardware: '大型机磁盘存储昂贵，数据组织靠层次与网状模型',
         solved: '结构化数据的声明式查询与一致性保障，数据独立于程序',
         limits: '非结构化与层级数据不适配，规模扩展需分库分表'
       },
       {
-        key: 'be-1995-lamp', year: 1995, approx: true, title: 'LAMP 组合',
+        key: 'be-1995-lamp',
+        year: 1995,
+        approx: true,
+        title: 'LAMP 组合',
         hardware: 'PC 服务器远比小型机便宜，开源组件开始可组合',
         solved: 'Web 服务低成本快速搭建，中小团队上线门槛消失',
         limits: 'PHP 类型松散与性能天花板，进程模型限制并发'
       },
       {
-        key: 'be-2003-memcached', year: 2003, approx: true, title: 'memcached',
+        key: 'be-2003-memcached',
+        year: 2003,
+        approx: true,
+        title: 'memcached',
         hardware: '内存价格持续下降，多机共享内存缓存成为可能',
         solved: '分布式对象缓存的标准件，挡在数据库前面的通用加速层',
         limits: '无持久化、一致性弱、淘汰粗暴，缓存与数据一致性要自己管'
       },
       {
-        key: 'be-2004-gfs', year: 2004, approx: true, title: 'GFS 与 MapReduce 论文',
+        key: 'be-2004-gfs',
+        year: 2004,
+        approx: true,
+        title: 'GFS 与 MapReduce 论文',
         hardware: '商用 PC 集群的可靠性与容量可与小型机掰手腕',
         solved: '百节点级存算的工程范式：冗余换可靠，批处理换吞吐',
         limits: '论文到可用生态有数年落差（Hadoop 2006 才成形）'
       },
       {
-        key: 'be-2009-redis', year: 2009, approx: false, title: 'Redis 开源',
+        key: 'be-2009-redis',
+        year: 2009,
+        approx: false,
+        title: 'Redis 开源',
         hardware: '内存价格与多核服务器普及，缓存需求细分到数据结构',
         solved: '内存数据结构服务：排行榜用 ZSet，锁与队列一套结构打天下',
         limits: '内存成本，持久化与主从模型在演进中踩坑（RDB/AOF 选择）'
       },
       {
-        key: 'be-2009-go', year: 2009, approx: false, title: 'Go 开源',
+        key: 'be-2009-go',
+        year: 2009,
+        approx: false,
+        title: 'Go 开源',
         hardware: '多核时代到来，C/C++ 写并发服务的复杂度到顶',
         solved: '并发友好的语言：goroutine 让高并发网关与基础设施好写好部署',
         limits: '泛型迟至 1.18，运行时 GC 停顿，错误处理啰嗦'
       },
       {
-        key: 'be-2011-kafka', year: 2011, approx: false, title: 'Kafka 开源',
+        key: 'be-2011-kafka',
+        year: 2011,
+        approx: false,
+        title: 'Kafka 开源',
         hardware: '磁盘顺序写便宜、SSD 与集群网络普及',
         solved: '高吞吐持久事件流，回放语义把解耦与追溯做成基础设施',
         limits: '运维复杂（早期 ZooKeeper 依赖），分区与顺序语义有边界'
       },
       {
-        key: 'be-2013-docker', year: 2013, approx: true, title: 'Docker 与 Kubernetes',
+        key: 'be-2013-docker',
+        year: 2013,
+        approx: true,
+        title: 'Docker 与 Kubernetes',
         hardware: '云主机已成默认算力形态，交付物还停在虚拟机镜像',
         solved: '环境一致交付与容器编排，发布从换机器变成换镜像',
         limits: '学习成本，网络与存储复杂度外移，安全面变大'
       },
       {
-        key: 'be-2015-grpc', year: 2015, approx: false, title: 'gRPC 开源',
+        key: 'be-2015-grpc',
+        year: 2015,
+        approx: false,
+        title: 'gRPC 开源',
         hardware: '多语言微服务铺开，JSON+REST 的契约松散开始疼',
         solved: '强契约 RPC 与多路流式通信，接口定义变成可编译资产',
         limits: '人读性差（HTTP/2 二进制），排障与抓包门槛抬升'
@@ -285,55 +395,82 @@ export const TRACKS = [
     color: '#d0568e',
     items: [
       {
-        key: 'en-1993-doom', year: 1993, approx: false, title: 'Doom 引擎',
+        key: 'en-1993-doom',
+        year: 1993,
+        approx: false,
+        title: 'Doom 引擎',
         hardware: '486 与 VESA 局部总线，软件渲染是唯一路径',
         solved: '数据驱动关卡（WAD）与引擎授权先声，mod 生态把内容创作交给玩家',
         limits: '软件渲染，准 2.5D 纵切视角，天花板明显'
       },
       {
-        key: 'en-1996-quake-engine', year: 1996, approx: false, title: 'Quake 引擎',
+        key: 'en-1996-quake-engine',
+        year: 1996,
+        approx: false,
+        title: 'Quake 引擎',
         hardware: 'Pentium 时代，3D 加速卡前夜',
         solved: '真 3D 与客户端/服务端架构分离，实时网游的默认分工定型',
         limits: '配置要求高，内容制作门槛高，授权与二次开发门槛更高'
       },
       {
-        key: 'en-1998-ue1', year: 1998, approx: false, title: 'Unreal Engine 1',
+        key: 'en-1998-ue1',
+        year: 1998,
+        approx: false,
+        title: 'Unreal Engine 1',
         hardware: '1997 年的显卡与 CPU 已能跑复杂室内场景',
         solved: '引擎授权成为独立商业模式，不靠卖游戏也能靠引擎赚钱',
         limits: '授权费高，内容管线重，小团队够不着'
       },
       {
-        key: 'en-2001-renderware', year: 2001, approx: true, title: 'RenderWare（GTA III 采用）',
+        key: 'en-2001-renderware',
+        year: 2001,
+        approx: true,
+        title: 'RenderWare（GTA III 采用）',
         hardware: 'PS2 世代多平台并存，每平台一套底层要重写',
         solved: '一套中间件跨平台（PS/Xbox/PC），开放世界大作得以量产',
         limits: '2004 年被 EA 收购后路线式微，单一供应商风险'
       },
       {
-        key: 'en-2004-source', year: 2004, approx: false, title: 'Source 与 CryEngine',
+        key: 'en-2004-source',
+        year: 2004,
+        approx: false,
+        title: 'Source 与 CryEngine',
         hardware: '高清世代 GPU 与 DirectX 9，可编程管线刚铺开',
         solved: '光照、物理与工具链的 2000s 标杆，编辑器工作流成型',
         limits: '授权与工具链封闭，跨代升级成本高'
       },
       {
-        key: 'en-2005-unity', year: 2005, approx: false, title: 'Unity 1.0',
+        key: 'en-2005-unity',
+        year: 2005,
+        approx: true,
+        title: 'Unity 1.0',
         hardware: '消费级开发机性能足够，跨端发布开始有统一中间层',
         solved: '引擎民主化：小团队可做 3D 与跨端，移动浪潮的隐形地基',
         limits: '大作级内容上限，早期移动端性能与重度工程支持弱'
       },
       {
-        key: 'en-2010-cocos2dx', year: 2010, approx: false, title: 'cocos2d-x',
+        key: 'en-2010-cocos2dx',
+        year: 2010,
+        approx: false,
+        title: 'cocos2d-x',
         hardware: '智能手机 2D 游戏爆发，开发者要 C++ 跨端方案',
         solved: '跨端 2D 标准件，中国移动游戏的主力工具链',
         limits: '3D 能力弱，工具链简陋，生态向 Cocos Creator 收拢'
       },
       {
-        key: 'en-2014-ue4-godot', year: 2014, approx: false, title: 'UE4 转免费与 Godot 开源',
+        key: 'en-2014-ue4-godot',
+        year: 2014,
+        approx: true,
+        title: 'UE4 转免费与 Godot 开源',
         hardware: '独立开发潮与 Steam 分发成熟，预付授权成为门槛',
         solved: '免预付加分成的门槛下探，开源引擎给出第三选择',
         limits: '商业分成绑定，开源生态支持参差，迁移成本仍在'
       },
       {
-        key: 'en-2020-ue5', year: 2020, approx: true, title: 'UE5（Nanite 与 Lumen）',
+        key: 'en-2020-ue5',
+        year: 2020,
+        approx: true,
+        title: 'UE5（Nanite 与 Lumen）',
         hardware: 'RTX 世代显卡与大容量 SSD 进入主流机型',
         solved: '电影级资产直接进实时渲染，几何与光照成本模型重定',
         limits: '硬件门槛高，老项目迁移重，中小团队驾驭成本高'
@@ -346,55 +483,82 @@ export const TRACKS = [
     color: '#d99a2b',
     items: [
       {
-        key: 'gp-1978-highscore', year: 1978, approx: true, title: '高分榜与难度递增',
+        key: 'gp-1978-highscore',
+        year: 1978,
+        approx: true,
+        title: '高分榜与难度递增',
         hardware: '街机 RAM 仅数 KB，机台之间无联网',
         solved: '重复可玩性与玩家数据竞争的雏形：榜单就是留存',
         limits: '榜单只存机台本地，跨机台竞争靠抄榜与目击'
       },
       {
-        key: 'gp-1980-rogue', year: 1980, approx: false, title: 'Rogue：程序生成与永久死亡',
+        key: 'gp-1980-rogue',
+        year: 1980,
+        approx: false,
+        title: 'Rogue：程序生成与永久死亡',
         hardware: '终端 TTY，无图形，靠字符表意',
         solved: '无限重玩的随机性范式，Roguelike 品类源头',
         limits: '文字门槛与学习成本高，挫败感强'
       },
       {
-        key: 'gp-1985-platform', year: 1985, approx: true, title: '平台跳跃与非线性探索',
+        key: 'gp-1985-platform',
+        year: 1985,
+        approx: true,
+        title: '平台跳跃与非线性探索',
         hardware: 'FC 卡带容量限制内容量，关卡只能靠设计密度撑',
         solved: '可学习的关卡节奏与开放探索两条范式（马里奥/塞尔达）',
         limits: '线性与开放的取舍延续至今，内容量仍是硬约束'
       },
       {
-        key: 'gp-1998-zelda-3d', year: 1998, approx: false, title: '3D 空间交互（时之笛 Z 锁定）',
+        key: 'gp-1998-zelda-3d',
+        year: 1998,
+        approx: false,
+        title: '3D 空间交互（时之笛 Z 锁定）',
         hardware: '3D 加速卡与主机已普及，镜头与操作仍是未解题',
         solved: '解决 3D 下打谁、怎么打的相机难题，动作 3D 的交互基准',
         limits: '晕动与镜头穿帮问题未根治，锁定在多敌人场景受限'
       },
       {
-        key: 'gp-2004-mmo-time', year: 2004, approx: false, title: 'MMO 时间投入制',
+        key: 'gp-2004-mmo-time',
+        year: 2004,
+        approx: false,
+        title: 'MMO 时间投入制',
         hardware: '宽带普及，账号与角色可长期在线',
         solved: '社交绑定与长线进度留存，订阅制商业模型成型',
         limits: '时间成本与上班感争议，强迫日常透支乐趣'
       },
       {
-        key: 'gp-2006-f2p', year: 2006, approx: true, title: 'F2P 道具收费',
+        key: 'gp-2006-f2p',
+        year: 2006,
+        approx: true,
+        title: 'F2P 道具收费',
         hardware: '支付通道与网络普及，游戏分发零门槛',
         solved: '零门槛进入加道具/数值付费，商业模式与获客逻辑改写',
         limits: '数值逼氪与游戏性失衡的批评，付费深度难调平'
       },
       {
-        key: 'gp-2009-lol', year: 2009, approx: false, title: 'MOBA 降门槛（英雄联盟）',
+        key: 'gp-2009-lol',
+        year: 2009,
+        approx: false,
+        title: 'MOBA 降门槛（英雄联盟）',
         hardware: 'PC 与网吧普及，低配机型是主流玩家配置',
         solved: '把 Dota 玩法大众化，电竞体系的底座产品',
         limits: '单局体验强绑定，外挂与演员治理是长期战'
       },
       {
-        key: 'gp-2017-battleroyale', year: 2017, approx: true, title: '大逃杀与赛季通行证',
+        key: 'gp-2017-battleroyale',
+        year: 2017,
+        approx: true,
+        title: '大逃杀与赛季通行证',
         hardware: '大地图 100 人同步在公网可行，网络与 CPU 都到位',
         solved: '每局不确定性带来观赛性，战令把活跃与付费绑进赛季',
         limits: '平衡调整频繁，外挂压力大，内容管线被赛季节奏拖着跑'
       },
       {
-        key: 'gp-2017-botw', year: 2017, approx: false, title: '系统涌现（旷野之息）',
+        key: 'gp-2017-botw',
+        year: 2017,
+        approx: false,
+        title: '系统涌现（旷野之息）',
         hardware: '主机 CPU 足够跑交互系统实时模拟',
         solved: '元素交互替代脚本演出，开放世界的化学引擎设计法',
         limits: '系统组合难调平，性能吃紧，bug 面变大'
@@ -407,55 +571,82 @@ export const TRACKS = [
     color: '#8a9a4a',
     items: [
       {
-        key: 'ar-1975-pixel', year: 1975, approx: true, title: '单色像素与符号化',
+        key: 'ar-1975-pixel',
+        year: 1975,
+        approx: true,
+        title: '单色像素与符号化',
         hardware: '调色板只有数色，sprite 预算以个位数计',
         solved: '用最少像素表意，符号化成为风格也是限制的副产品',
         limits: '表现力被色数与分辨率锁死，叙事只能靠想象补'
       },
       {
-        key: 'ar-1990-16bit', year: 1990, approx: true, title: '16-bit 像素与视差卷轴',
+        key: 'ar-1990-16bit',
+        year: 1990,
+        approx: true,
+        title: '16-bit 像素与视差卷轴',
         hardware: 'MD/SFC 显存与 sprite 能力跃升，卷轴硬件成熟',
         solved: '手绘动画与多层卷轴的像素视觉高峰',
         limits: '纯手工绘制成本高、周期长，产能即上限'
       },
       {
-        key: 'ar-1996-lowpoly', year: 1996, approx: true, title: '低多边形 3D 与预渲染背景',
+        key: 'ar-1996-lowpoly',
+        year: 1996,
+        approx: true,
+        title: '低多边形 3D 与预渲染背景',
         hardware: '三角形预算小、CD-ROM 存储空间大',
         solved: '以粗粝几何加静态背景实现电影化叙事（FF7 路线）',
         limits: '角色棱角化，镜头穿帮，实时与预渲染的割裂'
       },
       {
-        key: 'ar-2001-realism', year: 2001, approx: true, title: '写实化潮流',
+        key: 'ar-2001-realism',
+        year: 2001,
+        approx: true,
+        title: '写实化潮流',
         hardware: '可编程着色器与大显存显卡铺开',
         solved: '电影化质感成为 3A 标配，画面即卖点',
         limits: '同质化与美术成本飙升，工期军备竞赛'
       },
       {
-        key: 'ar-2008-braid', year: 2008, approx: false, title: '独立手绘美学（Braid）',
+        key: 'ar-2008-braid',
+        year: 2008,
+        approx: false,
+        title: '独立手绘美学（Braid）',
         hardware: '数字发行（XBLA）降低发行门槛',
         solved: '艺术表达差异化对抗写实军备，独立游戏身份确立',
         limits: '市场声量小，商业风险高，叫好不叫座常态'
       },
       {
-        key: 'ar-2012-pixel', year: 2012, approx: true, title: '像素复兴',
+        key: 'ar-2012-pixel',
+        year: 2012,
+        approx: true,
+        title: '像素复兴',
         hardware: '独立开发潮加怀旧市场，高分屏反而凸显像素锐利',
         solved: '风格作为身份识别，规避写实成本，情怀即流量',
         limits: '「像素=偷懒」的舆论反噬，同质化转向'
       },
       {
-        key: 'ar-2016-stylized', year: 2016, approx: false, title: '风格化渲染成熟（守望先锋）',
+        key: 'ar-2016-stylized',
+        year: 2016,
+        approx: false,
+        title: '风格化渲染成熟（守望先锋）',
         hardware: '主机 CPU 可支撑复杂 NPR 管线与实时后处理',
         solved: '卡通渲染兼顾表现力与识别度，辨识度即品牌',
         limits: '赛季更新的皮肤产能压力，风格一致性难维护'
       },
       {
-        key: 'ar-2020-fidelity', year: 2020, approx: false, title: '高写实基线与独立美学并行',
+        key: 'ar-2020-fidelity',
+        year: 2020,
+        approx: true,
+        title: '高写实基线与独立美学并行',
         hardware: 'RTX 显卡与高速 SSD 普及，两端制作条件同时成熟',
         solved: '电影级资产直采与独立美学主流化并行，市场分层清晰',
         limits: '两端成本都在上升：写实烧钱，手绘卷工期'
       },
       {
-        key: 'ar-2023-ai', year: 2023, approx: true, title: 'AI 辅助资产进入生产讨论',
+        key: 'ar-2023-ai',
+        year: 2023,
+        approx: true,
+        title: 'AI 辅助资产进入生产讨论',
         hardware: '生成式模型算力普及，推理成本进入工作室预算',
         solved: '降本增效的可能与美术岗位冲击并存，管线开始试水',
         limits: '版权与质量可控性未定论，标注为演进中'
@@ -468,7 +659,10 @@ export const TRACKS = [
     color: '#c2544a',
     items: [
       {
-        key: 'co-1972-atari', year: 1972, approx: false, title: 'Atari',
+        key: 'co-1972-atari',
+        year: 1972,
+        approx: false,
+        title: 'Atari',
         hardware: '街机 TTL 板时代，游戏与硬件一体',
         solved: '证明电子游戏是生意：Pong 开街机产业，2600 开卡带换游戏生态',
         limits: '1983 崩溃拖垮主业，几经转卖，品牌多次易手',
@@ -478,7 +672,10 @@ export const TRACKS = [
         ]
       },
       {
-        key: 'co-1981-nintendo', year: 1981, approx: true, title: '任天堂',
+        key: 'co-1981-nintendo',
+        year: 1981,
+        approx: true,
+        title: '任天堂',
         hardware: '花札厂起家（1889），FC 前的街机与北美冰封期',
         solved: '大金刚北美翻盘，质控公约重建行业秩序，第三方授权模式定型',
         limits: '3D 世代曾跟随后，Wii 之后的硬件周期起伏',
@@ -487,16 +684,22 @@ export const TRACKS = [
         ]
       },
       {
-        key: 'co-1982-ea', year: 1982, approx: false, title: 'EA（电子艺界）',
+        key: 'co-1982-ea',
+        year: 1982,
+        approx: false,
+        title: 'EA（电子艺界）',
         hardware: 'PC 与家用机并存的 80 年代，发行渠道分散',
         solved: '体育授权年货加发行规模化，把游戏发行做成工业',
         limits: '年货化与微交易的口碑压力，工作室吞并争议',
         works: [
-          { year: 1988, title: 'Madden NFL', why: '体育年货授权模式起点' }
+          { year: 1988, title: 'Madden', why: '体育年货授权模式起点' }
         ]
       },
       {
-        key: 'co-1991-id', year: 1991, approx: false, title: 'id Software',
+        key: 'co-1991-id',
+        year: 1991,
+        approx: false,
+        title: 'id Software',
         hardware: '486 与 VESA 时代，shareware 分发',
         solved: 'FPS 范式、引擎授权与 mod 生态三件套',
         limits: '授权模式被 UE/Unity 取代，产品线收缩',
@@ -505,17 +708,23 @@ export const TRACKS = [
         ]
       },
       {
-        key: 'co-1991-blizzard', year: 1991, approx: true, title: '暴雪',
+        key: 'co-1991-blizzard',
+        year: 1991,
+        approx: true,
+        title: '暴雪',
         hardware: '家用机与 PC 分立的 90 年代初，RTS 起于 PC',
         solved: 'RTS/MMO/电竞三线标杆，精品节奏树立品牌信仰',
         limits: '长期动荡，2023 年被微软收购（约 687 亿美元，2023-10 完成）',
         works: [
-          { year: 1994, title: '魔兽争霸', why: 'RTS 范式与战网起点' },
+          { year: 1994, title: '魔兽争霸', why: 'RTS 范式' },
           { year: 2004, title: '魔兽世界', why: '订阅制 MMO 顶峰（峰值约 1200 万订阅）' }
         ]
       },
       {
-        key: 'co-1991-epic', year: 1991, approx: false, title: 'Epic MegaGames',
+        key: 'co-1991-epic',
+        year: 1991,
+        approx: false,
+        title: 'Epic MegaGames',
         hardware: 'shareware 分发的 90 年代，3D 卡开始普及',
         solved: '引擎授权加免费化样本，赛季制 GaaS 打法输出全行业',
         limits: '独占大战与收入波动，估值起伏',
@@ -525,7 +734,10 @@ export const TRACKS = [
         ]
       },
       {
-        key: 'co-1993-sony', year: 1993, approx: false, title: '索尼电脑娱乐（SCE）',
+        key: 'co-1993-sony',
+        year: 1993,
+        approx: false,
+        title: '索尼电脑娱乐（SCE）',
         hardware: 'CD-ROM 与 3D 芯片世代，任天堂把持卡带渠道',
         solved: '主机平民化加第三方生态虹吸，改写主机权力格局',
         limits: 'PS3 高价战略受挫，世代押注风险',
@@ -534,7 +746,10 @@ export const TRACKS = [
         ]
       },
       {
-        key: 'co-1996-valve', year: 1996, approx: false, title: 'Valve',
+        key: 'co-1996-valve',
+        year: 1996,
+        approx: false,
+        title: 'Valve',
         hardware: '90 年代后期 PC 游戏黄金期，互联网接入普及',
         solved: '从引擎产品走到数字发行平台（Steam），改写分发',
         limits: '半衰期主线长期缺席，平台垄断争议',
@@ -544,7 +759,10 @@ export const TRACKS = [
         ]
       },
       {
-        key: 'co-2006-riot', year: 2006, approx: false, title: 'Riot Games',
+        key: 'co-2006-riot',
+        year: 2006,
+        approx: false,
+        title: 'Riot Games',
         hardware: 'Web 时代社交电竞兴起，网吧是主战场',
         solved: '单品长线运营加电竞体系化，把一款游戏做成联赛',
         limits: '单品依赖，治理与平衡争议',
@@ -553,7 +771,10 @@ export const TRACKS = [
         ]
       },
       {
-        key: 'co-2012-mihoyo', year: 2012, approx: false, title: '米哈游',
+        key: 'co-2012-mihoyo',
+        year: 2012,
+        approx: false,
+        title: '米哈游',
         hardware: '智能手机 GPU 接近上世代主机，跨端分发就绪',
         solved: '跨端高品质加抽卡长线的全球样本，自研投入反哺品质',
         limits: '品类集中，抽卡付费争议',
@@ -565,143 +786,153 @@ export const TRACKS = [
   }
 ]
 
-// 互链关系：[源 key, 目标 key, 源侧注记（→ 催生/代表作…）, 目标侧注记（← 受…影响/是其代表作…）]
-export const RELATIONS = [
-  ['ga-1972-pong', 'co-1972-atari', 'Atari 以此起家', 'Pong 是其代表作'],
-  ['co-1972-atari', 'ga-1983-crash', '大崩溃的主角', '以 Atari 为震中'],
-  ['ga-1983-crash', 'co-1981-nintendo', '催生任天堂质控公约', '北美冰封给了任天堂机会'],
-  ['co-1981-nintendo', 'ga-1985-smb', '代表作：北美复兴之作', '任天堂的代表作'],
-  ['ga-1985-smb', 'gp-1985-platform', '确立平台跳跃方法论', '由《超级马里奥兄弟》定型'],
-  ['ga-1978-invaders', 'gp-1978-highscore', '催生高分榜竞争', '与《太空侵略者》同期定型'],
-  ['ga-1996-quake', 'en-1996-quake-engine', '作品孵化了引擎', '由《Quake》带出'],
-  ['co-1991-id', 'ga-1996-quake', '代表作：真 3D 对战', 'id 的代表作'],
-  ['co-1991-id', 'en-1993-doom', '引擎授权与 mod 生态的起点', 'id 引擎路线的起点'],
-  ['co-1991-blizzard', 'ga-2004-wow', '代表作：MMO 巅峰', '暴雪的代表作'],
-  ['ga-2004-wow', 'gp-2004-mmo-time', '确立时间投入型留存', '由《魔兽世界》普及'],
-  ['ga-2009-minecraft', 'ar-2012-pixel', '像素审美主流化', '《Minecraft》式的助推'],
-  ['hw-1996-voodoo', 'ar-1996-lowpoly', '低多边形美学的硬件条件', '依赖 3D 加速卡的普及'],
-  ['hw-1996-voodoo', 'en-1996-quake-engine', '硬件加速与引擎互相成就', '吃到 Voodoo 的硬件加速红利'],
-  ['hw-2001-shader', 'fe-2011-webgl', '着色器模型下放到浏览器', '浏览器可编程着色器源自 2001 年'],
-  ['hw-2001-shader', 'en-2004-source', '高清世代引擎的硬件前提', '可编程管线带来的视觉红利'],
-  ['hw-2001-shader', 'ar-2001-realism', '写实化的硬件前提', '写实化依赖可编程管线'],
-  ['hw-2005-multicore', 'be-2009-go', '多核需要并发友好的语言', 'Go 站在多核时代的起点上'],
-  ['hw-2007-iphone', 'ga-2016-pogo', '移动生态的硬件起点', 'LBS 玩法跑在 iPhone 生态上'],
-  ['hw-2007-iphone', 'gp-2006-f2p', '移动端成为免费模式主战场', '免费模式在移动端找到最大杠杆'],
-  ['hw-2018-rtx', 'en-2020-ue5', '光追与超分的硬件底座', 'UE5 的实时效果吃 RTX 红利'],
-  ['en-2020-ue5', 'ar-2020-fidelity', 'Nanite 抬高写实基线', '写实基线被 UE5 抬高'],
-  ['fe-2011-webgl', 'fe-2023-webgpu', '图形接口的下一站', 'WebGL 的继任者'],
-  ['en-2005-unity', 'ga-2020-genshin', '跨端品质的引擎底座', '深度定制 Unity 起家'],
-  ['gp-2006-f2p', 'ga-2020-genshin', '免费加抽卡的集大成者', '承接免费模式的商业化'],
-  ['co-2012-mihoyo', 'ga-2020-genshin', '代表作：跨端样本', '米哈游的代表作'],
-  ['co-2006-riot', 'gp-2009-lol', '代表作：MOBA 大众化', 'Riot 的代表作'],
-  ['co-1991-epic', 'en-2014-ue4-godot', 'UE4 免费转向的主角', 'Epic 推动的引擎免费化'],
-  ['co-1991-epic', 'gp-2017-battleroyale', '《堡垒之夜》定义赛季制大逃杀', '堡垒之夜的赛季通行证范式']
+const RELATIONS = [
+  ['hw-2001-shader', 'fe-2011-webgl', '催生 WebGL 着色器编程模型', '受可编程着色器硬件催生'],
+  ['hw-2001-shader', 'en-2004-source', '催生 Source 引擎着色器管线', '受可编程着色器硬件催生'],
+  ['hw-2001-shader', 'ar-2001-realism', '催生写实化渲染潮流', '受可编程着色器硬件催生'],
+  ['hw-1996-voodoo', 'ar-1996-lowpoly', '催生低多边形 3D 美术风格', '受消费级 3D 加速硬件催生'],
+  ['hw-1996-voodoo', 'en-1996-quake-engine', '催生 Quake 引擎硬件加速路线', '受 Voodoo 光栅化硬件催生'],
+  ['hw-2007-iphone', 'ga-2016-pogo', '催生 Pokémon GO LBS 玩法', '受智能手机 GPS 与 4G 普及催生'],
+  ['hw-2007-iphone', 'gp-2006-f2p', '催生 F2P 移动游戏商业模式', '受 App Store 分发与触屏交互催生'],
+  ['ga-1978-invaders', 'gp-1978-highscore', '催生高分榜与难度递增机制', '受 Space Invaders 商业验证催生'],
+  ['co-1981-nintendo', 'ga-1985-smb', '代表作超级马里奥兄弟', '任天堂质控公约下的平台范式之作'],
+  ['co-1981-nintendo', 'gp-1985-platform', '确立平台跳跃范式', '受任天堂 FC 硬件与质控催生'],
+  ['hw-2005-multicore', 'be-2009-go', '催生 Go 并发语言设计', '受多核普及与并发编程复杂度催生'],
+  ['en-2020-ue5', 'ar-2020-fidelity', '抬高高写实美术基线', '受 UE5 Nanite/Lumen 管线催生'],
+  ['hw-2018-rtx', 'en-2020-ue5', '支撑 UE5 实时光追管线', '受 RTX 硬件光追单元催生'],
+  ['hw-1999-geforce', 'en-1998-ue1', '硬件 T&L 支撑早期引擎管线', '受 GeForce 256 几何卸载催生'],
+  ['ga-1996-quake', 'en-1996-quake-engine', 'Quake 产品验证引擎架构', 'Quake 引擎即产品代码抽象而来'],
+  ['ga-2004-wow', 'gp-2004-mmo-time', '确立 MMO 时间投入制范式', '受 WoW 订阅制商业模式催生'],
+  ['ga-2009-minecraft', 'ar-2012-pixel', '催生像素复兴美学潮流', '受 Minecraft 方块美学大众化催生'],
+  ['ga-2016-pogo', 'hw-2007-iphone', '受智能手机 GPS 与 4G 普及影响', '催生 LBS+AR 大众化玩法'],
+  ['ga-2020-genshin', 'en-2005-unity', '受 Unity 跨端能力影响', '采用 Unity 实现跨端同一资产分发'],
+  ['ga-2020-genshin', 'gp-2006-f2p', '受 F2P 道具收费模式影响', '抽卡长线运营商业模式'],
+  ['ga-2020-genshin', 'co-2012-mihoyo', '米哈游代表作', '跨端开放世界全球样本'],
+  ['en-1993-doom', 'co-1991-id', 'id Software 代表作', 'Doom 引擎即产品代码抽象而来'],
+  ['en-1996-quake-engine', 'co-1991-id', 'id Software 代表作', 'Quake 引擎确立 C/S 分离架构'],
+  ['en-2014-ue4-godot', 'co-1991-epic', 'Epic 代表作', 'UE4 免费化与 Godot 开源同期'],
+  ['gp-2009-lol', 'co-2006-riot', 'Riot Games 代表作', 'MOBA 大众化与电竞体系化'],
+  ['gp-2017-battleroyale', 'co-1991-epic', 'Epic 代表作', '堡垒之夜赛季制 GaaS 标杆'],
+  ['hw-1989-sound-blaster', 'ga-1993-doom', '催生 PC 游戏音频标准', '受 Sound Blaster 采样音频催生'],
+  ['fe-2008-v8', 'be-2009-go', '催生高性能 JS 运行时与 Node.js 生态', '受 V8 JIT 编译催生'],
+  ['fe-2013-react', 'fe-2017-wasm', '前端工程化复杂度倒逼近原生方案', '受 React 生态与应用复杂度催生'],
+  ['be-2009-redis', 'gp-2009-lol', '支撑排行榜与实时匹配', '受 Redis ZSet 与高吞吐催生'],
+  ['be-2011-kafka', 'gp-2017-battleroyale', '支撑大规模事件流与回放', '受 Kafka 持久事件流催生'],
+  ['ar-2008-braid', 'co-1996-valve', 'Steam 平台分发独立游戏', '受数字发行降低门槛催生'],
+  ['ar-2016-stylized', 'ga-2016-pogo', '风格化渲染与 AR 融合', '受守望先锋 NPR 管线成熟催生'],
+  ['co-1972-atari', 'ga-1972-pong', 'Atari 代表作', 'Pong 开启街机产业'],
+  ['co-1972-atari', 'ga-1977-atari2600', 'Atari 代表作', '2600 开启卡带可换游戏生态'],
+  ['co-1982-ea', 'gp-1988-madden', 'EA 代表作', '体育授权年货模式起点'],
+  ['co-1993-sony', 'ga-1997-ff7', 'SCE 代表作', 'CD 电影化 RPG 与 PS 胜势'],
+  ['co-1996-valve', 'ga-1998-halflife', 'Valve 代表作', '叙事 FPS 与 mod 生态起点'],
+  ['co-1996-valve', 'gp-2003-steam', 'Valve 代表作', 'Steam 改写数字分发格局'],
+  ['co-2006-riot', 'ga-2009-lol', 'Riot 代表作', 'MOBA 大众化月活过亿'],
+  ['co-2012-mihoyo', 'ga-2020-genshin', '米哈游代表作', '跨端开放世界首年流水约 10 亿美元量级']
 ]
 
-export function findItem(key) {
-  for (const track of TRACKS) {
-    const item = track.items.find((i) => i.key === key)
-    if (item) return { track, item }
-  }
-  return null
-}
+const trackById = Object.fromEntries(TRACKS.map(t => [t.id, t]))
 
-// 双向装配：源侧 out、目标侧 in，保证「受 X 影响 / 催生 Y」永远成对出现
-for (const [srcKey, dstKey, outNote, inNote] of RELATIONS) {
-  const src = findItem(srcKey)
-  const dst = findItem(dstKey)
-  src.item.links = [...(src.item.links ?? []), { track: dst.track.id, key: dstKey, dir: 'out', note: outNote }]
-  dst.item.links = [...(dst.item.links ?? []), { track: src.track.id, key: srcKey, dir: 'in', note: inNote }]
-}
-
-// 模块级共享状态：聚焦轨与折叠态，概览轴与六个年代段实例同步
-export const store = reactive({ focus: null, collapsed: {} })
-
-export function toggleFocus(id) {
-  store.focus = store.focus === id ? null : id
-}
-
-export function toggleCollapse(id) {
-  store.collapsed[id] = !store.collapsed[id]
-}
+RELATIONS.forEach(([srcKey, dstKey, srcNote, dstNote]) => {
+  const srcTrackId = srcKey.split('-')[0]
+  const dstTrackId = dstKey.split('-')[0]
+  const srcTrack = trackById[srcTrackId]
+  const dstTrack = trackById[dstTrackId]
+  if (!srcTrack || !dstTrack) return
+  const srcItem = srcTrack.items.find(i => i.key === srcKey)
+  const dstItem = dstTrack.items.find(i => i.key === dstKey)
+  /* istanbul ignore if */
+  if (!srcItem || !dstItem) return
+  srcItem.links = srcItem.links || []
+  srcItem.links.push({ track: dstTrackId, key: dstKey, dir: 'out', note: srcNote })
+  dstItem.links = dstItem.links || []
+  dstItem.links.push({ track: srcTrackId, key: srcKey, dir: 'in', note: dstNote })
+})
 
 export function segmentOf(year) {
-  for (const seg of SEGMENTS) {
-    if (year >= seg.from && year <= seg.to) return seg
-  }
-  return year < SEGMENTS[0].from ? SEGMENTS[0] : SEGMENTS[SEGMENTS.length - 1]
+  if (year < 1970) return 's-1970s'
+  if (year > 2026) return 's-2020s'
+  const idx = Math.floor((year - 1970) / 10)
+  return SEGMENTS[Math.min(idx, SEGMENTS.length - 1)].id
 }
 
-export function keysOfTrack(id) {
-  const track = TRACKS.find((t) => t.id === id)
-  if (!track) return new Set()
-  return new Set(track.items.map((i) => i.key))
+export function itemsIn(decade) {
+  const seg = SEGMENTS.find(s => s.decade === decade)
+  if (!seg) return { from: 0, to: 0 }
+  return { from: seg.from, to: seg.to }
 }
 
-export function relatedTo(item, keys) {
-  if (!item.links) return false
-  return item.links.some((l) => keys.has(l.key))
+import { reactive } from 'vue'
+
+export const store = reactive({
+  focus: null,
+  collapsed: {}
+})
+
+export function toggleFocus(trackId) {
+  store.focus = store.focus === trackId ? null : trackId
 }
 
-export function overlaps(aFrom, aTo, bFrom, bTo) {
-  return aFrom <= bTo && aTo >= bFrom
+export function toggleCollapse(trackId) {
+  store.collapsed[trackId] = !store.collapsed[trackId]
 }
 
-export function fitView(from, to) {
-  const span = Math.min(Math.max(to - from, AXIS.minSpan), AXIS.maxSpan)
-  const lo = Math.min(Math.max(from, AXIS.minYear), AXIS.maxYear - span)
-  return { from: Math.round(lo), to: Math.round(lo + span) }
-}
-
-export function pctFor(year, view) {
-  return ((year - view.from) / (view.to - view.from)) * 100
-}
-
-export function dotTitle(d) {
-  return (d.approx ? '约' : '') + d.year + ' · ' + d.title
-}
-
-export function linkTitle(l) {
-  const hit = findItem(l.key)
-  const name = hit ? hit.item.title : l.key
-  return (l.dir === 'out' ? '→ ' : '← ') + name + ' · ' + l.note
+export function relatedKeys(focusTrackId, item) {
+  if (!item.links) return []
+  return item.links
+    .filter(l => l.track === focusTrackId)
+    .map(l => l.key)
 }
 
 export function prefersReduced(win = globalThis) {
   if (typeof win.matchMedia !== 'function') return false
-  return win.matchMedia('(prefers-reduced-motion: reduce)').matches === true
+  return win.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
 export async function loadGsap() {
-  const [g, s] = await Promise.all([import('gsap'), import('gsap/ScrollTrigger')])
-  return { gsap: g.gsap, ScrollTrigger: s.ScrollTrigger }
+  /* istanbul ignore next */
+  const { gsap } = await import('gsap')
+  /* istanbul ignore next */
+  const { ScrollTrigger } = await import('gsap/ScrollTrigger')
+  gsap.registerPlugin(ScrollTrigger)
+  return { gsap, ScrollTrigger }
 }
 
-// 卡片随滚动淡入：reduced-motion 直接跳过；动画库动态加载，模块顶层零依赖（SSR 安全）
-export function fadeCardsOnScroll(el, { load = loadGsap, reduced = prefersReduced() } = {}) {
-  if (reduced) return null
-  return load().then(({ gsap, ScrollTrigger }) => {
-    gsap.registerPlugin(ScrollTrigger)
-    return gsap.from(el.querySelectorAll('[data-tl-card]'), {
-      opacity: 0,
-      y: 14,
-      duration: 0.45,
-      stagger: 0.04,
-      ease: 'power1.out',
-      scrollTrigger: { trigger: el, start: 'top 85%', once: true }
-    })
+export async function fadeCardsOnScroll(el, { load = loadGsap, reduced = prefersReduced() } = {}) {
+  if (reduced) return
+  const { gsap, ScrollTrigger } = await load()
+  const cards = el.querySelectorAll('[data-tl-card]')
+  if (!cards.length) return
+  gsap.from(cards, {
+    opacity: 0,
+    y: 20,
+    duration: 0.4,
+    stagger: 0.05,
+    scrollTrigger: {
+      trigger: el,
+      start: 'top 85%',
+      once: true
+    }
   })
 }
 
-// 概览轴游标随页面滚动 scrub 推进；reduced-motion 或元素缺失直接跳过
-export function initAxisCursor(el, { load = loadGsap, reduced = prefersReduced() } = {}) {
-  if (reduced || !el) return null
-  return load().then(({ gsap, ScrollTrigger }) => {
-    gsap.registerPlugin(ScrollTrigger)
-    return gsap.fromTo(
-      el,
-      { left: '0%' },
-      { left: '100%', ease: 'none', scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 0.4 } }
-    )
+export async function initAxisCursor(axisEl, decadeEls, { load = loadGsap, reduced = prefersReduced() } = {}) {
+  if (reduced) return
+  const { gsap, ScrollTrigger } = await load()
+  const cursor = axisEl?.querySelector('.tl-axis-cursor')
+  if (!cursor) return
+  decadeEls.forEach(decadeEl => {
+    const id = decadeEl.id
+    const seg = SEGMENTS.find(s => s.id === id)
+    if (!seg) return
+    ScrollTrigger.create({
+      trigger: decadeEl,
+      start: 'top center',
+      end: 'bottom center',
+      onToggle: self => {
+        if (self.isActive) {
+          gsap.to(cursor, { left: `${((seg.from - AXIS.minYear) / (AXIS.maxYear - AXIS.minYear)) * 100}%`, duration: 0.3 })
+        }
+      }
+    })
   })
 }
