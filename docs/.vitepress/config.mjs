@@ -192,6 +192,45 @@ export default {
         }
       ],
 
+      '/production/': [
+        {
+          text: '版本发布与研发管线',
+          collapsed: false,
+          items: [
+            { text: '版本发布与研发管线', link: '/production/' },
+            { text: '版本体系总览', link: '/production/01' },
+            { text: '客户端、资源、配置与协议版本', link: '/production/02' },
+            { text: '灰度、回滚与兼容窗口', link: '/production/03' },
+            { text: '前后端协同与平台约束', link: '/production/04' },
+            { text: '配置表与数据驱动管线', link: '/production/05' },
+            { text: '研发协作与发布工作流', link: '/production/06' }
+          ]
+        },
+        {
+          text: '配置管线与研发协作',
+          collapsed: false,
+          items: [
+            { text: '配置管线与研发协作', link: '/production/config/' },
+            { text: '配置表驱动开发', link: '/production/config/01' },
+            { text: '表结构设计与拆分', link: '/production/config/02' },
+            { text: '校验、导出与代码生成', link: '/production/config/03' },
+            { text: '工作流、事故防呆与协作', link: '/production/config/04' }
+          ]
+        },
+        {
+          text: '选型、实践与复盘',
+          collapsed: false,
+          items: [
+            { text: '选型、实践与复盘', link: '/production/retro/' },
+            { text: '引擎、语言与技术选型', link: '/production/retro/01' },
+            { text: '架构模式与选型对照', link: '/production/retro/02' },
+            { text: '关键问题清单', link: '/production/retro/03' },
+            { text: '分析框架、误区与失败案例', link: '/production/retro/04' },
+            { text: '个人查漏补缺清单', link: '/production/retro/05' }
+          ]
+        }
+      ],
+
       '/networking/': [
         {
           text: '网络与接入协议',
@@ -369,13 +408,13 @@ export default {
           text: '10. 版本发布、配置与研发管线',
           collapsed: true,
           items: [
-            { text: '版本发布与研发管线', link: '/12-versioning-release/' },
-            { text: '版本体系总览', link: '/12-versioning-release/01' },
-            { text: '客户端、资源、配置与协议版本', link: '/12-versioning-release/02' },
-            { text: '灰度、回滚与兼容窗口', link: '/12-versioning-release/03' },
-            { text: '前后端协同与平台约束', link: '/12-versioning-release/04' },
-            { text: '配置表与数据驱动管线', link: '/12-versioning-release/05' },
-            { text: '研发协作与发布工作流', link: '/12-versioning-release/06' }
+            { text: '版本发布与研发管线', link: '/production/' },
+            { text: '版本体系总览', link: '/production/01' },
+            { text: '客户端、资源、配置与协议版本', link: '/production/02' },
+            { text: '灰度、回滚与兼容窗口', link: '/production/03' },
+            { text: '前后端协同与平台约束', link: '/production/04' },
+            { text: '配置表与数据驱动管线', link: '/production/05' },
+            { text: '研发协作与发布工作流', link: '/production/06' }
           ]
         },
         {
@@ -463,12 +502,12 @@ export default {
           text: '18. 选型、实践、复盘与清单',
           collapsed: true,
           items: [
-            { text: '选型、实践与复盘', link: '/23-practice-retrospective/' },
-            { text: '引擎、语言与技术选型', link: '/23-practice-retrospective/01' },
-            { text: '架构模式与选型对照', link: '/23-practice-retrospective/02' },
-            { text: '关键问题清单', link: '/23-practice-retrospective/03' },
-            { text: '分析框架、误区与失败案例', link: '/23-practice-retrospective/04' },
-            { text: '个人查漏补缺清单', link: '/23-practice-retrospective/05' }
+            { text: '选型、实践与复盘', link: '/production/retro/' },
+            { text: '引擎、语言与技术选型', link: '/production/retro/01' },
+            { text: '架构模式与选型对照', link: '/production/retro/02' },
+            { text: '关键问题清单', link: '/production/retro/03' },
+            { text: '分析框架、误区与失败案例', link: '/production/retro/04' },
+            { text: '个人查漏补缺清单', link: '/production/retro/05' }
           ]
         },
         {
@@ -540,11 +579,11 @@ export default {
           text: '附录 A3. 配置表、数据驱动与研发协作',
           collapsed: true,
           items: [
-            { text: '配置管线与研发协作', link: '/17-config-pipeline/' },
-            { text: '配置表驱动开发', link: '/17-config-pipeline/01' },
-            { text: '表结构设计与拆分', link: '/17-config-pipeline/02' },
-            { text: '校验、导出与代码生成', link: '/17-config-pipeline/03' },
-            { text: '工作流、事故防呆与协作', link: '/17-config-pipeline/04' }
+            { text: '配置管线与研发协作', link: '/production/config/' },
+            { text: '配置表驱动开发', link: '/production/config/01' },
+            { text: '表结构设计与拆分', link: '/production/config/02' },
+            { text: '校验、导出与代码生成', link: '/production/config/03' },
+            { text: '工作流、事故防呆与协作', link: '/production/config/04' }
           ]
         },
         {
