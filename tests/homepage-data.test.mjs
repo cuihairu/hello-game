@@ -119,14 +119,14 @@ describe('homepage 数据层（真实 config 集成）', () => {
     }
   })
 
-  it('知识库目录：20 章 + 5 附录，章级链接全部对应真实文件', () => {
+  it('知识库目录：20 章 + 6 附录，章级链接全部对应真实文件', () => {
     const chapters = buildKbChapters(kb)
     expect(chapters[0]).toEqual({ num: '00', title: '如何阅读这套知识库', link: '/00-reading-guide/' })
     expect(homepageStats(tutorial, kb).kbChapterCount).toBe(20)
-    expect(homepageStats(tutorial, kb).appendixCount).toBe(5)
-    // 附录编号从分组标题取「A1」…「A5」
+    expect(homepageStats(tutorial, kb).appendixCount).toBe(6)
+    // 附录编号从分组标题取「A1」…「A6」
     const appendixNums = chapters.filter(c => /^A\d/.test(c.num)).map(c => c.num)
-    expect(appendixNums).toEqual(['A1', 'A2', 'A3', 'A4', 'A5'])
+    expect(appendixNums).toEqual(['A1', 'A2', 'A3', 'A4', 'A5', 'A6'])
     for (const ch of chapters) {
       expect(existsSync(linkToFile(ch.link)), `缺失文件: ${ch.link}`).toBe(true)
     }

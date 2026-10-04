@@ -445,6 +445,13 @@ export default {
             { text: '编程语言与技术栈地图', link: '/22-engine-language-tooling/02' },
             { text: '团队能力、项目类型与工具生态', link: '/22-engine-language-tooling/03' }
           ]
+        },
+        {
+          text: '附录 A6. 游戏后端引擎源码解析',
+          collapsed: true,
+          items: [
+            { text: 'Skynet：C 内核 + Lua Actor', link: '/27-backend-engines/01-skynet' }
+          ]
         }
       ]
     },
