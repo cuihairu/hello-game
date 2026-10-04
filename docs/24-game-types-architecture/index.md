@@ -90,7 +90,7 @@
 
 **技术选型**：
 - 语言：Python/Node.js/Go
-- 框架：Skynet/自研轻量框架
+- 框架：Skynet/自建轻量框架
 - 数据库：MySQL/SQLite
 
 ---
@@ -110,7 +110,7 @@
 
 **技术选型**：
 - 语言：C++/Java/Go
-- 框架：MMORPG框架（BigWorld/自研）
+- 框架：MMORPG框架（BigWorld/自建）
 - 数据库：MySQL（分服分库）
 - 缓存：Redis（每服独立）
 

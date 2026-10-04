@@ -50,7 +50,7 @@
 │   └── Cocos Creator（小游戏+手游一体化）
 │
 ├── PC/主机 3A
-│   ├── Unreal Engine 5（画面顶级）
+│   ├── Unreal Engine 5（画面上限高）
 │   └── Unity（中等品质，效率高）
 │
 └── 独立游戏
@@ -323,13 +323,13 @@ Godot 是商业引擎之外存在感持续上升的一支：MIT 协议完全开�
 Godot 的高层多人能力是 **MultiplayerAPI**：传输由 **MultiplayerPeer** 的实现提供，内置 ENet（UDP 加可靠层）、WebSocket、WebRTC 三种实现，也可用 StreamPeer 自接；逻辑侧用 `@rpc` 注解声明远程调用（区分可靠/不可靠、any_peer/authority），配合 MultiplayerSpawner 与 MultiplayerSynchronizer 做节点生成和属性同步。它的默认心智是**房间对等架构**：peer 1 是主机，既可以当专用服务器，也可以由某个玩家的客户端充当，其余 peer 连向它——一局一服的房间模型，天然匹配合作/竞技小局与 P2P 托管，也是 1.1 节「权威归服务端」边界经常失守的架构：
 
 ```text
-房间对等（MultiplayerAPI 默认）         自定义权威（自研服务端）
+房间对等（MultiplayerAPI 默认）         自定义权威（自建服务端）
 peer 1 = 主机（玩家客户端或 Godot 专服）  Go/Java 权威服务端（普通 WS/TCP 入口）
 peer 2/3/4 连向主机，流量可 P2P 直连      各客户端连服务端，绕开 MultiplayerAPI
 RPC 帧与 peer 握手 = Godot 私有格式       协议帧 = Protobuf/JSON，两端各自编解码
 ```
 
-对接自定义权威服务端时结论明确：**绕开 MultiplayerAPI，按普通 WebSocket/TCP 客户端对接**。原因有二：其一，高层多人协议（peer 握手、RPC 帧）是 Godot 私有格式，Go/Java 侧没有对等实现；其二，ENet 的可靠 UDP 层同样是私有协议，与自研 KCP 网关不互通——让服务端讲 ENet 是反向适配，正确方向是服务端入口收敛 WebSocket/TCP（强实时另配 KCP，第 4 章）。绕开之后，8.3 节的四层结构（传输 → 协议 → 分发 → 逻辑）自己搭一遍即可；平台后台策略对连接的影响也回到 2.1 节的老问题——suspend/resume 显式挂起与引擎无关，Godot 项目同样适用。
+对接自定义权威服务端时结论明确：**绕开 MultiplayerAPI，按普通 WebSocket/TCP 客户端对接**。原因有二：其一，高层多人协议（peer 握手、RPC 帧）是 Godot 私有格式，Go/Java 侧没有对等实现；其二，ENet 的可靠 UDP 层同样是私有协议，与自建 KCP 网关不互通——让服务端讲 ENet 是反向适配，正确方向是服务端入口收敛 WebSocket/TCP（强实时另配 KCP，第 4 章）。绕开之后，8.3 节的四层结构（传输 → 协议 → 分发 → 逻辑）自己搭一遍即可；平台后台策略对连接的影响也回到 2.1 节的老问题——suspend/resume 显式挂起与引擎无关，Godot 项目同样适用。
 
 ### 5.2 协议对接
 
@@ -339,7 +339,7 @@ RPC 帧与 peer 握手 = Godot 私有格式       协议帧 = Protobuf/JSON，�
 
 | 问题 | 原因 | 服务端应对策略 |
 |------|------|--------------|
-| 高层 RPC 连不上自研服务端 | MultiplayerAPI 默认 peer 架构，peer 1 即服务器 | 客户端绕开高层 API，按普通 WebSocket/TCP 对接（8.3 节标准结构） |
+| 高层 RPC 连不上自建服务端 | MultiplayerAPI 默认 peer 架构，peer 1 即服务器 | 客户端绕开高层 API，按普通 WebSocket/TCP 对接（8.3 节标准结构） |
 | 服务端被迫实现 ENet | ENet 可靠层是私有协议，Go 侧无成熟实现 | 服务端入口收敛 WebSocket/TCP（强实时另配 KCP），不做反向适配 |
 | `bytes_to_var` 解析失败或被注入 | Variant 序列化是引擎私有格式且可嵌对象 | 跨端协议用 Protobuf/JSON；Variant 字节不出引擎边界 |
 | 大版本升级协议错位 | Godot 4.x 大版本间 GDScript 与序列化有破坏性变更 | 协议自带版本字段 + 最低可玩版本拦截（8.6 节） |
@@ -407,7 +407,7 @@ LayaAir 的网络层与 Cocos 同构：引擎只提供基础件——Socket 封�
 | **MessagePack** | ★★★★ | ★★★ | ✓ | ✓ | 中型游戏 |
 | **JSON** | ★★ | ★★ | ✗ | ✗ | 管理接口/原型 |
 
-大型游戏用 Protobuf，极致性能场景用 FlatBuffers，管理后台和原型用 JSON——**按链路选格式，不搞一刀切**（详细对比与兼容性纪律见第 4 章）。
+大型游戏用 Protobuf，低延迟热路径用 FlatBuffers，管理后台和原型用 JSON——**按链路选格式，不搞一刀切**（详细对比与兼容性纪律见第 4 章）。
 
 ### 8.2 客户端-服务端交互模式
 
