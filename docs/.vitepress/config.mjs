@@ -129,6 +129,31 @@ export default {
         }
       ],
 
+      '/database/': [
+        {
+          text: '数据建模与数据库',
+          collapsed: false,
+          items: [
+            { text: '数据建模与数据库', link: '/database/' },
+            { text: '游戏数据分类与建模', link: '/database/01' },
+            { text: '关系型与非关系型数据库', link: '/database/02' },
+            { text: '事务、一致性与分库分表', link: '/database/03' },
+            { text: '数据同步、冷热分层与归档', link: '/database/04' }
+          ]
+        },
+        {
+          text: '缓存、中间件与基础设施',
+          collapsed: false,
+          items: [
+            { text: '缓存、中间件与基础设施', link: '/database/cache/' },
+            { text: 'Redis、排行榜与锁', link: '/database/cache/01' },
+            { text: 'singleflight、MQ 与事件流', link: '/database/cache/02' },
+            { text: '注册中心、负载均衡与一致性哈希', link: '/database/cache/03' },
+            { text: '对象存储、CDN 与资源分发', link: '/database/cache/04' }
+          ]
+        }
+      ],
+
       '/networking/': [
         {
           text: '网络与接入协议',
@@ -319,22 +344,22 @@ export default {
           text: '11. 数据建模与数据库',
           collapsed: true,
           items: [
-            { text: '数据建模与数据库', link: '/13-data-database/' },
-            { text: '游戏数据分类与建模', link: '/13-data-database/01' },
-            { text: '关系型与非关系型数据库', link: '/13-data-database/02' },
-            { text: '事务、一致性与分库分表', link: '/13-data-database/03' },
-            { text: '数据同步、冷热分层与归档', link: '/13-data-database/04' }
+            { text: '数据建模与数据库', link: '/database/' },
+            { text: '游戏数据分类与建模', link: '/database/01' },
+            { text: '关系型与非关系型数据库', link: '/database/02' },
+            { text: '事务、一致性与分库分表', link: '/database/03' },
+            { text: '数据同步、冷热分层与归档', link: '/database/04' }
           ]
         },
         {
           text: '12. 缓存、中间件与基础设施',
           collapsed: true,
           items: [
-            { text: '缓存、中间件与基础设施', link: '/14-cache-middleware/' },
-            { text: 'Redis、排行榜与锁', link: '/14-cache-middleware/01' },
-            { text: 'singleflight、MQ 与事件流', link: '/14-cache-middleware/02' },
-            { text: '注册中心、负载均衡与一致性哈希', link: '/14-cache-middleware/03' },
-            { text: '对象存储、CDN 与资源分发', link: '/14-cache-middleware/04' }
+            { text: '缓存、中间件与基础设施', link: '/database/cache/' },
+            { text: 'Redis、排行榜与锁', link: '/database/cache/01' },
+            { text: 'singleflight、MQ 与事件流', link: '/database/cache/02' },
+            { text: '注册中心、负载均衡与一致性哈希', link: '/database/cache/03' },
+            { text: '对象存储、CDN 与资源分发', link: '/database/cache/04' }
           ]
         },
         {

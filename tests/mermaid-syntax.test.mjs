@@ -13,7 +13,7 @@ function walkMd(dir) {
   for (const name of readdirSync(dir, { withFileTypes: true })) {
     const p = resolve(dir, name.name)
     if (name.isDirectory()) {
-      if (name.name === 'dist' || name.name === 'cache' || name.name === 'public') continue
+      if (name.name === '.vitepress') continue
       out.push(...walkMd(p))
     } else if (name.name.endsWith('.md')) {
       out.push(p)

@@ -55,10 +55,12 @@ describe('site config', () => {
       '/24-game-types-architecture/',
       '/server/',
       '/system/',
+      '/database/',
       '/networking/',
       '/'
     ])
-    for (const key of ['/server/', '/system/', '/networking/']) {
+    for (const key of ['/server/', '/system/',
+      '/database/', '/networking/']) {
       const links = collectLinks(config.themeConfig.sidebar[key])
       expect(links.length).toBeGreaterThan(0)
       for (const link of links) {
