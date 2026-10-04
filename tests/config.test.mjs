@@ -54,13 +54,15 @@ describe('site config', () => {
     expect(Object.keys(config.themeConfig.sidebar)).toEqual([
       '/24-game-types-architecture/',
       '/server/',
+      '/networking/',
       '/'
     ])
-    const graph = config.themeConfig.sidebar['/server/']
-    const links = collectLinks(graph)
-    expect(links.length).toBeGreaterThan(0)
-    for (const link of links) {
-      expect(existsSync(linkToFile(link)), `缺失文件: ${link}`).toBe(true)
+    for (const key of ['/server/', '/networking/']) {
+      const links = collectLinks(config.themeConfig.sidebar[key])
+      expect(links.length).toBeGreaterThan(0)
+      for (const link of links) {
+        expect(existsSync(linkToFile(link)), `缺失文件: ${link}`).toBe(true)
+      }
     }
   })
 

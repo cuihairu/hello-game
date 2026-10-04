@@ -117,6 +117,36 @@ export default {
         }
       ],
 
+      '/networking/': [
+        {
+          text: '网络与接入协议',
+          collapsed: false,
+          items: [
+            { text: '网络与接入协议', link: '/networking/' },
+            { text: '游戏网络基础', link: '/networking/01' },
+            { text: 'I/O 模型与事件通知机制', link: '/networking/02' },
+            { text: '传输层与接入协议选择', link: '/networking/03' },
+            { text: '数据帧与协议契约', link: '/networking/04' },
+            { text: '消息模式与事件分发', link: '/networking/05' },
+            { text: '可靠性、顺序与兼容性', link: '/networking/06' },
+            { text: '房间广播、弱网与国内网络环境', link: '/networking/07' }
+          ]
+        },
+        {
+          text: '消息系统与进程间通信',
+          collapsed: false,
+          items: [
+            { text: '消息系统与进程间通信', link: '/networking/ipc/' },
+            { text: 'IPC 基础与场景边界', link: '/networking/ipc/01' },
+            { text: '通信模式', link: '/networking/ipc/02' },
+            { text: '主链路与外围链路差异', link: '/networking/ipc/03' },
+            { text: '低延迟与高吞吐取舍', link: '/networking/ipc/04' },
+            { text: '消息语义、幂等与顺序', link: '/networking/ipc/05' },
+            { text: '如何选通信方案', link: '/networking/ipc/06' }
+          ]
+        }
+      ],
+
       '/': [
         {
           text: '导读',
@@ -173,14 +203,14 @@ export default {
           text: '3. 网络与接入协议',
           collapsed: true,
           items: [
-            { text: '网络与接入协议', link: '/03-network/' },
-            { text: '游戏网络基础', link: '/03-network/01' },
-            { text: 'I/O 模型与事件通知机制', link: '/03-network/02' },
-            { text: '传输层与接入协议选择', link: '/03-network/03' },
-            { text: '数据帧与协议契约', link: '/03-network/04' },
-            { text: '消息模式与事件分发', link: '/03-network/05' },
-            { text: '可靠性、顺序与兼容性', link: '/03-network/06' },
-            { text: '房间广播、弱网与国内网络环境', link: '/03-network/07' }
+            { text: '网络与接入协议', link: '/networking/' },
+            { text: '游戏网络基础', link: '/networking/01' },
+            { text: 'I/O 模型与事件通知机制', link: '/networking/02' },
+            { text: '传输层与接入协议选择', link: '/networking/03' },
+            { text: '数据帧与协议契约', link: '/networking/04' },
+            { text: '消息模式与事件分发', link: '/networking/05' },
+            { text: '可靠性、顺序与兼容性', link: '/networking/06' },
+            { text: '房间广播、弱网与国内网络环境', link: '/networking/07' }
           ]
         },
         {
@@ -228,13 +258,13 @@ export default {
           text: '7. 消息系统与进程间通信',
           collapsed: true,
           items: [
-            { text: '消息系统与进程间通信', link: '/07-ipc-messaging/' },
-            { text: 'IPC 基础与场景边界', link: '/07-ipc-messaging/01' },
-            { text: '通信模式', link: '/07-ipc-messaging/02' },
-            { text: '主链路与外围链路差异', link: '/07-ipc-messaging/03' },
-            { text: '低延迟与高吞吐取舍', link: '/07-ipc-messaging/04' },
-            { text: '消息语义、幂等与顺序', link: '/07-ipc-messaging/05' },
-            { text: '如何选通信方案', link: '/07-ipc-messaging/06' }
+            { text: '消息系统与进程间通信', link: '/networking/ipc/' },
+            { text: 'IPC 基础与场景边界', link: '/networking/ipc/01' },
+            { text: '通信模式', link: '/networking/ipc/02' },
+            { text: '主链路与外围链路差异', link: '/networking/ipc/03' },
+            { text: '低延迟与高吞吐取舍', link: '/networking/ipc/04' },
+            { text: '消息语义、幂等与顺序', link: '/networking/ipc/05' },
+            { text: '如何选通信方案', link: '/networking/ipc/06' }
           ]
         },
         {
