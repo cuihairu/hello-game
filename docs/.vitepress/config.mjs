@@ -107,6 +107,13 @@ export default {
           items: [
             { text: 'AOI：兴趣区域', link: '/server/aoi' }
           ]
+        },
+        {
+          text: '源码解析',
+          collapsed: false,
+          items: [
+            { text: 'Skynet：C 内核 + Lua Actor', link: '/server/skynet' }
+          ]
         }
       ],
 
@@ -460,7 +467,7 @@ export default {
           text: '附录 A6. 游戏后端引擎源码解析',
           collapsed: true,
           items: [
-            { text: 'Skynet：C 内核 + Lua Actor', link: '/27-backend-engines/01-skynet' }
+            { text: 'Skynet：C 内核 + Lua Actor', link: '/server/skynet' }
           ]
         }
       ]
