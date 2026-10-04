@@ -8,13 +8,13 @@
 
 ## 本章文章
 
-- [数值策划的工作与口径](/26-design-numerics/01)
-- [战斗数值与伤害公式族](/26-design-numerics/02)
-- [成长曲线模型](/26-design-numerics/03)
-- [经济循环与产出消耗](/26-design-numerics/04)
-- [掉落与概率设计](/26-design-numerics/05)
-- [商业化数值示例模型](/26-design-numerics/06)
-- [关卡难度与新手节奏](/26-design-numerics/07)
-- [数值书单与资料](/26-design-numerics/08)
+- [数值策划的工作与口径](/numerical/01)
+- [战斗数值与伤害公式族](/numerical/02)
+- [成长曲线模型](/numerical/03)
+- [经济循环与产出消耗](/numerical/04)
+- [掉落与概率设计](/numerical/05)
+- [商业化数值示例模型](/numerical/06)
+- [关卡难度与新手节奏](/numerical/07)
+- [数值书单与资料](/numerical/08)
 
 建议阅读顺序即编号顺序：01 定口径，02/03 是两条主干（战斗与成长），04/05 是两个系统（经济与随机），06/07 是两类体验调参（付费与难度），08 是延伸阅读。
