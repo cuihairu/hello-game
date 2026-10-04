@@ -30,7 +30,7 @@ describe('site config', () => {
   it('基础站点元信息', () => {
     expect(config.title).toBe('游戏知识体系')
     expect(config.description).toBe(
-      '系统化的游戏开发知识体系——后端为主场，覆盖引擎与客户端、网络同步、数据运营与安全'
+      '开源的、面向个人开发者的游戏开发知识图谱——覆盖设计、客户端、服务器、数值、美术、工具与运营，用成熟商业游戏与成熟开源项目连接知识节点'
     )
     expect(config.lang).toBe('zh-CN')
     expect(config.base).toBe('/hello-game/')
@@ -50,11 +50,18 @@ describe('site config', () => {
     expect(external).toHaveLength(0)
   })
 
-  it('双书结构：sidebar 有教程与知识库两个入口', () => {
+  it('知识图谱新树入口', () => {
     expect(Object.keys(config.themeConfig.sidebar)).toEqual([
       '/24-game-types-architecture/',
+      '/server/',
       '/'
     ])
+    const graph = config.themeConfig.sidebar['/server/']
+    const links = collectLinks(graph)
+    expect(links.length).toBeGreaterThan(0)
+    for (const link of links) {
+      expect(existsSync(linkToFile(link)), `缺失文件: ${link}`).toBe(true)
+    }
   })
 
   it('教程 sidebar 覆盖 21 讲且每个链接对应真实文件', () => {

@@ -2,7 +2,7 @@
 // 首页 index.md 会把本文件作为数据源引入 client bundle，故不 import vitepress 包。
 export default {
   title: '游戏知识体系',
-  description: '系统化的游戏开发知识体系——后端为主场，覆盖引擎与客户端、网络同步、数据运营与安全',
+  description: '开源的、面向个人开发者的游戏开发知识图谱——覆盖设计、客户端、服务器、数值、美术、工具与运营，用成熟商业游戏与成熟开源项目连接知识节点',
   lang: 'zh-CN',
   base: '/hello-game/',
   cleanUrls: true,
@@ -96,6 +96,16 @@ export default {
             { text: '19 客户端架构与性能基础', link: '/24-game-types-architecture/19-client-architecture' },
             { text: '20 游戏测试与质量保障', link: '/24-game-types-architecture/20-game-testing' },
             { text: '21 音频与美术管线协作', link: '/24-game-types-architecture/21-art-audio-pipeline' }
+          ]
+        }
+      ],
+
+      '/server/': [
+        {
+          text: '多人模型',
+          collapsed: false,
+          items: [
+            { text: 'AOI：兴趣区域', link: '/server/aoi' }
           ]
         }
       ],
