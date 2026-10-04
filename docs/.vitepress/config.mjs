@@ -154,6 +154,44 @@ export default {
         }
       ],
 
+      '/client/': [
+        {
+          text: '客户端架构与引擎体系',
+          collapsed: false,
+          items: [
+            { text: '客户端架构与引擎体系', link: '/client/' },
+            { text: '客户端技术栈与引擎', link: '/client/01' },
+            { text: '前后端边界与网络层', link: '/client/02' },
+            { text: '资源系统与工具链', link: '/client/03' },
+            { text: '脚本语言与 ECS', link: '/client/04' },
+            { text: 'AI 在客户端与游戏系统中的应用场景', link: '/client/05' }
+          ]
+        },
+        {
+          text: 'Web 游戏前端体系',
+          collapsed: false,
+          items: [
+            { text: 'Web 游戏前端体系', link: '/client/web/' },
+            { text: 'H5 与 Canvas 2D 渲染基础', link: '/client/web/01' },
+            { text: 'WebGL 与三维渲染入门', link: '/client/web/02' },
+            { text: '游戏引擎与 Cocos Creator', link: '/client/web/03' },
+            { text: '游戏 UI 体系', link: '/client/web/04' },
+            { text: '小游戏平台与浏览器环境', link: '/client/web/05' },
+            { text: '客户端内部分层：渲染、逻辑与资源', link: '/client/web/06' }
+          ]
+        },
+        {
+          text: '引擎、语言与工具生态',
+          collapsed: false,
+          items: [
+            { text: '引擎、语言与工具生态', link: '/client/engines/' },
+            { text: '引擎选择与商业模式', link: '/client/engines/01' },
+            { text: '编程语言与技术栈地图', link: '/client/engines/02' },
+            { text: '团队能力、项目类型与工具生态', link: '/client/engines/03' }
+          ]
+        }
+      ],
+
       '/networking/': [
         {
           text: '网络与接入协议',
@@ -308,12 +346,12 @@ export default {
           text: '8. 客户端架构与引擎体系',
           collapsed: true,
           items: [
-            { text: '客户端架构与引擎体系', link: '/10-client-engine-runtime/' },
-            { text: '客户端技术栈与引擎', link: '/10-client-engine-runtime/01' },
-            { text: '前后端边界与网络层', link: '/10-client-engine-runtime/02' },
-            { text: '资源系统与工具链', link: '/10-client-engine-runtime/03' },
-            { text: '脚本语言与 ECS', link: '/10-client-engine-runtime/04' },
-            { text: 'AI 在客户端与游戏系统中的应用场景', link: '/10-client-engine-runtime/05' }
+            { text: '客户端架构与引擎体系', link: '/client/' },
+            { text: '客户端技术栈与引擎', link: '/client/01' },
+            { text: '前后端边界与网络层', link: '/client/02' },
+            { text: '资源系统与工具链', link: '/client/03' },
+            { text: '脚本语言与 ECS', link: '/client/04' },
+            { text: 'AI 在客户端与游戏系统中的应用场景', link: '/client/05' }
           ]
         },
         {
@@ -437,13 +475,13 @@ export default {
           text: '19. Web 游戏前端体系',
           collapsed: true,
           items: [
-            { text: 'Web 游戏前端体系', link: '/25-web-frontend/' },
-            { text: 'H5 与 Canvas 2D 渲染基础', link: '/25-web-frontend/01' },
-            { text: 'WebGL 与三维渲染入门', link: '/25-web-frontend/02' },
-            { text: '游戏引擎与 Cocos Creator', link: '/25-web-frontend/03' },
-            { text: '游戏 UI 体系', link: '/25-web-frontend/04' },
-            { text: '小游戏平台与浏览器环境', link: '/25-web-frontend/05' },
-            { text: '客户端内部分层：渲染、逻辑与资源', link: '/25-web-frontend/06' }
+            { text: 'Web 游戏前端体系', link: '/client/web/' },
+            { text: 'H5 与 Canvas 2D 渲染基础', link: '/client/web/01' },
+            { text: 'WebGL 与三维渲染入门', link: '/client/web/02' },
+            { text: '游戏引擎与 Cocos Creator', link: '/client/web/03' },
+            { text: '游戏 UI 体系', link: '/client/web/04' },
+            { text: '小游戏平台与浏览器环境', link: '/client/web/05' },
+            { text: '客户端内部分层：渲染、逻辑与资源', link: '/client/web/06' }
           ]
         },
         {
@@ -524,10 +562,10 @@ export default {
           text: '附录 A5. 引擎选择、语言地图与工具生态',
           collapsed: true,
           items: [
-            { text: '引擎、语言与工具生态', link: '/22-engine-language-tooling/' },
-            { text: '引擎选择与商业模式', link: '/22-engine-language-tooling/01' },
-            { text: '编程语言与技术栈地图', link: '/22-engine-language-tooling/02' },
-            { text: '团队能力、项目类型与工具生态', link: '/22-engine-language-tooling/03' }
+            { text: '引擎、语言与工具生态', link: '/client/engines/' },
+            { text: '引擎选择与商业模式', link: '/client/engines/01' },
+            { text: '编程语言与技术栈地图', link: '/client/engines/02' },
+            { text: '团队能力、项目类型与工具生态', link: '/client/engines/03' }
           ]
         },
         {

@@ -56,11 +56,13 @@ describe('site config', () => {
       '/server/',
       '/system/',
       '/database/',
+      '/client/',
       '/networking/',
       '/'
     ])
     for (const key of ['/server/', '/system/',
-      '/database/', '/networking/']) {
+      '/database/',
+      '/client/', '/networking/']) {
       const links = collectLinks(config.themeConfig.sidebar[key])
       expect(links.length).toBeGreaterThan(0)
       for (const link of links) {

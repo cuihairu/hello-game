@@ -6,11 +6,11 @@ Web 是游戏触达玩家成本最低的路径之一：浏览器打开即玩，�
 
 ## 本章文章
 
-- [H5 与 Canvas 2D 渲染基础](/25-web-frontend/01)
-- [WebGL 与三维渲染入门](/25-web-frontend/02)
-- [游戏引擎与 Cocos Creator](/25-web-frontend/03)
-- [游戏 UI 体系](/25-web-frontend/04)
-- [小游戏平台与浏览器环境](/25-web-frontend/05)
-- [客户端内部分层：渲染、逻辑与资源](/25-web-frontend/06)
+- [H5 与 Canvas 2D 渲染基础](/client/web/01)
+- [WebGL 与三维渲染入门](/client/web/02)
+- [游戏引擎与 Cocos Creator](/client/web/03)
+- [游戏 UI 体系](/client/web/04)
+- [小游戏平台与浏览器环境](/client/web/05)
+- [客户端内部分层：渲染、逻辑与资源](/client/web/06)
 
 建议阅读顺序即编号顺序：01/02 是渲染地基，03 是工程载体，04/05 是两类终端形态，06 把前三页收拢成可维护的结构。
