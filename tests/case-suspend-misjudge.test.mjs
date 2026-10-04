@@ -7,12 +7,12 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const dir = resolve(root, 'docs/24-game-types-architecture')
 const lecture03 = readFileSync(resolve(dir, '03-frontend-engines.md'), 'utf8')
 
-// 案例切片：从「## 12. 实战案例」到文件结束（小结为编号第 11 节，案例追加在第 11 节之后）
+// 案例切片：从「## 14. 实战案例」到文件结束（小结为编号第 13 节，案例追加在第 13 节之后）
 function caseSection(src) {
-  const start = src.indexOf('## 12. 实战案例')
-  expect(start, '第 03 讲应存在「## 12. 实战案例」节').toBeGreaterThan(-1)
-  expect(start, '案例应位于小结之后').toBeGreaterThan(src.indexOf('## 11. 小结'))
-  expect(src.indexOf('## 12. 实战案例', start + 1), '案例节不应重复出现').toBe(-1)
+  const start = src.indexOf('## 14. 实战案例')
+  expect(start, '第 03 讲应存在「## 14. 实战案例」节').toBeGreaterThan(-1)
+  expect(start, '案例应位于小结之后').toBeGreaterThan(src.indexOf('## 13. 小结'))
+  expect(src.indexOf('## 14. 实战案例', start + 1), '案例节不应重复出现').toBe(-1)
   return src.slice(start)
 }
 
@@ -62,7 +62,7 @@ describe('实战案例冒烟（第 03 讲「切个微信就要重新登录」的
     // 第四步：宽限期 15 分钟与讲内骨架常量对账；补发窗口 1000 条与讲内文字对账
     const grace = Number(grab(/宽限期定 \*\*(\d+)\*\* 分钟/, '宽限期')[1])
     const pin = lecture03.match(/const gracePeriod = (\d+) \* time\.Minute/)
-    expect(pin, '讲义第 7 节骨架应有 gracePeriod 常量').toBeTruthy()
+    expect(pin, '讲义第 9 节骨架应有 gracePeriod 常量').toBeTruthy()
     expect(grace).toBe(Number(pin[1]))
     expect(lecture03.includes('分钟到半小时量级')).toBe(true)
     expect(grace).toBeGreaterThanOrEqual(1)
@@ -85,7 +85,7 @@ describe('实战案例冒烟（第 03 讲「切个微信就要重新登录」的
     expect(Number(grab(/真死链平均 \*\*(\d+)\*\* 分钟内回收/, '死链回收')[1])).toBe(grace)
   })
 
-  it('声称对账：推导公式 3 项、适配清单 11 条第 4 条、陷阱表 9 行第 1 行全部与讲内实况一致', () => {
+  it('声称对账：推导公式 3 项、适配清单 11 条第 4 条、陷阱表 10 行第 1 行全部与讲内实况一致', () => {
     const grab = (pattern, label) => {
       const m = sec.match(pattern)
       expect(m, `案例中找不到「${label}」`).toBeTruthy()
@@ -102,9 +102,9 @@ describe('实战案例冒烟（第 03 讲「切个微信就要重新登录」的
     const items = s34.split('\n').filter(l => /^□ \d+\./.test(l))
     expect(items.length).toBe(Number(ck[1]))
     expect(items[Number(ck[2]) - 1]).toContain('suspend/resume')
-    // 第 10 节陷阱表 9 行，第 1 行「把切后台当掉线」
+    // 第 12 节陷阱表 10 行，第 1 行「把切后台当掉线」
     const trap = grab(/陷阱表 \*\*(\d+)\*\* 行里的第 \*\*(\d+)\*\* 行/, '陷阱行数与位次')
-    const s10 = lecture03.slice(lecture03.indexOf('## 10. 常见陷阱总结'), lecture03.indexOf('## 11. 小结'))
+    const s10 = lecture03.slice(lecture03.indexOf('## 12. 常见陷阱总结'), lecture03.indexOf('## 13. 小结'))
     const trapRows = s10.split('\n').filter(l => l.startsWith('| ') && !l.startsWith('| 陷阱') && !l.startsWith('|---'))
     expect(trapRows.length).toBe(Number(trap[1]))
     expect(trapRows[Number(trap[2]) - 1]).toContain('切后台')
@@ -115,7 +115,7 @@ describe('实战案例冒烟（第 03 讲「切个微信就要重新登录」的
     expect(lecture03.includes('客户端切后台时发 `suspend` 包')).toBe(true)
   })
 
-  it('引用闭合：「第 N 讲」对应真实文件，呼应节与第 7 节骨架代码真实存在', () => {
+  it('引用闭合：「第 N 讲」对应真实文件，呼应节与第 9 节骨架代码真实存在', () => {
     for (const m of sec.matchAll(/第 (\d{2}) 讲/g)) {
       const prefix = `${m[1]}-`
       const hit = readdirSync(dir).some(f => f.startsWith(prefix))
@@ -125,14 +125,14 @@ describe('实战案例冒烟（第 03 讲「切个微信就要重新登录」的
       '### 2.1 Unity 客户端网络层的典型结构',
       '### 2.3 常见问题与服务端应对',
       '### 3.4 小游戏的服务端适配清单',
-      '## 7. 代码示例：切后台、重连与补发的会话骨架',
-      '### 9.2 性能优化检查清单',
-      '## 10. 常见陷阱总结',
-      '## 11. 小结',
+      '## 9. 代码示例：切后台、重连与补发的会话骨架',
+      '### 11.2 性能优化检查清单',
+      '## 12. 常见陷阱总结',
+      '## 13. 小结',
     ]) {
       expect(lecture03.includes(anchor), `案例呼应的节不存在: ${anchor}`).toBe(true)
     }
-    // 处置形态与第 7 节骨架一致：显式挂起 + Sweep 唯一关闭路径 + 快照兜底
+    // 处置形态与第 9 节骨架一致：显式挂起 + Sweep 唯一关闭路径 + 快照兜底
     expect(lecture03.includes('func (c *Conn) Suspend')).toBe(true)
     expect(lecture03.includes('func (c *Conn) Resume')).toBe(true)
     expect(lecture03.includes('func (c *Conn) Sweep')).toBe(true)
