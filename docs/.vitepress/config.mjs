@@ -316,6 +316,22 @@ export default {
         }
       ],
 
+      '/design/': [
+        {
+          text: '按问题域归纳各类游戏',
+          collapsed: false,
+          items: [
+            { text: '按问题域归纳各类游戏', link: '/design/problem-domains/' },
+            { text: '单局房间型架构', link: '/design/problem-domains/01' },
+            { text: '强实时对战型架构', link: '/design/problem-domains/02' },
+            { text: '持续在线世界型架构', link: '/design/problem-domains/03' },
+            { text: '长周期成长型架构', link: '/design/problem-domains/04' },
+            { text: '经济平台型架构', link: '/design/problem-domains/05' },
+            { text: '这页的用途', link: '/design/problem-domains/06' }
+          ]
+        }
+      ],
+
       '/networking/': [
         {
           text: '网络与接入协议',
@@ -651,13 +667,13 @@ export default {
           text: '附录 A2. 按问题域归纳各类游戏',
           collapsed: true,
           items: [
-            { text: '按问题域归纳各类游戏', link: '/09-problem-domain/' },
-            { text: '单局房间型架构', link: '/09-problem-domain/01' },
-            { text: '强实时对战型架构', link: '/09-problem-domain/02' },
-            { text: '持续在线世界型架构', link: '/09-problem-domain/03' },
-            { text: '长周期成长型架构', link: '/09-problem-domain/04' },
-            { text: '经济平台型架构', link: '/09-problem-domain/05' },
-            { text: '这页的用途', link: '/09-problem-domain/06' }
+            { text: '按问题域归纳各类游戏', link: '/design/problem-domains/' },
+            { text: '单局房间型架构', link: '/design/problem-domains/01' },
+            { text: '强实时对战型架构', link: '/design/problem-domains/02' },
+            { text: '持续在线世界型架构', link: '/design/problem-domains/03' },
+            { text: '长周期成长型架构', link: '/design/problem-domains/04' },
+            { text: '经济平台型架构', link: '/design/problem-domains/05' },
+            { text: '这页的用途', link: '/design/problem-domains/06' }
           ]
         },
         {
