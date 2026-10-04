@@ -86,7 +86,7 @@ const { lectureCount, kbChapterCount, appendixCount, pageCount } = homepageStats
 </div>
 
 <p class="bp-note">
-  知识库与教程主线同题对应：教程是实战路线，知识库是逐章展开的参考。带着具体问题来查，或从<a :href="withBase('/02-models/')">问题模型</a>进入。
+  知识库与教程主线同题对应：教程是实战路线，知识库是逐章展开的参考。带着具体问题来查，或从<a :href="withBase('/industry/models/')">问题模型</a>进入。
 </p>
 
 <h2 class="bp-h2">三条阅读线索</h2>

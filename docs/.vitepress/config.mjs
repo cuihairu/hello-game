@@ -259,6 +259,63 @@ export default {
         }
       ],
 
+      '/industry/': [
+        {
+          text: '总论与方法论',
+          collapsed: false,
+          items: [
+            { text: '总论与方法论', link: '/industry/methodology/' },
+            { text: '游戏开发知识地图', link: '/industry/methodology/01' },
+            { text: '游戏类型、平台与商业形态', link: '/industry/methodology/02' },
+            { text: '从玩法到架构的分析方法', link: '/industry/methodology/03' },
+            { text: '游戏后端设计的核心取舍', link: '/industry/methodology/04' },
+            { text: '客户端、服务端、平台与运营的边界', link: '/industry/methodology/05' },
+            { text: '游戏项目生命周期与团队协作', link: '/industry/methodology/06' },
+            { text: '如何系统化积累游戏开发经验', link: '/industry/methodology/07' }
+          ]
+        },
+        {
+          text: '游戏类型与问题模型',
+          collapsed: false,
+          items: [
+            { text: '游戏类型与问题模型', link: '/industry/models/' },
+            { text: '常见玩法类型概览', link: '/industry/models/00' },
+            { text: '游戏类型的分类方法', link: '/industry/models/01' },
+            { text: '单局房间型游戏问题模型', link: '/industry/models/02' },
+            { text: '强实时对战型游戏问题模型', link: '/industry/models/03' },
+            { text: '持续在线世界型游戏问题模型', link: '/industry/models/04' },
+            { text: '长周期成长与异步交互型游戏问题模型', link: '/industry/models/05' },
+            { text: '经济与平台型游戏问题模型', link: '/industry/models/06' },
+            { text: '高频对象与重表现型游戏问题模型', link: '/industry/models/07' },
+            { text: '模型之间如何组合', link: '/industry/models/08' }
+          ]
+        },
+        {
+          text: '游戏类型专题',
+          collapsed: false,
+          items: [
+            { text: '游戏类型专题', link: '/industry/genres/' },
+            { text: '房间制与轻量在线', link: '/industry/genres/01' },
+            { text: '强实时对战', link: '/industry/genres/02' },
+            { text: '持续在线世界', link: '/industry/genres/03' },
+            { text: '长周期成长与经营', link: '/industry/genres/04' },
+            { text: '平台与生态型游戏', link: '/industry/genres/05' },
+            { text: '如何使用这页', link: '/industry/genres/06' }
+          ]
+        },
+        {
+          text: '平台生态、渠道与 SDK',
+          collapsed: false,
+          items: [
+            { text: '平台生态、渠道与 SDK', link: '/industry/platforms/' },
+            { text: '平台与渠道生态', link: '/industry/platforms/01' },
+            { text: '小游戏平台与技术约束', link: '/industry/platforms/02' },
+            { text: '登录、支付、社交与广告 SDK', link: '/industry/platforms/03' },
+            { text: '发布、版本与商业模式', link: '/industry/platforms/04' }
+          ]
+        }
+      ],
+
       '/networking/': [
         {
           text: '网络与接入协议',
@@ -315,30 +372,30 @@ export default {
           text: '1. 总论与方法论',
           collapsed: true,
           items: [
-            { text: '总论与方法论', link: '/01-methodology/' },
-            { text: '游戏开发知识地图', link: '/01-methodology/01' },
-            { text: '游戏类型、平台与商业形态', link: '/01-methodology/02' },
-            { text: '从玩法到架构的分析方法', link: '/01-methodology/03' },
-            { text: '游戏后端设计的核心取舍', link: '/01-methodology/04' },
-            { text: '客户端、服务端、平台与运营的边界', link: '/01-methodology/05' },
-            { text: '游戏项目生命周期与团队协作', link: '/01-methodology/06' },
-            { text: '如何系统化积累游戏开发经验', link: '/01-methodology/07' }
+            { text: '总论与方法论', link: '/industry/methodology/' },
+            { text: '游戏开发知识地图', link: '/industry/methodology/01' },
+            { text: '游戏类型、平台与商业形态', link: '/industry/methodology/02' },
+            { text: '从玩法到架构的分析方法', link: '/industry/methodology/03' },
+            { text: '游戏后端设计的核心取舍', link: '/industry/methodology/04' },
+            { text: '客户端、服务端、平台与运营的边界', link: '/industry/methodology/05' },
+            { text: '游戏项目生命周期与团队协作', link: '/industry/methodology/06' },
+            { text: '如何系统化积累游戏开发经验', link: '/industry/methodology/07' }
           ]
         },
         {
           text: '2. 游戏类型与问题模型',
           collapsed: true,
           items: [
-            { text: '游戏类型与问题模型', link: '/02-models/' },
-            { text: '常见玩法类型概览', link: '/02-models/00' },
-            { text: '游戏类型的分类方法', link: '/02-models/01' },
-            { text: '单局房间型游戏问题模型', link: '/02-models/02' },
-            { text: '强实时对战型游戏问题模型', link: '/02-models/03' },
-            { text: '持续在线世界型游戏问题模型', link: '/02-models/04' },
-            { text: '长周期成长与异步交互型游戏问题模型', link: '/02-models/05' },
-            { text: '经济与平台型游戏问题模型', link: '/02-models/06' },
-            { text: '高频对象与重表现型游戏问题模型', link: '/02-models/07' },
-            { text: '模型之间如何组合', link: '/02-models/08' }
+            { text: '游戏类型与问题模型', link: '/industry/models/' },
+            { text: '常见玩法类型概览', link: '/industry/models/00' },
+            { text: '游戏类型的分类方法', link: '/industry/models/01' },
+            { text: '单局房间型游戏问题模型', link: '/industry/models/02' },
+            { text: '强实时对战型游戏问题模型', link: '/industry/models/03' },
+            { text: '持续在线世界型游戏问题模型', link: '/industry/models/04' },
+            { text: '长周期成长与异步交互型游戏问题模型', link: '/industry/models/05' },
+            { text: '经济与平台型游戏问题模型', link: '/industry/models/06' },
+            { text: '高频对象与重表现型游戏问题模型', link: '/industry/models/07' },
+            { text: '模型之间如何组合', link: '/industry/models/08' }
           ]
         },
         {
@@ -494,11 +551,11 @@ export default {
           text: '15. 平台生态、渠道与 SDK',
           collapsed: true,
           items: [
-            { text: '平台生态、渠道与 SDK', link: '/21-platforms-sdks/' },
-            { text: '平台与渠道生态', link: '/21-platforms-sdks/01' },
-            { text: '小游戏平台与技术约束', link: '/21-platforms-sdks/02' },
-            { text: '登录、支付、社交与广告 SDK', link: '/21-platforms-sdks/03' },
-            { text: '发布、版本与商业模式', link: '/21-platforms-sdks/04' }
+            { text: '平台生态、渠道与 SDK', link: '/industry/platforms/' },
+            { text: '平台与渠道生态', link: '/industry/platforms/01' },
+            { text: '小游戏平台与技术约束', link: '/industry/platforms/02' },
+            { text: '登录、支付、社交与广告 SDK', link: '/industry/platforms/03' },
+            { text: '发布、版本与商业模式', link: '/industry/platforms/04' }
           ]
         },
         {
@@ -581,13 +638,13 @@ export default {
           text: '附录 A1. 游戏类型专题',
           collapsed: true,
           items: [
-            { text: '游戏类型专题', link: '/08-game-genres/' },
-            { text: '房间制与轻量在线', link: '/08-game-genres/01' },
-            { text: '强实时对战', link: '/08-game-genres/02' },
-            { text: '持续在线世界', link: '/08-game-genres/03' },
-            { text: '长周期成长与经营', link: '/08-game-genres/04' },
-            { text: '平台与生态型游戏', link: '/08-game-genres/05' },
-            { text: '如何使用这页', link: '/08-game-genres/06' }
+            { text: '游戏类型专题', link: '/industry/genres/' },
+            { text: '房间制与轻量在线', link: '/industry/genres/01' },
+            { text: '强实时对战', link: '/industry/genres/02' },
+            { text: '持续在线世界', link: '/industry/genres/03' },
+            { text: '长周期成长与经营', link: '/industry/genres/04' },
+            { text: '平台与生态型游戏', link: '/industry/genres/05' },
+            { text: '如何使用这页', link: '/industry/genres/06' }
           ]
         },
         {
