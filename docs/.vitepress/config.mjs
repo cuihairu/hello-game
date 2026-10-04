@@ -117,6 +117,18 @@ export default {
         }
       ],
 
+      '/system/': [
+        {
+          text: '玩法系统',
+          collapsed: false,
+          items: [
+            { text: '排行榜：四种实现比对', link: '/system/leaderboard' },
+            { text: '队伍匹配：四种撮合形态', link: '/system/party-matchmaking' },
+            { text: 'PVP 匹配：评分与匹配池', link: '/system/pvp-matchmaking' }
+          ]
+        }
+      ],
+
       '/networking/': [
         {
           text: '网络与接入协议',
