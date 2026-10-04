@@ -62,6 +62,7 @@ describe('site config', () => {
       '/industry/',
       '/design/',
       '/numerical/',
+      '/glossary/',
       '/networking/',
       '/'
     ])
@@ -72,7 +73,8 @@ describe('site config', () => {
       '/operation/',
       '/industry/',
       '/design/',
-      '/numerical/', '/networking/']) {
+      '/numerical/',
+      '/glossary/', '/networking/']) {
       const links = collectLinks(config.themeConfig.sidebar[key])
       expect(links.length).toBeGreaterThan(0)
       for (const link of links) {

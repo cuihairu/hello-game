@@ -350,6 +350,25 @@ export default {
         }
       ],
 
+      '/glossary/': [
+        {
+          text: '术语约定',
+          collapsed: false,
+          items: [
+            { text: '术语约定', link: '/glossary/' },
+            { text: '服务端', link: '/glossary/01' },
+            { text: '接入层', link: '/glossary/02' },
+            { text: '主链路 / 外围链路', link: '/glossary/03' },
+            { text: '权威状态', link: '/glossary/04' },
+            { text: '配置驱动 / 脚本驱动', link: '/glossary/05' },
+            { text: '热更新', link: '/glossary/06' },
+            { text: '控制平面', link: '/glossary/07' },
+            { text: '运营', link: '/glossary/08' },
+            { text: '风控', link: '/glossary/09' }
+          ]
+        }
+      ],
+
       '/networking/': [
         {
           text: '网络与接入协议',
@@ -390,16 +409,16 @@ export default {
             { text: '按问题进入', link: '/00-reading-guide/02' },
             { text: '主线和附录的区别', link: '/00-reading-guide/03' },
             { text: '怎么用它做项目分析', link: '/00-reading-guide/04' },
-            { text: '术语约定', link: '/00-terminology/' },
-            { text: '服务端', link: '/00-terminology/01' },
-            { text: '接入层', link: '/00-terminology/02' },
-            { text: '主链路 / 外围链路', link: '/00-terminology/03' },
-            { text: '权威状态', link: '/00-terminology/04' },
-            { text: '配置驱动 / 脚本驱动', link: '/00-terminology/05' },
-            { text: '热更新', link: '/00-terminology/06' },
-            { text: '控制平面', link: '/00-terminology/07' },
-            { text: '运营', link: '/00-terminology/08' },
-            { text: '风控', link: '/00-terminology/09' }
+            { text: '术语约定', link: '/glossary/' },
+            { text: '服务端', link: '/glossary/01' },
+            { text: '接入层', link: '/glossary/02' },
+            { text: '主链路 / 外围链路', link: '/glossary/03' },
+            { text: '权威状态', link: '/glossary/04' },
+            { text: '配置驱动 / 脚本驱动', link: '/glossary/05' },
+            { text: '热更新', link: '/glossary/06' },
+            { text: '控制平面', link: '/glossary/07' },
+            { text: '运营', link: '/glossary/08' },
+            { text: '风控', link: '/glossary/09' }
           ]
         },
         {
