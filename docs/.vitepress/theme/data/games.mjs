@@ -34,7 +34,7 @@ export const TAG_LINKS = {
   KCP: '/networking/',
   分片分区: '/design/problem-domains/',
   副本实例: '/design/problem-domains/',
-  跨服: '/19-capacity-scaling/',
+  跨服: '/server/capacity/',
   匹配服务: '/15-common-services/',
   排行榜: '/database/cache/',
   存档: '/database/',

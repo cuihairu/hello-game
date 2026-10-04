@@ -114,6 +114,71 @@ export default {
           items: [
             { text: 'Skynet：C 内核 + Lua Actor', link: '/server/skynet' }
           ]
+        },
+
+        {
+          text: '同步、战斗与实时交互',
+          collapsed: false,
+          items: [
+            { text: '同步、战斗与实时交互', link: '/server/sync/' },
+            { text: 'Tick 与时间推进', link: '/server/sync/01' },
+            { text: '同步模型', link: '/server/sync/02' },
+            { text: '帧同步详解', link: '/server/sync/03' },
+            { text: '暂停、继续、追帧与断线重连', link: '/server/sync/04' },
+            { text: '预测、补偿与纠正', link: '/server/sync/05' },
+            { text: '确定性与数值一致性', link: '/server/sync/06' },
+            { text: '回放、观战与裁决', link: '/server/sync/07' },
+            { text: '技能系统设计', link: '/server/sync/08' }
+          ]
+        },
+        {
+          text: '执行模型与运行时',
+          collapsed: false,
+          items: [
+            { text: '执行模型与运行时', link: '/server/runtime/' },
+            { text: '并发模型总览：从七周七并发到游戏运行时', link: '/server/runtime/00' },
+            { text: '单线程、多线程与 Actor', link: '/server/runtime/01' },
+            { text: '协程、状态机与任务队列', link: '/server/runtime/02' },
+            { text: 'Tick 驱动与逻辑执行', link: '/server/runtime/03' },
+            { text: '流控、背压与稳定性机制', link: '/server/runtime/04' },
+            { text: '锁竞争与性能代价', link: '/server/runtime/05' },
+            { text: 'Epoch-driven Actor / Channel Runtime', link: '/server/runtime/06' }
+          ]
+        },
+        {
+          text: '服务拆分与控制平面',
+          collapsed: false,
+          items: [
+            { text: '服务拆分与控制平面', link: '/server/services/' },
+            { text: '服务拆分方法论', link: '/server/services/01' },
+            { text: '核心服务角色', link: '/server/services/02' },
+            { text: '协调层、跨服与控制平面', link: '/server/services/03' },
+            { text: '服务发现、路由与协作', link: '/server/services/04' },
+            { text: '一致性、恢复与重连', link: '/server/services/05' }
+          ]
+        },
+        {
+          text: '容量扩缩',
+          collapsed: false,
+          items: [
+            { text: '容量扩缩', link: '/server/capacity/' },
+            { text: '压测与容量规划', link: '/server/capacity/01' },
+            { text: '扩容、缩容与动态加服', link: '/server/capacity/02' },
+            { text: '分区、迁移、合服与下线', link: '/server/capacity/03' },
+            { text: '平台化运维与多地域架构', link: '/server/capacity/04' }
+          ]
+        },
+        {
+          text: '安全、风控与合规',
+          collapsed: false,
+          items: [
+            { text: '安全、风控与合规', link: '/server/security/' },
+            { text: '安全与反作弊', link: '/server/security/01' },
+            { text: '审计、隐私与数据安全', link: '/server/security/02' },
+            { text: '行为风控与治理体系', link: '/server/security/03' },
+            { text: '合规、版号与平台约束', link: '/server/security/04' },
+            { text: '许可风险与依赖治理', link: '/server/security/05' }
+          ]
         }
       ],
 
@@ -469,41 +534,41 @@ export default {
           text: '4. 同步、战斗与实时交互',
           collapsed: true,
           items: [
-            { text: '同步、战斗与实时交互', link: '/04-sync-combat/' },
-            { text: 'Tick 与时间推进', link: '/04-sync-combat/01' },
-            { text: '同步模型', link: '/04-sync-combat/02' },
-            { text: '帧同步详解', link: '/04-sync-combat/03' },
-            { text: '暂停、继续、追帧与断线重连', link: '/04-sync-combat/04' },
-            { text: '预测、补偿与纠正', link: '/04-sync-combat/05' },
-            { text: '确定性与数值一致性', link: '/04-sync-combat/06' },
-            { text: '回放、观战与裁决', link: '/04-sync-combat/07' },
-            { text: '技能系统设计', link: '/04-sync-combat/08' }
+            { text: '同步、战斗与实时交互', link: '/server/sync/' },
+            { text: 'Tick 与时间推进', link: '/server/sync/01' },
+            { text: '同步模型', link: '/server/sync/02' },
+            { text: '帧同步详解', link: '/server/sync/03' },
+            { text: '暂停、继续、追帧与断线重连', link: '/server/sync/04' },
+            { text: '预测、补偿与纠正', link: '/server/sync/05' },
+            { text: '确定性与数值一致性', link: '/server/sync/06' },
+            { text: '回放、观战与裁决', link: '/server/sync/07' },
+            { text: '技能系统设计', link: '/server/sync/08' }
           ]
         },
         {
           text: '5. 执行模型与运行时',
           collapsed: true,
           items: [
-            { text: '执行模型与运行时', link: '/05-concurrency-runtime/' },
-            { text: '并发模型总览：从七周七并发到游戏运行时', link: '/05-concurrency-runtime/00' },
-            { text: '单线程、多线程与 Actor', link: '/05-concurrency-runtime/01' },
-            { text: '协程、状态机与任务队列', link: '/05-concurrency-runtime/02' },
-            { text: 'Tick 驱动与逻辑执行', link: '/05-concurrency-runtime/03' },
-            { text: '流控、背压与稳定性机制', link: '/05-concurrency-runtime/04' },
-            { text: '锁竞争与性能代价', link: '/05-concurrency-runtime/05' },
-            { text: 'Epoch-driven Actor / Channel Runtime', link: '/05-concurrency-runtime/06' }
+            { text: '执行模型与运行时', link: '/server/runtime/' },
+            { text: '并发模型总览：从七周七并发到游戏运行时', link: '/server/runtime/00' },
+            { text: '单线程、多线程与 Actor', link: '/server/runtime/01' },
+            { text: '协程、状态机与任务队列', link: '/server/runtime/02' },
+            { text: 'Tick 驱动与逻辑执行', link: '/server/runtime/03' },
+            { text: '流控、背压与稳定性机制', link: '/server/runtime/04' },
+            { text: '锁竞争与性能代价', link: '/server/runtime/05' },
+            { text: 'Epoch-driven Actor / Channel Runtime', link: '/server/runtime/06' }
           ]
         },
         {
           text: '6. 服务拆分、分布式与控制平面',
           collapsed: true,
           items: [
-            { text: '服务拆分与控制平面', link: '/06-services-control-plane/' },
-            { text: '服务拆分方法论', link: '/06-services-control-plane/01' },
-            { text: '核心服务角色', link: '/06-services-control-plane/02' },
-            { text: '协调层、跨服与控制平面', link: '/06-services-control-plane/03' },
-            { text: '服务发现、路由与协作', link: '/06-services-control-plane/04' },
-            { text: '一致性、恢复与重连', link: '/06-services-control-plane/05' }
+            { text: '服务拆分与控制平面', link: '/server/services/' },
+            { text: '服务拆分方法论', link: '/server/services/01' },
+            { text: '核心服务角色', link: '/server/services/02' },
+            { text: '协调层、跨服与控制平面', link: '/server/services/03' },
+            { text: '服务发现、路由与协作', link: '/server/services/04' },
+            { text: '一致性、恢复与重连', link: '/server/services/05' }
           ]
         },
         {
@@ -628,12 +693,12 @@ export default {
           text: '17. 安全、风控与合规',
           collapsed: true,
           items: [
-            { text: '安全、风控与合规', link: '/20-security-compliance/' },
-            { text: '安全与反作弊', link: '/20-security-compliance/01' },
-            { text: '审计、隐私与数据安全', link: '/20-security-compliance/02' },
-            { text: '行为风控与治理体系', link: '/20-security-compliance/03' },
-            { text: '合规、版号与平台约束', link: '/20-security-compliance/04' },
-            { text: '许可风险与依赖治理', link: '/20-security-compliance/05' }
+            { text: '安全、风控与合规', link: '/server/security/' },
+            { text: '安全与反作弊', link: '/server/security/01' },
+            { text: '审计、隐私与数据安全', link: '/server/security/02' },
+            { text: '行为风控与治理体系', link: '/server/security/03' },
+            { text: '合规、版号与平台约束', link: '/server/security/04' },
+            { text: '许可风险与依赖治理', link: '/server/security/05' }
           ]
         },
         {
@@ -728,11 +793,11 @@ export default {
           text: '附录 A4. 压测、容量规划与扩缩容',
           collapsed: true,
           items: [
-            { text: '容量扩缩', link: '/19-capacity-scaling/' },
-            { text: '压测与容量规划', link: '/19-capacity-scaling/01' },
-            { text: '扩容、缩容与动态加服', link: '/19-capacity-scaling/02' },
-            { text: '分区、迁移、合服与下线', link: '/19-capacity-scaling/03' },
-            { text: '平台化运维与多地域架构', link: '/19-capacity-scaling/04' }
+            { text: '容量扩缩', link: '/server/capacity/' },
+            { text: '压测与容量规划', link: '/server/capacity/01' },
+            { text: '扩容、缩容与动态加服', link: '/server/capacity/02' },
+            { text: '分区、迁移、合服与下线', link: '/server/capacity/03' },
+            { text: '平台化运维与多地域架构', link: '/server/capacity/04' }
           ]
         },
         {

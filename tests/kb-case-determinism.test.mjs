@@ -4,7 +4,7 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const file = resolve(root, 'docs/04-sync-combat/06.md')
+const file = resolve(root, 'docs/server/sync/06.md')
 const page = readFileSync(file, 'utf8')
 
 // 本页案例标题（声明式：tests/site-links 对账按此逐字核对页面标题）
@@ -20,7 +20,7 @@ function caseSection(src) {
   return src.slice(start)
 }
 
-describe('实战案例冒烟（知识库 04-sync-combat/06「同一份回放，两台机器算出两个结果」的确定性分叉排查）', () => {
+describe('实战案例冒烟（知识库 server/sync/06「同一份回放，两台机器算出两个结果」的确定性分叉排查）', () => {
   const sec = caseSection(page)
 
   it('四段结构齐全：背景与现象、四步、回填清单 + 教训收束', () => {
@@ -135,7 +135,7 @@ describe('实战案例冒烟（知识库 04-sync-combat/06「同一份回放，�
     // 同章页面清单未被改动（案例是页内小节，不新增页）
     // 注：断言不出现试点篇页名的文件名字面量——site-links 的 kb-case 对账按页名子串 find，
     // 出现会误命中试点篇页面导致标题核对错位
-    const pages = readdirSync(resolve(root, 'docs/04-sync-combat')).filter(f => f.endsWith('.md'))
+    const pages = readdirSync(resolve(root, 'docs/server/sync')).filter(f => f.endsWith('.md'))
     expect(pages.length).toBe(9)
     expect(pages).toContain('06.md')
     expect(pages).toContain('index.md')

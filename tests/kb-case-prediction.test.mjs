@@ -4,7 +4,7 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const file = resolve(root, 'docs/04-sync-combat/05.md')
+const file = resolve(root, 'docs/server/sync/05.md')
 const page = readFileSync(file, 'utf8')
 
 // 本页案例标题（声明式：tests/site-links 对账按此逐字核对页面标题）
@@ -20,7 +20,7 @@ function caseSection(src) {
   return src.slice(start)
 }
 
-describe('实战案例冒烟（知识库 04-sync-combat/05「明明躲开了还中」的回溯判定争议排查）', () => {
+describe('实战案例冒烟（知识库 server/sync/05「明明躲开了还中」的回溯判定争议排查）', () => {
   const sec = caseSection(page)
 
   it('四段结构齐全：背景与现象、四步、回填清单 + 教训收束', () => {
@@ -139,7 +139,7 @@ describe('实战案例冒烟（知识库 04-sync-combat/05「明明躲开了还�
     }
     expect(existsSync(file)).toBe(true)
     // 同章页面清单未被改动（案例是页内小节，不新增页）
-    const pages = readdirSync(resolve(root, 'docs/04-sync-combat')).filter(f => f.endsWith('.md'))
+    const pages = readdirSync(resolve(root, 'docs/server/sync')).filter(f => f.endsWith('.md'))
     expect(pages.sort()).toEqual(['01.md', '02.md', '03.md', '04.md', '05.md', '06.md', '07.md', '08.md', 'index.md'])
   })
 })
