@@ -231,6 +231,34 @@ export default {
         }
       ],
 
+      '/operation/': [
+        {
+          text: '运营、商业化与数据分析',
+          collapsed: false,
+          items: [
+            { text: '运营、商业化与数据分析', link: '/operation/bi/' },
+            { text: '运营与商业化基础', link: '/operation/bi/01' },
+            { text: '埋点、BI 与分析系统', link: '/operation/bi/02' },
+            { text: '经济、平衡与风控分析', link: '/operation/bi/03' },
+            { text: '触达体系与外部能力接入', link: '/operation/bi/04' },
+            { text: 'AI 在运营、分析与风控中的应用', link: '/operation/bi/05' }
+          ]
+        },
+        {
+          text: '可观测性、性能、容量与稳定性',
+          collapsed: false,
+          items: [
+            { text: '可观测性与稳定性', link: '/operation/observability/' },
+            { text: '日志、指标、Tracing 与 OTel', link: '/operation/observability/01' },
+            { text: '专项可观测与 Tick 指标', link: '/operation/observability/02' },
+            { text: 'Profiling、火焰图与热点分析', link: '/operation/observability/03' },
+            { text: 'Debug、故障定位与复盘', link: '/operation/observability/04' },
+            { text: '压测、容量规划与扩缩容', link: '/operation/observability/05' },
+            { text: '稳定性治理的真正目标', link: '/operation/observability/06' }
+          ]
+        }
+      ],
+
       '/networking/': [
         {
           text: '网络与接入协议',
@@ -454,12 +482,12 @@ export default {
           text: '14. 运营、商业化与数据分析',
           collapsed: true,
           items: [
-            { text: '运营、商业化与数据分析', link: '/16-operations-bi/' },
-            { text: '运营与商业化基础', link: '/16-operations-bi/01' },
-            { text: '埋点、BI 与分析系统', link: '/16-operations-bi/02' },
-            { text: '经济、平衡与风控分析', link: '/16-operations-bi/03' },
-            { text: '触达体系与外部能力接入', link: '/16-operations-bi/04' },
-            { text: 'AI 在运营、分析与风控中的应用', link: '/16-operations-bi/05' }
+            { text: '运营、商业化与数据分析', link: '/operation/bi/' },
+            { text: '运营与商业化基础', link: '/operation/bi/01' },
+            { text: '埋点、BI 与分析系统', link: '/operation/bi/02' },
+            { text: '经济、平衡与风控分析', link: '/operation/bi/03' },
+            { text: '触达体系与外部能力接入', link: '/operation/bi/04' },
+            { text: 'AI 在运营、分析与风控中的应用', link: '/operation/bi/05' }
           ]
         },
         {
@@ -477,13 +505,13 @@ export default {
           text: '16. 可观测性、性能、容量与稳定性',
           collapsed: true,
           items: [
-            { text: '可观测性与稳定性', link: '/18-observability-debugging/' },
-            { text: '日志、指标、Tracing 与 OTel', link: '/18-observability-debugging/01' },
-            { text: '专项可观测与 Tick 指标', link: '/18-observability-debugging/02' },
-            { text: 'Profiling、火焰图与热点分析', link: '/18-observability-debugging/03' },
-            { text: 'Debug、故障定位与复盘', link: '/18-observability-debugging/04' },
-            { text: '压测、容量规划与扩缩容', link: '/18-observability-debugging/05' },
-            { text: '稳定性治理的真正目标', link: '/18-observability-debugging/06' }
+            { text: '可观测性与稳定性', link: '/operation/observability/' },
+            { text: '日志、指标、Tracing 与 OTel', link: '/operation/observability/01' },
+            { text: '专项可观测与 Tick 指标', link: '/operation/observability/02' },
+            { text: 'Profiling、火焰图与热点分析', link: '/operation/observability/03' },
+            { text: 'Debug、故障定位与复盘', link: '/operation/observability/04' },
+            { text: '压测、容量规划与扩缩容', link: '/operation/observability/05' },
+            { text: '稳定性治理的真正目标', link: '/operation/observability/06' }
           ]
         },
         {
