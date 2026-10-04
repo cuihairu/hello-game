@@ -83,8 +83,8 @@ describe('实战案例冒烟（第 06 讲「迁移后移动一卡一卡」的隐
     expect(treeRow, '决策树应有「射击/动作（小规模）」行').toBeTruthy()
     expect(treeRow).toContain('Photon Fusion')
     expect(sec.includes('射击/动作（小规模）')).toBe(true)
-    // 迁移指南「从 Photon 迁移到自研」：恰好 5 步，坑句被案例逐字引用
-    const sPho = lecture06.slice(lecture06.indexOf('### 从 Photon 迁移到自研'), lecture06.indexOf('### 从 KBEngine 迁移到 Pitaya'))
+    // 迁移指南「从 Photon 迁移到自行开发」：恰好 5 步，坑句被案例逐字引用
+    const sPho = lecture06.slice(lecture06.indexOf('### 从 Photon 迁移到自行开发'), lecture06.indexOf('### 从 KBEngine 迁移到 Pitaya'))
     expect((sPho.match(/^\d\. /gm) || []).length).toBe(5)
     expect(sPho).toContain('Photon 的很多功能是隐式实现的（如状态同步的插值、预测），迁移时很容易遗漏')
     expect(sec.includes('Photon 的很多功能是隐式实现的（如状态同步的插值、预测）')).toBe(true)
@@ -119,7 +119,7 @@ describe('实战案例冒烟（第 06 讲「迁移后移动一卡一卡」的隐
     for (const anchor of [
       '## 18. 小结',
       '### 阶段五：手游快速上线',
-      '### 从 Photon 迁移到自研',
+      '### 从 Photon 迁移到自行开发',
       '## 13. 框架选型矩阵',
     ]) {
       expect(lecture06.includes(anchor), `案例呼应的节不存在: ${anchor}`).toBe(true)

@@ -40,7 +40,7 @@ describe('site config', () => {
 
   it('head 声明 favicon', () => {
     expect(config.head).toEqual([
-      ['link', { rel: 'icon', href: '/hello-game/favicon.svg' }]
+      ['link', { rel: 'icon', href: '/hello-game/logo.svg' }]
     ])
   })
 

@@ -8,7 +8,7 @@ export default {
   cleanUrls: true,
 
   head: [
-    ['link', { rel: 'icon', href: '/hello-game/favicon.svg' }]
+    ['link', { rel: 'icon', href: '/hello-game/logo.svg' }]
   ],
 
   themeConfig: {
