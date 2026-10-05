@@ -41,8 +41,8 @@ AOI 把平方账压成线性账：每个客户端只收「可见集大小 × f�
 
 ## Used By
 
-- BigWorld：每个「有视野的真实实体」挂一个 Witness，跟踪可见集与逐目标的更新优先级（`server/cellapp/witness.hpp:26-65`）；大实体可声明 AppealRadius，半径小于它的观察者会被反向吸引（`server/cellapp/range_list_appeal_trigger.hpp:10-24`）。
-- KBEngine：进出场回调链 `onEnterView → addWitnessed`（`kbe/src/server/cellapp/witness.cpp:356`、`:414-415`），把可见集变化交给消息层下发。
+- **BigWorld**（commit `088d3b84`，路径相对 `programming/bigworld/`）：每个「有视野的真实实体」挂一个 Witness，跟踪可见集与逐目标的更新优先级（`server/cellapp/witness.hpp:26-65`）；大实体可声明 AppealRadius，半径小于它的观察者会被反向吸引（`server/cellapp/range_list_appeal_trigger.hpp:10-24`）。
+- **KBEngine**（commit `0bc93d5`）：进出场回调链 `onEnterView → addWitnessed`（`kbe/src/server/cellapp/witness.cpp:356`、`:414-415`），把可见集变化交给消息层下发。
 - WoW / TrinityCore：grid 分块 + 周期性 Notifier 通知可见性（公开资料口径，本站未做源码级核对）。
 - EVE：官方公开资料说明大规模会战采用 time dilation（时间减速）缓解服务器压力——可见性管理不是只有 AOI 一条路，同屏实体压垮服务器时，降时间流速是与裁剪可组合的另一手。
 
