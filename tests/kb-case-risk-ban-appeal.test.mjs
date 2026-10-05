@@ -4,7 +4,7 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const file = resolve(root, 'docs/15-common-services/04.md')
+const file = resolve(root, 'docs/system/services/04.md')
 const page = readFileSync(file, 'utf8')
 
 // 本页案例标题（声明式：tests/site-links 对账按此逐字核对页面标题）
@@ -20,7 +20,7 @@ function caseSection(src) {
   return src.slice(start)
 }
 
-describe('实战案例冒烟（知识库 15-common-services/04「凌晨封了 8000 个号，改判四成」的风控误伤排查）', () => {
+describe('实战案例冒烟（知识库 system/services/04「凌晨封了 8000 个号，改判四成」的风控误伤排查）', () => {
   const sec = caseSection(page)
 
   it('四段结构齐全：背景与现象、四步、回填清单 + 教训收束', () => {
@@ -164,7 +164,7 @@ describe('实战案例冒烟（知识库 15-common-services/04「凌晨封了 80
     }
     expect(existsSync(file)).toBe(true)
     // 同章页面清单未被改动（案例是页内小节，不新增页）
-    const pages = readdirSync(resolve(root, 'docs/15-common-services')).filter(f => f.endsWith('.md'))
+    const pages = readdirSync(resolve(root, 'docs/system/services')).filter(f => f.endsWith('.md'))
     expect(pages.length).toBe(5)
     expect(pages).toContain('index.md')
   })

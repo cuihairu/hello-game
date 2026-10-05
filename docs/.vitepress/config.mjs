@@ -184,12 +184,41 @@ export default {
 
       '/system/': [
         {
+          text: '系统总览',
+          collapsed: false,
+          items: [
+            { text: '系统总览', link: '/system/' }
+          ]
+        },
+        {
           text: '玩法系统',
           collapsed: false,
           items: [
             { text: '排行榜：四种实现比对', link: '/system/leaderboard' },
             { text: '队伍匹配：四种撮合形态', link: '/system/party-matchmaking' },
             { text: 'PVP 匹配：评分与匹配池', link: '/system/pvp-matchmaking' }
+          ]
+        },
+        {
+          text: '脚本与热更',
+          collapsed: false,
+          items: [
+            { text: '脚本、热更新与逻辑扩展', link: '/system/scripting/' },
+            { text: '脚本层定位与语言选择', link: '/system/scripting/01' },
+            { text: '宿主运行时与脚本 VM 集成', link: '/system/scripting/02' },
+            { text: '配置驱动与脚本驱动', link: '/system/scripting/03' },
+            { text: '热更新体系', link: '/system/scripting/04' }
+          ]
+        },
+        {
+          text: '通用服务',
+          collapsed: false,
+          items: [
+            { text: '通用游戏服务', link: '/system/services/' },
+            { text: '账号、角色与基础系统', link: '/system/services/01' },
+            { text: '活动、排行、匹配与社交', link: '/system/services/02' },
+            { text: '交易、支付与经济系统', link: '/system/services/03' },
+            { text: '风控、审计、GM 与客服', link: '/system/services/04' }
           ]
         }
       ],
@@ -600,11 +629,11 @@ export default {
           text: '9. 脚本、热更新与逻辑扩展',
           collapsed: true,
           items: [
-            { text: '脚本、热更新与逻辑扩展', link: '/11-scripting-hotfix/' },
-            { text: '脚本层定位与语言选择', link: '/11-scripting-hotfix/01' },
-            { text: '宿主运行时与脚本 VM 集成', link: '/11-scripting-hotfix/02' },
-            { text: '配置驱动与脚本驱动', link: '/11-scripting-hotfix/03' },
-            { text: '热更新体系', link: '/11-scripting-hotfix/04' }
+            { text: '脚本、热更新与逻辑扩展', link: '/system/scripting/' },
+            { text: '脚本层定位与语言选择', link: '/system/scripting/01' },
+            { text: '宿主运行时与脚本 VM 集成', link: '/system/scripting/02' },
+            { text: '配置驱动与脚本驱动', link: '/system/scripting/03' },
+            { text: '热更新体系', link: '/system/scripting/04' }
           ]
         },
         {
@@ -646,11 +675,11 @@ export default {
           text: '13. 通用游戏服务',
           collapsed: true,
           items: [
-            { text: '通用游戏服务', link: '/15-common-services/' },
-            { text: '账号、角色与基础系统', link: '/15-common-services/01' },
-            { text: '活动、排行、匹配与社交', link: '/15-common-services/02' },
-            { text: '交易、支付与经济系统', link: '/15-common-services/03' },
-            { text: '风控、审计、GM 与客服', link: '/15-common-services/04' }
+            { text: '通用游戏服务', link: '/system/services/' },
+            { text: '账号、角色与基础系统', link: '/system/services/01' },
+            { text: '活动、排行、匹配与社交', link: '/system/services/02' },
+            { text: '交易、支付与经济系统', link: '/system/services/03' },
+            { text: '风控、审计、GM 与客服', link: '/system/services/04' }
           ]
         },
         {

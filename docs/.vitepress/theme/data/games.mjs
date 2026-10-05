@@ -35,7 +35,7 @@ export const TAG_LINKS = {
   分片分区: '/design/problem-domains/',
   副本实例: '/design/problem-domains/',
   跨服: '/server/capacity/',
-  匹配服务: '/15-common-services/',
+  匹配服务: '/system/services/',
   排行榜: '/database/cache/',
   存档: '/database/',
   反作弊: '/24-game-types-architecture/18-security-compliance',
