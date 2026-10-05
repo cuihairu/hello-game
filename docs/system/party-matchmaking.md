@@ -95,6 +95,8 @@ T0+90s    拆队降级：整队不齐时允许单人补位进残局池
 - **KBEngine / BigWorld**：队伍本体可挂实体系统（KBEngine 的实体与 mailbox、BigWorld 的 cell/base 分工），撮合器仍建议独立于对局进程
 - 撮合质量的线上口径（胜率回归、等待 P95）按教程第 11 讲的匹配质量双指标落地，防震荡按同讲陷阱表执行
 
+- **Colyseus**（commit `e620123`）：撮合 API 的房间中心形态——`joinOrCreate` 先查后建（`packages/core/src/MatchMaker.ts:201`、`:216`、`:230`），按过滤条件加锁（`packages/core/src/matchmaker/driver.ts:24-26`），跨进程席位预约走 `remoteRoomCall`（`MatchMaker.ts:962`）
+
 ## Related
 
 关系链：玩法形态（社交/竞技）→ 队伍作为撮合原子单位 → 撮合形态（房间/池/分桶/队列）→ 跨服分片 → 降级阶梯兜底。逐段回答「为什么需要下一个」：
