@@ -1,10 +1,24 @@
 # Skynet：C 内核 + Lua Actor 的轻量服务端框架
 
+## Category
+
+server / 横向节点。节点定位：全站唯一一篇通读式源码解析——把 skynet 的两级队列、actor 纪律、厘秒时间轮与「哪些东西刻意不做」逐段钉在文件:行号上，为 runtime、services、sync 三棵子树里的结论提供第一手依据。
+
+## Definition
+
 > 本系列「常见游戏后端引擎源码级解析」与教程第 03 讲（前端引擎与客户端）互为镜像：那边讲客户端引擎如何反推服务端设计，这边直接读服务端引擎的源码。本文基于 skynet 仓库 commit `64391f7`（2026-09-29）浅克隆源码通读写成，引用均为短摘引并标注 文件:行号（MIT 协议允许）；查不到的内容如实标注「未见于源码」。
 >
 > 源码出处：上游官方仓 `https://github.com/cloudwu/skynet`（MIT），本文所有 文件:行号 均基于 commit `64391f7`。
 
-## 1. 仓库定位与技术栈
+## Problem
+
+读框架源码最容易停在「看懂了就过」：知道 skynet 是 actor，却说不出服务内为什么不用加锁、定时器为什么只有厘秒精度、缺持久化与服务发现时哪些方案要自建。这三点恰好是 runtime（执行模型）、services（服务拆分）、sync（时间模型）三棵子树反复引用的前提——结论没有出处，评审就只能争口径。
+
+本节点把每个结论钉回 commit 锚定的文件:行号，让「为什么服务内可以无锁」「为什么帧同步不该建在它上面」这类判断可以被逐条复核；正文按源码阅读顺序排列，节号（第 1~13 节）被站内其他节点直接引用，改动时保持节序与节号不变。
+
+## Algorithm
+
+### 1. 仓库定位与技术栈
 
 skynet 是云风开源的**轻量级游戏服务端框架**：C 内核提供 actor 运行时（消息调度、网络、定时器），业务逻辑用 Lua 写成一个个服务。仓库规模克制——C 核心（`skynet-src/`）约 7000 行，Lua 层（`lualib/` + `service/`）约 1.5 万行，两边都可以完整通读。第三方依赖同样克制：内置 Lua（`3rd/lua/`）、jemalloc、lpeg 等（`3rd/` 目录）。
 
@@ -15,7 +29,7 @@ skynet 是云风开源的**轻量级游戏服务端框架**：C 内核提供 act
 
 它不是「引擎」而是「框架」：没有实体同步、AOI、账号体系这些游戏引擎组件（未见于源码），它只回答一个问题——**一个进程里如何调度成百上千个并发服务**。
 
-## 2. 进程/线程模型
+### 2. 进程/线程模型
 
 skynet 是**单进程多线程**。线程拓扑在 `skynet_start.c:187` 的 `start(thread)` 里一次铺开：`pthread_t pid[thread+3]`（`skynet_start.c:188`），即 **thread 个 worker + 3 个固定线程**：
 
@@ -30,7 +44,7 @@ worker 无活可干时靠条件变量睡眠，由 socket/timer 线程 `wakeup`�
 
 worker 之间有**权重分工**（`skynet_start.c:213-217`）：前 4 个 weight=-1（每次只处理 1 条，防止长队霸占），随后按 0/1/2/3 递增（一次最多处理 `队列长度 >> weight` 条，`skynet_server.c:316-318`）。低权 worker 保证交互类消息的公平，高权 worker 提升批量吞吐。
 
-## 3. 启动流程（main 到服务就绪）
+### 3. 启动流程（main 到服务就绪）
 
 C 侧顺序（`skynet_start.c:266` 的 `skynet_start`）：
 
@@ -56,7 +70,7 @@ pcall(skynet.newservice, skynet.getenv "start" or "main")    -- :50，启动业�
 
 到 `start` 指向的 Lua 服务跑起来、监听端口就绪，服务才算就绪。示例入口 `examples/main.lua:6-21` 依次拉起 debug_console、simpledb、watchdog，并让 watchdog 监听 8888。
 
-## 4. 网络层（acceptor / 连接管理 / 编解码）
+### 4. 网络层（acceptor / 连接管理 / 编解码）
 
 **事件循环**：socket 线程循环调 `skynet_socket_poll`（`skynet_socket.c:79`）→ `socket_server_poll`（`socket_server.c:1708`）。就绪描述符由 epoll/kqueue 报告（`socket_epoll.h:31-49` 的 `EPOLLIN`/`EPOLLOUT` 控制），控制命令走一条 self-pipe 用 `select` 读（`socket_server.c:1295` 的 `recvctrl_fd`）——业务线程通过写管道向网络线程下达 connect/listen/close 指令，网络线程只输出事件，读写全部收敛在一个线程。
 
@@ -70,7 +84,7 @@ pcall(skynet.newservice, skynet.getenv "start" or "main")    -- :50，启动业�
 
 **编解码**：粘包拆分在 C 侧由 netpack 模块完成（`lualib-src/lua-netpack.c`）——帧格式是「uint16 大端长度 + 数据」，文件头注释写明「Each package is uint16 + data」（`:28`），打包侧在 `:436`；应用层协议生态以 sproto（`lualib/sproto.lua`）为代表。这对应教程第 03 讲 2.2 节「协议三件套」的 C 侧实现位：拆包器在引擎内，协议定义文件仍是两端共享的单一来源。
 
-## 5. 消息分发与路由
+### 5. 消息分发与路由
 
 **消息头**：`skynet.h:9-26` 定义消息类型——`PTYPE_TEXT`（0）、`PTYPE_RESPONSE`（1，RPC 回包）、`PTYPE_CLIENT`（3，客户端流量）、`PTYPE_SOCKET`（6）、`PTYPE_LUA`（10）等；类型编号存进消息长度的比特高位（`MESSAGE_TYPE_SHIFT`），一条 `skynet_message` 就是 `source + session + 指针`，零拷贝倾向明显。
 
@@ -80,7 +94,7 @@ pcall(skynet.newservice, skynet.getenv "start" or "main")    -- :50，启动业�
 
 **寻址与路由**：服务地址 `handle` 是 32 位整数，高位为 harbor id（`skynet_imp.h` 的 `HANDLE_REMOTE_SHIFT`），低位为本地槽位。本地注册用环形探测找空槽、槽满倍增（`skynet_handle.c:91-127`）；`skynet_send`（`skynet_server.c:696`）按 handle 投递，`skynet_sendname`（`:742`）按 `.name` 名字解析后投递。跨机消息交给 harbor 服务（`service-src/service_harbor.c`，配置 `harbor = 1`）；更大规模用 cluster 组件（`service/clusterd.lua` 系，master/slave/agent/sender 四件套）。
 
-## 6. 并发模型（actor / 线程 / 协程）
+### 6. 并发模型（actor / 线程 / 协程）
 
 skynet 的并发哲学一句话：**服务内串行、服务间靠消息、等待靠协程**。
 
@@ -91,7 +105,7 @@ skynet 的并发哲学一句话：**服务内串行、服务间靠消息、等�
 
 对服务端设计者的含义：**业务代码写起来像阻塞式，运行起来是事件驱动**——教程第 05 讲的「协程思路」在 skynet 里是一个完整落地样本，代价是任何一次忘记 `skynet.ret` 都会让协程永久悬挂（框架在多次调度后发现悬挂会报 `SUSPEND` 错误，`lualib/skynet.lua:450` 附近）。
 
-## 7. 定时器与主循环
+### 7. 定时器与主循环
 
 skynet 没有业务主循环——**timer 线程就是节拍源**（`skynet_start.c:131-157`）：每 2.5ms 调一次 `skynet_updatetime`（`skynet_timer.c:246`），推进系统时间与定时器。
 
@@ -101,7 +115,7 @@ skynet 没有业务主循环——**timer 线程就是节拍源**（`skynet_star
 
 **服务端提示**：厘秒是业务定时器的精度上限——对心跳、活动开关、每日重置这类分钟级/秒级任务绰绰有余；帧同步等亚 10ms 强实时逻辑不该建在它上面（对照教程第 03 讲 2.1 节的超时推导：阈值设计里「服务端处理余量」一项，在这套框架里取厘秒级粒度即可）。
 
-## 8. 持久化
+### 8. 持久化
 
 **skynet 本体不提供持久化**——`skynet-src/` 中没有任何存储组件（未见于源码）。这不是缺陷而是边界：skynet 把「内存中的 actor 世界」做扎实，落库交给业务：
 
@@ -111,7 +125,7 @@ skynet 没有业务主循环——**timer 线程就是节拍源**（`skynet_star
 
 设计含义与教程第 03 讲 1.1 节「权威归服务端」同题：状态权威在服务内存里，**落库时机、对账、回档窗口全部由业务层显式设计**——框架不替你兜底，也不假装替你兜底。
 
-## 9. 构建与最小运行
+### 9. 构建与最小运行
 
 ```bash
 make linux          # 产物：skynet 可执行 + cservice/*.so（C 服务）+ luaclib/*.so（C Lua 模块）
@@ -143,7 +157,7 @@ skynet.start(function()
 end)
 ```
 
-## 10. 设计得失点评
+### 10. 设计得失点评
 
 **得**：
 
@@ -161,7 +175,7 @@ end)
 
 **与同类对比**：KBEngine（C++ 分布式引擎）内置空间管理、实体同步、账号体系，开箱即用但形状固定；skynet 反其道——只给调度与 IO，业务形状自己捏。Pomelo（Node.js）同为 actor 风格框架，但 JS 单线程事件循环没有 skynet 的多 worker 抢队列，吞吐模型不同。TrinityCore 是 MMO 专用单体服务端，与 skynet 的「通用框架」定位不可互换。回到教程第 03 讲 6 章的选型口径：skynet 属于「轻框架 + 自建配套」一端，团队工程能力决定上限；要全家桶就选重引擎，要自由度就选 skynet——它把选择权连同责任一起交给你。
 
-## 11. 与其他引擎对比
+### 11. 与其他引擎对比
 
 四台引擎的结构性对照（只收可从源码结构直接核对的事实，各台细节以本系列对应篇目为准）：
 
@@ -176,7 +190,7 @@ end)
 | 生态与现状 | 中文社区为主，云风持续维护 | 社区开源，中英文档 | 魔兽服务器社区，数据与脚本积累规模大 | 上游最后提交 2019-11（浅克隆 HEAD），活跃度存疑 |
 | 性能特征 | 长连接高并发，内存世界吞吐稳定 | 空间同步开销换 MMO 语义 | 单场景重模拟，CPU 密集 | V8 单线程吞吐上限 |
 
-## 12. 设计优缺点与取舍
+### 12. 设计优缺点与取舍
 
 skynet 的每个设计选择都是一笔「用 X 换 Y」的明账：
 
@@ -189,7 +203,7 @@ skynet 的每个设计选择都是一笔「用 X 换 Y」的明账：
 
 一句话概括取舍逻辑：skynet 把「正确的并发结构」做进内核，把「性能、运维、存储」的选择权交给用户——它赌的是使用者的工程能力，这既是自由度的来源，也是使用门槛。
 
-## 13. 适用游戏场景
+### 13. 适用游戏场景
 
 按玩法特性对号入座，给出明确判断：
 
@@ -211,3 +225,26 @@ skynet 的每个设计选择都是一笔「用 X 换 Y」的明账：
 - **期望开箱即用全家桶、团队无意自建配套**——skynet 的自由度以工程能力为前提（第 12 节），没有这份投入就选带引擎设施的方案
 
 一句话收束：玩法是请求-响应或状态聚合型，skynet 的设计就是为它长的；玩法吃计算精度或空间语义，就换有这些设施的引擎。
+
+## Used By
+
+- 服务端三棵子树的结论回引本文：[执行模型与运行时](/server/runtime/00) 的立场总览、[服务拆分与控制平面](/server/services/01) 的「按角色拆而非按进程拆」、[Tick 与时间推进](/server/sync/01) 的时间源——三处都按小节回引（第 2、5、7 节）
+- 玩法系统侧的落点：[排行榜](/system/leaderboard) 的单写者服务语义、[PVP 匹配](/system/pvp-matchmaking) 的撮合器常驻 actor、[队伍匹配](/system/party-matchmaking) 的撮合池服务内串行
+- 树根总览把本文与 [AOI](/server/aoi) 并列为 server 树的两枚横向节点：一个回答「一个进程怎么调度上千服务」，一个回答「同屏可见集怎么裁」；本文第 8 节恰好说明这两件事都属框架之外的边界
+
+## Related
+
+关系链：仓库定位 → 线程与队列 → 启动链 → 网络层 → 分发与路由 → 并发模型 → 定时器与主循环 → 持久化边界 → 构建与最小运行 → 得失点评 → 横向对比 → 取舍 → 适用场景。逐段回答「为什么需要下一个」：
+
+- 定位先于实现：第 1 节先说清它不做什么，后面所有「未内置」才是边界而不是遗漏
+- 线程与两级队列是全篇地基：分发、并发模型、定时器三节都复用第 5 节那套队列，没有第二套机制
+- 持久化一节给的是反面约束：框架不兜底，落库时机与对账窗口必须由业务显式设计——这正是 database 树与 runtime 树的交界
+- 横向对比放在得失之后：先自己评一遍再与四台引擎并排，结论才不会被对比表带着走
+
+姊妹节点：[AOI](/server/aoi)（skynet 明确不内置、需自建的那一半）、[执行模型与运行时](/server/runtime/)、[服务拆分与控制平面](/server/services/)；与教程第 03 讲（前端引擎与客户端）互为镜像，那边反推服务端设计，这边读服务端框架源码。
+
+## Reference
+
+- 上游官方仓 `https://github.com/cloudwu/skynet`（MIT，Copyright 2012-2025 codingnow.com）；本文全部 文件:行号 基于 commit `64391f7`（2026-09-29 浅克隆）
+- 站内其他节点引用 skynet 时按各自核对时的 commit 锚定（如 `64391f7`）；换 commit 后行号可能漂移，核对时以引用处标注的 commit 为准
+- 术语对照：Service（服务 = 一个常驻 Lua VM）、Message Queue（服务私有队列）、Global Queue（全局队列）、Harbor（节点 id）、Cluster（集群组件）、Centisecond Time Wheel（厘秒时间轮）、Agent（连接专属服务）
