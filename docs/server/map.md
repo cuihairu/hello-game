@@ -1,0 +1,60 @@
+# 开源服务器地图
+
+## Category
+
+server / 横向节点 / 语言与选型。一句话：开源服务端不是一类东西——按「给什么、你要自建什么」分四种形态，选型的第一问是对局模型，不是语言与星数。
+
+## Definition
+
+[engines/03](/client/engines/03) 把「自研、框架、现成方案」的判断立在了客户端侧；服务端的同一问有更明确的谱系：**库/框架**给网络与房间骨架，**Actor 运行时**给并发与消息语义，**完整平台**给账号、社交、匹配等基础件，**MMO 引擎服务端**给 AOI、分服、实体同步的全套。形态选错不是性能问题，而是「定制点找不到」或「基础件全自建」的工程量问题——账在立项那一刻就定下了。
+
+## Problem
+
+- **按语言或星数选，不按对局模型选**：帧同步项目选了状态同步框架，房间制项目扛回一个 MMO 引擎——形态错配在架构第一天就写死，后面每一步都在为它还债。
+- **拿平台当框架用**：想要的是对局逻辑的自由度，却选了完整平台；发现定制点不开放，误判为「要 fork」——其实是形态选错。
+- **拿框架当平台用**：选了薄框架图省心，账号、支付、风控全写进房间类——[system/services](/system/services/) 的基础件清单全部自建，却没有一样按正式项目立项。
+- **低估自建清单的长度**：薄框架的自建清单 = 同步语义 + 持久化 + 结算 + 风控 + 账号……engines/03 的「现成方案」判断在服务端要按这份清单算钱，不是按「框架好不好用」。
+
+## Algorithm
+
+### 四形态地图
+
+| 形态 | 给什么 | 你要自建 | 适合 |
+|------|--------|---------|------|
+| 库/框架（leaf、nano、Colyseus） | 网络接入、房间/会话骨架、心跳与广播 | 同步语义、持久化、结算、账号、风控 | 房间制小团队，要全控 |
+| Actor 运行时（skynet、Orleans） | 消息路由、调度、单 Actor 串行语义 | 游戏语义（AOI、同步、玩法）全自建 | 服务化组织的大团队 |
+| 完整平台（Nakama） | 账号、社交、匹配、存储、购买校验 | 玩法与对局本体 | 聚焦玩法的休闲/中轻度 |
+| MMO 引擎服务端（BigWorld、KBEngine） | AOI、实体同步、分服、持久化框架 | 玩法脚本与数值 | 大世界 MMO 类 |
+
+- 形态之间不可比优劣，只可比匹配度：比「框架 A 强还是平台 B 强」没有意义，比「形态与对局模型匹配吗」才有答案。
+- 每种形态的「自建清单」长度不同：清单越长，控制力越大、上线越慢——这是同一枚硬币的两面，不是可以既要又要的取舍。
+
+### 选型链路
+
+对局模型（[industry/models](/industry/models/)）→ 权威与同步形态（[同步模型](/server/sync/02)）→ 形态定性 → 语言与热更约束（[服务端语言与运行时](./language.md)）收窄 → 用自建清单算工程账，再动手。
+
+## Used By
+
+- **Colyseus**（commit `e620123`）：框架形态代表——房间即服务单元（模拟 60fps / patch 20fps，`packages/core/src/Room.ts:57-58`），但引擎不提供任何玩法设施：无技能、无结算钩子（`database.boot` 只拉账号 SQL 层，`packages/core/src/Server.ts:462`）——自建清单最长、控制力最大。
+- **Nakama**（commit `e920249`）：平台形态——购买校验、通知、匹配器、dashboard 开箱即用（`README.md:25-28`），玩法经运行时扩展三选一（`README.md:27`）——基础件由平台承包、玩法自建。
+- **skynet**（commit `64391f7`）：Actor 运行时——22 个内置服务给出「框架给并发、语义全自建」的边界（`service/` 目录），业务服务经 `skynet.launch` 拉起（`service/launcher.lua:95`）。
+- **BigWorld**（commit `088d3b84`，路径相对 `programming/bigworld/`）与 **KBEngine**（commit `0bc93d5`）：MMO 引擎服务端——前者把持久化做成显式服务（`server/dbapp/dbapp.cpp:2288-2294` 的 writeEntity），后者 README.md:66 自述「An MMOG server engine」；AOI 与分服由引擎承担（见 [AOI](/server/aoi)）。
+- **leaf**（commit `af71eb0`）与 **nano**（commit `dbf22c7`）：库形态两端——定位句分别是「A pragmatic game server framework in Go」（leaf `README.md:3`）与「lightweight game server networking library for Go」（nano `README.md:12`）。
+
+适用判断：房间制 16 人以内，薄框架足矣；带账号社交的中轻度，平台省的是基础件的账；大世界，要么引擎服务端，要么 Actor 运行时加自建——没有第四条便宜路。
+
+## Related
+
+关系链：对局模型 → 形态定性 → 自建清单 → 语言约束 → 工程账。逐段回答「为什么需要下一个」：
+
+- 对局模型决定形态：房间制、大世界、中轻度各对应不同形态，先定性再谈选型（[industry/models](/industry/models/)）。
+- 形态定了才知道自建什么：薄框架的自建清单就是 [system/services](/system/services/) 的基础件目录，逐项立项而不是顺手写进房间类。
+- 自建清单定了要算语言账：同一形态下不同运行时的运营期成本不同（[服务端语言与运行时](./language.md)）。
+- 账算完才动手：源码级样例见 [Skynet 源码解析](/server/skynet)（Actor 运行时的完整解剖）。
+
+姊妹节点：[engines/03 项目与团队综合决策](/client/engines/03)（客户端半边的同一判断）。上游：[同步模型](/server/sync/02)（权威与同步形态）、[industry/models](/industry/models/)（对局模型）；下游：[system/services](/system/services/)（自建基础件清单）、[服务拆分方法论](/server/services/01)（自建之后怎么拆）。
+
+## Reference
+
+- 本页为工程经验归纳；各家引擎事实以文内 commit 锚定的源码引用为准
+- 术语对照：Server Framework（服务端框架）、Full-stack Platform（完整平台）、Actor Runtime（Actor 运行时）、Build vs Buy（自建与现成）

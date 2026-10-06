@@ -115,6 +115,14 @@ export default {
             { text: 'Skynet：C 内核 + Lua Actor', link: '/server/skynet' }
           ]
         },
+        {
+          text: '语言与选型',
+          collapsed: false,
+          items: [
+            { text: '服务端语言与运行时', link: '/server/language' },
+            { text: '开源服务器地图', link: '/server/map' }
+          ]
+        },
 
         {
           text: '同步、战斗与实时交互',

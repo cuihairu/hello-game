@@ -16,7 +16,7 @@ client / engines 子树总览。覆盖：引擎商业模式（01）、语言地�
 
 ## Related
 
-关系链：授权光谱（01）→ 语言地图（02）→ 项目与团队综合决策（03）。上游：client/01（技术栈责任划分）；下游：production 树（流程与复盘，production/retro）、server 树（服务端语言与选型，待写）。
+关系链：授权光谱（01）→ 语言地图（02）→ 项目与团队综合决策（03）。上游：client/01（技术栈责任划分）；下游：production 树（流程与复盘，production/retro）、server 树（[服务端语言与运行时](/server/language)、[开源服务器地图](/server/map)）。
 
 ## Reference
 
