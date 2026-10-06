@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # 只保留安全更新通道：不开版本更新 PR（open-pull-requests-limit 不约束安全更新）
+    open-pull-requests-limit: 0
+    ignore:
+      # katex 的安全修复要求 >= 0.18.2，但 mermaid 全线（含 12.x）仍声明 katex@^0.16.47，
+      # 依赖树内不可达（security_update_not_possible），强行 override 会破坏渲染。
+      # 本站 mermaid/katex 只渲染第一方文档，无可信度风险面；待 mermaid 升级 katex 区间后移除此条。
+      - dependency-name: "katex"
+        versions: [">=0.18"]

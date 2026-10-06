@@ -196,7 +196,9 @@ export default {
           items: [
             { text: '排行榜：四种实现比对', link: '/system/leaderboard' },
             { text: '队伍匹配：四种撮合形态', link: '/system/party-matchmaking' },
-            { text: 'PVP 匹配：评分与匹配池', link: '/system/pvp-matchmaking' }
+            { text: 'PVP 匹配：评分与匹配池', link: '/system/pvp-matchmaking' },
+            { text: '技能系统：部件边界与扩展', link: '/system/skill' },
+            { text: '结算：凭证与幂等', link: '/system/settlement' }
           ]
         },
         {

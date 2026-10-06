@@ -28,7 +28,7 @@ server / sync 子树总览。覆盖：时间模型（01）、同步模型（02�
 
 ## Related
 
-关系链：时间（01）→ 模型（02）→ 帧同步（03）→ 暂停与重连（04）→ 预测补偿（05）→ 确定性（06）→ 回放裁决（07）→ 技能（08）。上游：runtime 子树（Tick 与执行模型）；下游：networking 树、system 树（结算节点，待写）、树根 [server 总览](../index.md)。
+关系链：时间（01）→ 模型（02）→ 帧同步（03）→ 暂停与重连（04）→ 预测补偿（05）→ 确定性（06）→ 回放裁决（07）→ 技能（08）。上游：runtime 子树（Tick 与执行模型）；下游：networking 树、[system 树结算](/system/settlement)（对局结果的生效点）、树根 [server 总览](../index.md)。
 
 ## Reference
 
