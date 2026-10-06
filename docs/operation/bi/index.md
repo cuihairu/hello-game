@@ -24,7 +24,7 @@ operation / bi 子树总览。覆盖：运营与商业化基础（01）、埋点
 
 ## Related
 
-关系链：运营基础（01）→ 数据口径（02）→ 三类分析（03）→ 触达（04）→ AI 边界（05）。上游：production/05（配置管线）；下游：economy 树（规划迁入）、numerical 树（规划迁入）、树根 [operation 总览](../index.md)。
+关系链：运营基础（01）→ 数据口径（02）→ 三类分析（03）→ 触达（04）→ AI 边界（05）。上游：production/05（配置管线）；下游：economy 树（规划迁入）、numerical 树、树根 [operation 总览](../index.md)。
 
 ## Reference
 

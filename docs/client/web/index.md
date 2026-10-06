@@ -12,7 +12,7 @@ Web 是游戏触达玩家成本最低的路径之一：浏览器打开即玩，�
 
 ## Related
 
-关系链：Canvas 2D（01）→ WebGL 管线（02）→ 引擎封装（03）→ UI 体系（04）→ 平台环境（05）→ 进程内分层（06）。上游：client 树总纲（02 的边界、03 的引擎观）；下游：database/cache/04（资源分发）、industry 树平台生态（规划迁入）。
+关系链：Canvas 2D（01）→ WebGL 管线（02）→ 引擎封装（03）→ UI 体系（04）→ 平台环境（05）→ 进程内分层（06）。上游：client 树总纲（02 的边界、03 的引擎观）；下游：database/cache/04（资源分发）、industry 树平台生态（industry/platforms）。
 
 ## Reference
 

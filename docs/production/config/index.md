@@ -16,7 +16,7 @@ production / config 子树总览。覆盖：驱动边界（01）、拆表协作�
 
 ## Related
 
-关系链：进表边界（01）→ 拆表协作（02）→ 校验与导出（03）→ 防呆与回滚（04）。上游：production/05（管线总览）；下游：numerical 树（数值配置的消费侧，规划迁入）、operation 树（配置监控，规划迁入）。
+关系链：进表边界（01）→ 拆表协作（02）→ 校验与导出（03）→ 防呆与回滚（04）。上游：production/05（管线总览）；下游：numerical 树（数值配置的消费侧）、operation 树（配置监控，observability）。
 
 ## Reference
 

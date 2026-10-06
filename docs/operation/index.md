@@ -15,7 +15,7 @@ operation 树总览。节点定位：上线之后系统暴露的不再是设计�
 - [运营、商业化与数据分析](/operation/bi/)——运营基础 → 数据口径 → 三类分析 → 触达 → AI 边界
 - [可观测性、性能、容量与稳定性](/operation/observability/)——三支柱证据 → 主链路指标 → 性能取证 → 故障定位 → 容量推演 → 稳定性可控性
 
-上游：production 树（配置管线与发布流程）；下游：economy、numerical 树（规划迁入）。
+上游：production 树（配置管线与发布流程）；下游：economy 树（规划迁入）、numerical 树。
 
 ## Reference
 

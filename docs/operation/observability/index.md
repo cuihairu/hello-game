@@ -12,7 +12,7 @@ operation / observability 子树总览。覆盖：日志指标 Tracing 与 OTel�
 
 ## Related
 
-关系链：三支柱证据（01）→ 主链路指标（02）→ 性能取证（03）→ 故障定位（04）→ 容量推演（05）→ 稳定性可控性（06）。上游：server 树（规划迁入）；下游：production/03 与 production/06（发布与工作流的稳定性面）、树根 [operation 总览](../index.md)。
+关系链：三支柱证据（01）→ 主链路指标（02）→ 性能取证（03）→ 故障定位（04）→ 容量推演（05）→ 稳定性可控性（06）。上游：server 树；下游：production/03 与 production/06（发布与工作流的稳定性面）、树根 [operation 总览](../index.md)。
 
 ## Reference
 
