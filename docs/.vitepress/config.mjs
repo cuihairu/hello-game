@@ -386,6 +386,13 @@ export default {
           ]
         },
         {
+          text: '职业地图',
+          collapsed: false,
+          items: [
+            { text: '职业地图：岗位、成长与流动', link: '/industry/career' }
+          ]
+        },
+        {
           text: '游戏类型与问题模型',
           collapsed: false,
           items: [
