@@ -8,7 +8,10 @@ updates:
     open-pull-requests-limit: 0
     ignore:
       # katex 的安全修复要求 >= 0.18.2，但 mermaid 全线（含 12.x）仍声明 katex@^0.16.47，
-      # 依赖树内不可达（security_update_not_possible），强行 override 会破坏渲染。
-      # 本站 mermaid/katex 只渲染第一方文档，无可信度风险面；待 mermaid 升级 katex 区间后移除此条。
+      # 依赖树内不可达（npm 线最新 0.17.0，patched 版本不存在），强行 override 会破坏渲染。
+      # 本站 mermaid/katex 只渲染第一方文档，无可信度风险面——alert #15 已按 tolerable_risk dismiss
+      # （security 通道不再评估 katex）；本 ignore 保留作版本更新通道的护栏（limit 放开时防不可行 PR）。
+      # 2026-10-07 记：run 1613952319 曾因 ignore 挡掉全部候选版本报 all_versions_ignored 判红，
+      # dismiss alert 后安全 run 不再携带 katex advisory，该错误随之消失。
       - dependency-name: "katex"
         versions: [">=0.18"]
