@@ -272,6 +272,13 @@ export default {
           ]
         },
         {
+          text: '交互与输入',
+          collapsed: false,
+          items: [
+            { text: '交互与输入：意图与映射', link: '/client/input' }
+          ]
+        },
+        {
           text: 'Web 游戏前端体系',
           collapsed: false,
           items: [
