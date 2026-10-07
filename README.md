@@ -1,6 +1,6 @@
 <div align="center">
 
-<p align="center"><img src="docs/public/logo.svg" width="64" height="64" alt="logo" /></p>
+<p align="center"><img src="docs/public/logo.svg" width="64" height="64" alt="logo" /> <img src="docs/public/badges/langs.svg" alt="languages" /></p>
 
 # 游戏知识体系
 <p align="center"><img src="docs/public/badges/topic.svg" alt="topic" /> <img src="docs/public/badges/docs.svg" alt="docs" />
