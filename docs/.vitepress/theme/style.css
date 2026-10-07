@@ -43,7 +43,6 @@
 
   /* 组件覆写 */
   --vp-c-sponsor: #284331;
-  --vp-home-hero-name-color: transparent;
   --vp-sidebar-bg-color: var(--vp-c-bg-alt);
   --vp-nav-bg-color: var(--vp-c-bg);
   --vp-code-block-bg: #eef3f9;
