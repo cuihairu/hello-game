@@ -12,6 +12,8 @@
 
 ---
 
+<p align="center"><img src="docs/public/badges/topic.svg" alt="topic" /> <img src="docs/public/badges/docs.svg" alt="docs" /></p>
+
 ## 定位
 
 这不是一个可运行的游戏工程，而是**开源的、面向个人开发者的游戏开发知识图谱**——知识关系网的形态（MDN / Kubernetes docs / Wikipedia 一类），不是教程仓、不是课程、不是岗位技能树。三条组织原则：
