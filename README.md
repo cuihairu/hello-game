@@ -1,8 +1,11 @@
 <div align="center">
 
-<img src="docs/public/logo.svg" width="96" alt="hello-game logo" />
+<p align="center"><img src="docs/public/logo.svg" width="64" height="64" alt="logo" /></p>
 
 # 游戏知识体系
+
+<p align="center"><img src="docs/public/badges/topic.svg" alt="topic" /> <img src="docs/public/badges/docs.svg" alt="docs" /></p>
+<p align="center"><img src="docs/public/badges/license.svg" alt="CC BY 4.0" /></p>
 
 **开源的、面向个人开发者的游戏开发知识图谱**——覆盖设计、客户端、服务器、数值、美术、工具与运营，用成熟商业游戏与成熟开源项目连接知识节点。
 
@@ -11,9 +14,6 @@
 </div>
 
 ---
-
-<p align="center"><img src="docs/public/badges/topic.svg" alt="topic" /> <img src="docs/public/badges/docs.svg" alt="docs" /></p>
-<p align="center"><img src="docs/public/badges/license.svg" alt="CC BY 4.0" /></p>
 
 ## 定位
 
