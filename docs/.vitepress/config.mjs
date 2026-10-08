@@ -483,7 +483,8 @@ export default {
             { text: '热更新', link: '/glossary/06' },
             { text: '控制平面', link: '/glossary/07' },
             { text: '运营', link: '/glossary/08' },
-            { text: '风控', link: '/glossary/09' }
+            { text: '风控', link: '/glossary/09' },
+            { text: '英文术语与词源', link: '/glossary/10' }
           ]
         }
       ],
@@ -537,7 +538,8 @@ export default {
             { text: '热更新', link: '/glossary/06' },
             { text: '控制平面', link: '/glossary/07' },
             { text: '运营', link: '/glossary/08' },
-            { text: '风控', link: '/glossary/09' }
+            { text: '风控', link: '/glossary/09' },
+            { text: '英文术语与词源', link: '/glossary/10' }
           ]
         },
         {
