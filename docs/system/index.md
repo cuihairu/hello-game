@@ -14,6 +14,7 @@ system 树总览。节点定位：跨端共用的系统层知识——玩法系�
 
 - 玩法系统：[排行榜](/system/leaderboard)、[队伍匹配](/system/party-matchmaking)、[PVP 匹配](/system/pvp-matchmaking)、[技能系统](/system/skill)、[结算](/system/settlement)
 - 子树：[脚本与热更](/system/scripting/)、[通用服务](/system/services/)
+- 对照：[品类与组件覆盖对照](/system/genre-coverage)（21 个品类、46 个组件的三档判定与 11 个缺口）
 
 ## Reference
 
