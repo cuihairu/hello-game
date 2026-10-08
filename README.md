@@ -1,8 +1,10 @@
+[English](README.md) | [中文](README.zh.md)
+
 <div align="center">
 
 <p align="center"><img src="docs/public/logo.svg" width="64" height="64" alt="logo" /> </p>
 
-# 游戏知识体系
+# Game Knowledge System
 
 <p align="center">
   <img src="docs/public/badges/topic.svg" alt="topic" />
@@ -11,146 +13,146 @@
   <img src="docs/public/badges/langs.svg" alt="langs" />
 </p>
 
-**开源的、面向个人开发者的游戏开发知识图谱**——覆盖设计、客户端、服务器、数值、美术、工具与运营，用成熟商业游戏与成熟开源项目连接知识节点。
+**An open-source game development knowledge graph for individual developers** — covering design, client, server, numerical design, art, tooling, and operations, connecting knowledge nodes through mature commercial games and mature open-source projects.
 
-[快速开始](#本地开发) · [目录结构](#目录结构) · [在线阅读](https://cuihairu.github.io/hello-game/)
+[Quick Start](#local-development) · [Directory Layout](#directory-layout) · [Read Online](https://cuihairu.github.io/hello-game/)
 
 </div>
 
 ---
 
-## 定位
+## Positioning
 
-这不是一个可运行的游戏工程，而是**开源的、面向个人开发者的游戏开发知识图谱**——知识关系网的形态（MDN / Kubernetes docs / Wikipedia 一类），不是教程仓、不是课程、不是岗位技能树。三条组织原则：
+This is not a runnable game project. It is an **open-source game development knowledge graph for individual developers** — shaped like a knowledge web (MDN / Kubernetes docs / Wikipedia style), not a tutorial repository, not a course, and not a job-skill tree. Three organizing principles:
 
-- **问题域/场景链组织**：节点按「游戏场景怎么走通」串联，不是技术名词表。例如玩家登录链 = 登录 → 网关 → 会话 → 玩家对象 → 内存态 → 持久化 → 离线恢复；写每个节点先回答「这解决游戏后端的什么问题」。
-- **知识点是节点不是长文**：每页按固定七段组织（Category / Definition / Problem / Algorithm / Used By / Related / Reference），节点间的关系链（Related / Implemented by / Used in / Case）是图谱主体，每条链都要能回答「为什么需要下一个节点」。
-- **案例只用成熟商业与成熟开源**：WoW、EVE、KBEngine、skynet、BigWorld、TrinityCore、Nakama、Netty、Erlang 这一级的公开事实与源码出处，不引未验证的材料。
+- **Organized by problem domain and scenario chains**: nodes are chained the way a game scenario actually runs, not arranged as a list of technology names. For example, the player login chain = login → gateway → session → player object → in-memory state → persistence → offline recovery; before writing a node, answer "what problem of the game backend does this solve".
+- **Knowledge points are nodes, not long essays**: every page follows a fixed seven-section layout (Category / Definition / Problem / Algorithm / Used By / Related / Reference). The relation chains between nodes (Related / Implemented by / Used in / Case) are the body of the graph, and every chain must answer "why the next node is needed".
+- **Cases only from mature commercial and mature open-source projects**: public facts and source-code references at the level of WoW, EVE, KBEngine, skynet, BigWorld, TrinityCore, Nakama, Netty, and Erlang; no unverified material.
 
-数值、策划、美术内容从程序员视角写：数值写「属性模型 → 伤害公式 → 客户端显示 → 服务端权威计算 → 配置表 → 数值调整」的全链路，美术写资产流水线（概念 → 模型 → 贴图 → 动画 → 引擎导入 → 运行时）给程序看。
+Numerical design, game design, and art content are written from a programmer's perspective: numerical design covers the full chain of "attribute model → damage formula → client display → authoritative server calculation → config tables → numerical tuning", and art covers the asset pipeline (concept → model → texture → animation → engine import → runtime) written for programmers.
 
-适合：
-- 想入行游戏开发的个人开发者
-- 想按场景串起全链路的后端/全栈工程师
-- 想理解服务端如何裁决的客户端/前端工程师
-- 想了解游戏技术的产品/策划/测试
+Intended readers:
+- Individual developers who want to get into game development
+- Backend / full-stack engineers who want to string the whole chain together by scenario
+- Client / frontend engineers who want to understand how the server adjudicates
+- Product, design, and test roles who want to understand game technology
 
-## 目录结构
+## Directory Layout
 
-知识图谱一级树（重构中：既有页面按节点格式逐步迁入，内容不丢页）：
-
-```
-docs/
-├── industry/      # 游戏行业：AAA/独立/手游/端游/主机/网游/Live Service/F2P，类型→技术需求→团队→成本
-├── design/        # 策划：Core Loop/机制/关卡/叙事/任务/成长/奖励/玩家心理
-├── system/        # 各系统：角色/背包/装备/技能/任务/成就/公会/排行/匹配/商店/支付，每系统 Design→Client→Server→DB→Operation 链
-├── numerical/     # 数值：属性/公式/成长/平衡/概率/掉落/模拟/分析（等级经验曲线、战力、经济 Source→Currency→Sink）
-├── economy/       # 经济：货币/道具/交易/通胀/水龙头水池/防作弊
-├── client/        # 客户端：引擎/渲染/动画/物理/UI/资源管线；预测/插值/服务器校对
-├── server/        # 服务器：架构/会话/网关/匹配/World/Zone/Battle/社交/持久化/反作弊/扩展；含样板节点 AOI
-├── networking/    # 网络：传输/协议契约/可靠性/弱网
-├── database/      # 数据：玩家数据/背包/排行/经济/回放的存储与中间件
-├── art/           # 美术：资产流水线（DCC→导出→引擎→运行时），给程序看
-├── audio/         # 音频
-├── tools/         # 工具与技术美术：Shader/管线/自动化/程序生成
-├── production/    # 生产：版本/构建/发布/本地化/QA/流水线
-├── operation/     # 运营：分析/活动/热更/GM/客服/社区
-└── glossary/      # 术语
-```
-
-既有站点由**教程**、**知识库**与两个**横向入口**组成：教程是 21 讲的实战路线，知识库是逐章展开的参考体系，二者主线同题对应；横向入口按时间（历史线）与分类（游戏库）浏览，条目均带后端技术视角。迁移期间两套结构并存，以站内侧边栏为准。
+Top-level trees of the knowledge graph (restructuring in progress: existing pages are being migrated into the node format step by step; no page is dropped):
 
 ```
 docs/
-├── 24-game-types-architecture/       # 教程（21 讲 + 选型对照总览 + 扩展讲次 + 扩展规划台账 expansion.md）
-│   ├── 01 游戏后端技术全景
-│   ├── 02 数值与经济系统
-│   ├── 03 前端引擎与客户端
-│   ├── 04 通信协议设计
-│   ├── 05 并发模型：七种常见并发思路与适用场景
-│   ├── 06 常见框架：从最轻到最重
-│   ├── 07 架构总览
-│   ├── 08 数据存储与中间件
-│   ├── 09 游戏编程模式
-│   ├── 10 玩法系统设计
-│   ├── 11 辅助系统设计
-│   ├── 12 游戏数据分析
-│   ├── 13 运维与基础设施实战
-│   ├── 14 研发组织与项目管理
-│   ├── 15 学习资源与经验沉淀
-│   ├── 16 脚本热更新与逻辑扩展
-│   ├── 17 版本发布、配置与研发管线
-│   ├── 18 安全、风控与合规
-│   ├── 19 客户端架构与性能基础（扩展）
-│   ├── 20 游戏测试与质量保障（扩展）
-│   └── 21 音频与美术管线协作（扩展）
-│
-├── history/                          # 横向入口：游戏发展历史线（八轨交互时间线 + 设计稿与节点清单）
-├── games/                            # 横向入口：知名游戏库（条目 + 后端技术栏 + 多维筛选）
-│
-└── 知识库
-    ├── 导读与术语约定
-    ├── 1. 总论与方法论
-    ├── 2. 游戏类型与问题模型
-    ├── 3. 网络与接入协议
-    ├── 4. 同步、战斗与实时交互
-    ├── 5. 执行模型与运行时
-    ├── 6. 服务拆分、分布式与控制平面
-    ├── 7. 消息系统与进程间通信
-    ├── 8. 客户端架构与引擎体系
-    ├── 9. 脚本、热更新与逻辑扩展
-    ├── 10. 版本发布、配置与研发管线
-    ├── 11. 数据建模与数据库
-    ├── 12. 缓存、中间件与基础设施
-    ├── 13. 通用游戏服务
-    ├── 14. 运营、商业化与数据分析
-    ├── 15. 平台生态、渠道与 SDK
-    ├── 16. 可观测性、性能、容量与稳定性
-    ├── 17. 安全、风控与合规
-    ├── 18. 选型、实践、复盘与清单
-    ├── 19. Web 游戏前端体系
-    ├── 20. 策划与数值体系
-    └── 附录与横向索引（游戏类型 / 问题域 / 配置管线 / 容量扩缩 / 引擎语言工具）
+├── industry/      # Game industry: AAA/indie/mobile/PC/console/online/Live Service/F2P; genre → technical requirements → team → cost
+├── design/        # Game design: Core Loop/mechanics/levels/narrative/quests/progression/rewards/player psychology
+├── system/        # Systems: character/inventory/equipment/skills/quests/achievements/guilds/leaderboards/shops/payments; a Design→Client→Server→DB→Operation chain per system
+├── numerical/     # Numerical design: attributes/formulas/progression/balance/probability/drops/simulation/analytics (level curves, combat power, economy Source→Currency→Sink)
+├── economy/       # Economy: currency/items/trading/inflation/faucet and sink/anti-cheat
+├── client/        # Client: engines/rendering/animation/physics/UI/asset pipeline; prediction/interpolation/server reconciliation
+├── server/        # Server: architecture/sessions/gateway/matchmaking/World/Zone/Battle/social/persistence/anti-cheat/extensibility; includes the sample node AOI
+├── networking/    # Networking: transport/protocol contracts/reliability/weak-network conditions
+├── database/      # Data: storage and middleware for player data/inventory/leaderboards/economy/replays
+├── art/           # Art: asset pipeline (DCC→export→engine→runtime), written for programmers
+├── audio/         # Audio
+├── tools/         # Tools and technical art: shaders/pipelines/automation/procedural generation
+├── production/    # Production: versioning/build/release/localization/QA/pipelines
+├── operation/     # Operations: analytics/events/hot updates/GM/customer support/community
+└── glossary/      # Glossary
 ```
 
-> 注：知识库各章的目录名与章号不一一对应（如第 8 章在 `10-client-engine-runtime/`），以站内侧边栏为准。
+The existing site consists of the **tutorial**, the **knowledge base**, and two **cross-cutting entries**: the tutorial is a 21-lecture practical route; the knowledge base is a chapter-by-chapter reference; the two track the same mainline topics side by side. The cross-cutting entries are browsed by time (history) and by category (game library), and every entry carries a backend-technology view. Both structures coexist during the migration; the site sidebar is authoritative.
 
-## 技术栈
+```
+docs/
+├── 24-game-types-architecture/       # Tutorial (21 lectures + selection overview + extension lectures + expansion ledger expansion.md)
+│   ├── 01 Game backend technology panorama
+│   ├── 02 Numerical and economy systems
+│   ├── 03 Frontend engines and the client
+│   ├── 04 Communication protocol design
+│   ├── 05 Concurrency models: seven common approaches and where they fit
+│   ├── 06 Common frameworks: from the lightest to the heaviest
+│   ├── 07 Architecture overview
+│   ├── 08 Data storage and middleware
+│   ├── 09 Game programming patterns
+│   ├── 10 Gameplay system design
+│   ├── 11 Auxiliary system design
+│   ├── 12 Game data analytics
+│   ├── 13 Operations and infrastructure in practice
+│   ├── 14 Development organization and project management
+│   ├── 15 Learning resources and knowledge retention
+│   ├── 16 Scripting, hot updates, and logic extension
+│   ├── 17 Release, configuration, and the development pipeline
+│   ├── 18 Security, risk control, and compliance
+│   ├── 19 Client architecture and performance basics (extension)
+│   ├── 20 Game testing and quality assurance (extension)
+│   └── 21 Audio and art pipeline collaboration (extension)
+│
+├── history/                          # Cross-cutting entry: game history timeline (eight-track interactive timeline + design doc and node list)
+├── games/                            # Cross-cutting entry: notable games library (entries + backend tech column + multi-dimensional filters)
+│
+└── Knowledge base
+    ├── Reading guide and terminology conventions
+    ├── 1. Overview and methodology
+    ├── 2. Game genres and problem models
+    ├── 3. Networking and access protocols
+    ├── 4. Synchronization, combat, and real-time interaction
+    ├── 5. Execution models and runtimes
+    ├── 6. Service decomposition, distribution, and the control plane
+    ├── 7. Messaging systems and inter-process communication
+    ├── 8. Client architecture and engine systems
+    ├── 9. Scripting, hot updates, and logic extension
+    ├── 10. Release, configuration, and the development pipeline
+    ├── 11. Data modeling and databases
+    ├── 12. Caching, middleware, and infrastructure
+    ├── 13. Common game services
+    ├── 14. Operations, monetization, and data analytics
+    ├── 15. Platform ecosystems, channels, and SDKs
+    ├── 16. Observability, performance, capacity, and stability
+    ├── 17. Security, risk control, and compliance
+    ├── 18. Selection, practice, retrospectives, and checklists
+    ├── 19. Web game frontend
+    ├── 20. Game design and numerical systems
+    └── Appendix and cross-cutting indexes (game genres / problem domains / config pipeline / capacity scaling / engine and language tooling)
+```
 
-- **文档框架**：VitePress
-- **部署**：GitHub Pages（Actions 自动构建，推 main 即发布）
-- **代码示例**：Go / Python / Lua / Java / SQL / JS / HTML / TS / C / C++ / C# 等——全站围栏语言白名单 22 种，`tests/code-blocks` 回归约束（围栏必须标注语言、Go 代码块过 gofmt 语法检查）
-- **架构图**：ASCII + Mermaid（`tests/mermaid-syntax` 语法兜底回归）
-- **交互动画**：GSAP（历史线时间轴）
+> Note: knowledge-base directory names do not map one-to-one to chapter numbers (e.g. chapter 8 lives in `10-client-engine-runtime/`); the site sidebar is authoritative.
 
-## 测试与门禁
+## Tech Stack
 
-- **源码覆盖**：`npm test`（vitest）+ 主题源码 11 个文件 100% 覆盖率门槛（`vitest.config.mjs` 的 `coverage.include`：config + theme 组件与数据层）
-- **内容回归**：`tests/site-links` 六项对账（站内链接、md 总数、教程讲数、案例覆盖与台账一致性）、`tests/code-blocks`、`tests/mermaid-syntax`
-- **实战案例冒烟**：教程讲次与知识库页各有配套用例（`tests/case-*.test.mjs` / `tests/kb-case-*.test.mjs`），校验结构、数字闭环、声称对账与引用闭合
+- **Docs framework**: VitePress
+- **Deployment**: GitHub Pages (built automatically by Actions; pushing to main publishes)
+- **Code samples**: Go / Python / Lua / Java / SQL / JS / HTML / TS / C / C++ / C# and more — the fenced-block language whitelist has 22 languages, enforced by the `tests/code-blocks` regression (every fence must declare a language; Go blocks must pass gofmt syntax checks)
+- **Diagrams**: ASCII + Mermaid (syntax fallback regression in `tests/mermaid-syntax`)
+- **Interactive animation**: GSAP (history timeline)
 
-改内容先跑 `npm test` 与 `npm run docs:build`，全绿再提交推送。
+## Tests and Gates
 
-## 参考书籍
+- **Source coverage**: `npm test` (vitest) with a 100% coverage gate over the 11 theme source files (`coverage.include` in `vitest.config.mjs`: config + theme components and data layer)
+- **Content regression**: the six-way audit in `tests/site-links` (in-site links, md totals, lecture counts, case coverage, ledger consistency), plus `tests/code-blocks` and `tests/mermaid-syntax`
+- **Case smoke tests**: tutorial lectures and knowledge-base pages each ship with companion test cases (`tests/case-*.test.mjs` / `tests/kb-case-*.test.mjs`) that check structure, numeric closure, claim cross-checks, and reference closure
 
-| 书名 | 作者 | 重点 |
+Run `npm test` and `npm run docs:build` before committing content changes; push only when both are green.
+
+## Reference Books
+
+| Book | Author | Focus |
 |------|------|------|
-| 《游戏编程模式》 | Robert Nystrom | 设计模式 |
-| 《游戏数据分析的艺术》 | 于洋等 | 数据分析 |
-| 《百万在线》 | 罗培羽 | 大型游戏服务端开发 |
-| 《游戏服务器架构与优化》 | 蔡能 | 架构优化 |
-| 《网络游戏核心技术与实战》 | 中嶋谦互 | 全面架构 |
+| 《游戏编程模式》(Game Programming Patterns) | Robert Nystrom | Design patterns |
+| 《游戏数据分析的艺术》 | 于洋 等 | Data analytics |
+| 《百万在线》 | 罗培羽 | Large-scale game server development |
+| 《游戏服务器架构与优化》 | 蔡能 | Architecture and optimization |
+| 《网络游戏核心技术与实战》 | 中嶋谦互 | End-to-end architecture |
 
-## 本地开发
+## Local Development
 
 ```bash
 npm install
-npm run docs:dev     # 开发服务器
-npm run docs:build   # 构建（站内死链检查）
-npm run docs:preview # 预览构建结果
-npm test             # 测试 + 覆盖率（见「测试与门禁」）
+npm run docs:dev     # dev server
+npm run docs:build   # build (in-site dead-link check)
+npm run docs:preview # preview the build
+npm test             # tests + coverage (see "Tests and Gates")
 ```
 
-## 许可证
+## License
 
 Apache License 2.0
