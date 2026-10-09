@@ -207,6 +207,10 @@ export default {
             { text: 'PVP 匹配：评分与匹配池', link: '/system/pvp-matchmaking' },
             { text: '技能系统：部件边界与扩展', link: '/system/skill' },
             { text: '结算：凭证与幂等', link: '/system/settlement' },
+            { text: '任务系统：进度与链式前置', link: '/system/quest' },
+            { text: '成就与图鉴', link: '/system/achievement' },
+            { text: '体力与次数门控', link: '/system/stamina' },
+            { text: '装备强化与升星', link: '/system/enhance' },
             { text: '品类与组件覆盖对照', link: '/system/genre-coverage' }
           ]
         },
