@@ -211,6 +211,9 @@ export default {
             { text: '成就与图鉴', link: '/system/achievement' },
             { text: '体力与次数门控', link: '/system/stamina' },
             { text: '装备强化与升星', link: '/system/enhance' },
+            { text: '签到、福利与兑换码', link: '/system/checkin' },
+            { text: '战令与赛季轨', link: '/system/battle-pass' },
+            { text: '走马灯与公告', link: '/system/marquee' },
             { text: '品类与组件覆盖对照', link: '/system/genre-coverage' }
           ]
         },
