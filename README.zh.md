@@ -57,8 +57,12 @@ docs/
 ├── tools/         # 工具与技术美术：Shader/管线/自动化/程序生成
 ├── production/    # 生产：版本/构建/发布/本地化/QA/流水线
 ├── operation/     # 运营：分析/活动/热更/GM/客服/社区
+├── research/      # 调研：书籍/官方文档/应用场景三维度覆盖审计 + 覆盖差异表
+├── knowledge.md   # 调研知识点总览：核心概念/书籍与文档要点/应用场景/常见坑误区
 └── glossary/      # 术语
 ```
+
+**调研与知识点**：[调研知识点总览](https://cuihairu.github.io/hello-game/knowledge) 收拢三份覆盖审计调研（[权威书籍](https://cuihairu.github.io/hello-game/research/01-authoritative-books)、[引擎与中间件官方文档](https://cuihairu.github.io/hello-game/research/02-engine-middleware-docs)、[应用场景对照](https://cuihairu.github.io/hello-game/research/03-application-scenarios)）——核心概念、书籍与文档要点、应用场景、常见坑误区，逐条给来源标注与站内落点。
 
 既有站点由**教程**、**知识库**与两个**横向入口**组成：教程是 21 讲的实战路线，知识库是逐章展开的参考体系，二者主线同题对应；横向入口按时间（历史线）与分类（游戏库）浏览，条目均带后端技术视角。迁移期间两套结构并存，以站内侧边栏为准。
 

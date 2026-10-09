@@ -57,8 +57,12 @@ docs/
 ├── tools/         # Tools and technical art: shaders/pipelines/automation/procedural generation
 ├── production/    # Production: versioning/build/release/localization/QA/pipelines
 ├── operation/     # Operations: analytics/events/hot updates/GM/customer support/community
+├── research/      # Research: three-dimension coverage audits (books / official docs / application scenarios) + coverage diff
+├── knowledge.md   # Knowledge digest: concepts, book and doc key points, scenarios, pitfalls
 └── glossary/      # Glossary
 ```
+
+**Research and knowledge points**: the [knowledge digest](https://cuihairu.github.io/hello-game/knowledge) consolidates three coverage-audit surveys ([authoritative books](https://cuihairu.github.io/hello-game/research/01-authoritative-books), [official engine and middleware docs](https://cuihairu.github.io/hello-game/research/02-engine-middleware-docs), [application scenarios](https://cuihairu.github.io/hello-game/research/03-application-scenarios)) into core concepts, book and doc key points, application scenarios, and common pitfalls, each with a source note and an in-site landing link.
 
 The existing site consists of the **tutorial**, the **knowledge base**, and two **cross-cutting entries**: the tutorial is a 21-lecture practical route; the knowledge base is a chapter-by-chapter reference; the two track the same mainline topics side by side. The cross-cutting entries are browsed by time (history) and by category (game library), and every entry carries a backend-technology view. Both structures coexist during the migration; the site sidebar is authoritative.
 

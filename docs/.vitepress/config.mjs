@@ -882,6 +882,18 @@ export default {
           items: [
             { text: 'Skynet：C 内核 + Lua Actor', link: '/server/skynet' }
           ]
+        },
+        {
+          text: '调研与知识点',
+          collapsed: true,
+          items: [
+            { text: '调研知识点总览', link: '/knowledge' },
+            { text: '调研总览', link: '/research/' },
+            { text: '权威书籍调研', link: '/research/01-authoritative-books' },
+            { text: '引擎与中间件官方文档调研', link: '/research/02-engine-middleware-docs' },
+            { text: '应用场景对照', link: '/research/03-application-scenarios' },
+            { text: '覆盖差异表', link: '/research/04-coverage-diff' }
+          ]
         }
       ]
     },
