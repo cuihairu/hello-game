@@ -214,6 +214,9 @@ export default {
             { text: '签到、福利与兑换码', link: '/system/checkin' },
             { text: '战令与赛季轨', link: '/system/battle-pass' },
             { text: '走马灯与公告', link: '/system/marquee' },
+            { text: '外观、皮肤与装扮', link: '/system/cosmetics' },
+            { text: '家园、领地与建造权限', link: '/system/territory' },
+            { text: '游戏内语音', link: '/system/voice' },
             { text: '品类与组件覆盖对照', link: '/system/genre-coverage' }
           ]
         },
