@@ -325,7 +325,8 @@ export default {
             { text: '灰度、回滚与兼容窗口', link: '/production/03' },
             { text: '前后端协同与平台约束', link: '/production/04' },
             { text: '配置表与数据驱动管线', link: '/production/05' },
-            { text: '研发协作与发布工作流', link: '/production/06' }
+            { text: '研发协作与发布工作流', link: '/production/06' },
+            { text: '工作室分工与质量门禁', link: '/production/07' }
           ]
         },
         {
@@ -683,7 +684,8 @@ export default {
             { text: '灰度、回滚与兼容窗口', link: '/production/03' },
             { text: '前后端协同与平台约束', link: '/production/04' },
             { text: '配置表与数据驱动管线', link: '/production/05' },
-            { text: '研发协作与发布工作流', link: '/production/06' }
+            { text: '研发协作与发布工作流', link: '/production/06' },
+            { text: '工作室分工与质量门禁', link: '/production/07' }
           ]
         },
         {

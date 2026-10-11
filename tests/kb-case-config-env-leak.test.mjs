@@ -158,9 +158,9 @@ describe('实战案例冒烟（知识库 production/05「测试表发进了生�
       expect(page.indexOf(anchor), `回填落点应位于案例之前: ${anchor}`).toBeLessThan(page.indexOf(CASE_HEADING))
     }
     expect(existsSync(file)).toBe(true)
-    // 同章页面清单未被改动（案例是页内小节，不新增页）
+    // 同章页面清单：树根总览 + 01–07（工作室方法节点入库后 8 篇）
     const pages = readdirSync(resolve(root, 'docs/production')).filter(f => f.endsWith('.md'))
-    expect(pages.length).toBe(7)
+    expect(pages.length).toBe(8)
     expect(pages).toContain('index.md')
   })
 })
