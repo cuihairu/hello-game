@@ -659,3 +659,14 @@ func (w *OnlineGuard) peak() int64 {
 | 数据库 schema 变更的回滚纪律？ | 向前兼容：新代码兼容旧表结构，代码可回滚、表结构不回滚 |
 | 开服洪峰四件套？ | 限流 + 排队 + 降级 + 扩容，排队状态必须静态化防打挂 |
 | 自动化的前置条件？ | 先手动跑通并稳定，再自动化固化——不要自动化一个坏流程 |
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [01-authoritative-books](/research/01-authoritative-books.md)

@@ -111,3 +111,20 @@ T0+90s    拆队降级：整队不齐时允许单人补位进残局池
 
 - 本页为工程经验归纳，无单一外部出处；撮合质量双指标与防震荡陷阱表见教程第 11 讲《匹配系统》
 - 术语对照：Party Matchmaking（组队匹配）、Matchmaking Pool（撮合池）、Skill Bucket（段位分桶）、Degradation Ladder（降级阶梯）
+
+## 参考资料
+
+- [Wikipedia · Matchmaking](https://en.wikipedia.org/wiki/Matchmaking)
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [10](/glossary/10.md)
+- [skynet](/server/skynet.md)
+- [genre-coverage](genre-coverage.md)
+- [index](index.md)
+- [leaderboard](leaderboard.md)
+- [pvp-matchmaking](pvp-matchmaking.md)
+- [skill](skill.md)
+- [voice](voice.md)

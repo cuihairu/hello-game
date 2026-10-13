@@ -100,3 +100,17 @@ equipped_appearance:               # 每槽位一条
 - 本页为机制归纳；各商业案例的皮肤定价、返场策略以各自官方公开信息为准。
 - 「外观不影响数值」为竞技品类通行设计红线，本仓作为口径采纳；非竞技品类的边界（如带增益外观）不在本页主张内。
 - 术语对照：Cosmetic（外观）、Skin（皮肤）、Transmog（幻化/整套替换）、Slot（槽位）、Rental（限时租用）、Rarity（稀有度）。
+
+## 参考资料
+
+- [Wikipedia · Cosmetic item](https://en.wikipedia.org/wiki/Loot_box)
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [10](/glossary/10.md)
+- [knowledge](/knowledge.md)
+- [03-application-scenarios](/research/03-application-scenarios.md)
+- [genre-coverage](genre-coverage.md)
+- [territory](territory.md)

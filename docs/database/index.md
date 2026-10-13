@@ -31,3 +31,13 @@ database 树总览。覆盖：分类与建模（01）、存储选型（02）、�
 - [关系型与非关系型数据库](./02.md)：讨论不同存储模型各自真正适合承接什么问题，而不是按流行度选型。
 - [事务、一致性与分库分表](./03.md)：把资产一致性、事务边界和扩展策略放回同一张工程账本里讨论。
 - [数据同步、冷热分层与归档](./04.md)：说明为什么数据生命周期管理会直接影响成本、恢复能力和长期运营弹性。
+
+## 参考资料
+
+- [Wikipedia · CAP theorem](https://en.wikipedia.org/wiki/CAP_theorem)
+- [Wikipedia · Database](https://en.wikipedia.org/wiki/Database)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [05](/client/web/05.md)

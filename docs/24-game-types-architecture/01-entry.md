@@ -774,3 +774,14 @@ func handleConn(conn net.Conn, room *Room) {
 1. **团队熟悉度不是架构依据，问题模型才是**。「我们会 MMO」建出的是熟悉的世界型组件，不是这个项目需要的开局链路——成本花在了最不出故障的地方。
 2. **分型要在立项时做，不要在删档测试的账单里做**。六个问题五个指向房间型，答案一直都在，缺的只是把六问问出口。
 3. **主导模型决定第一阶段的优先级，不否定其余模型**。世界型组件冻结待用而不是删除——组合模型的正确姿势是分阶段建设，不是「按最高标准一起建设」。
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [01-authoritative-books](/research/01-authoritative-books.md)

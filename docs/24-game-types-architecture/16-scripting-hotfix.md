@@ -564,3 +564,13 @@ hotfix_compatibility:
 1. **下载和校验证明的是「文件到了」，不是「能跑」**——热更最危险的是兼容性而不是下载失败，运行时才开始崩的问题在发布链路里全绿（4.3 节）。
 2. **灰度不是专业姿态，是事故隔离**——没有灰度的直发全量，事故半径比整包发版还大；五阶段每一步都在给回滚留观察窗口（4.5 节）。
 3. **热更缩短的是修复窗口，不是测试责任**——P0 三项没测，快就变成了快速把错误送到更多玩家手里（4.6 节 / 5.3 节）。
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [expansion](expansion.md)

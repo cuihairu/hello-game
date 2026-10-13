@@ -99,3 +99,13 @@ export const TRACKS = [
 ## 6. 与旧页的关系
 
 旧版是三线静态表（技术线 / 引擎线 / 名作线）：六个年代锚点与「历史不会重复，但会押韵」的收束保留在新页，旧表 10 条绝对内链收缩为收束段 2 条章节互链（引擎分工与同步模型两讲）；旧表条目作为素材融入八轨数据（如 QuakeWorld、UO 分片、WOW 副本实例化在游戏/硬件/引擎轨互链可见）。存疑口径由「存疑」改为「约」，与清单口径一致。
+
+## 参考资料
+
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+- [Wikipedia · History of video games](https://en.wikipedia.org/wiki/History_of_video_games)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](index.md)

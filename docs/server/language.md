@@ -114,3 +114,18 @@ server / 横向节点 / 语言与选型。一句话：服务端语言选型不�
 1. **榜单不回答停顿形态**。全停顿 GC 一次 80 毫秒，超 tick 预算 5 倍，帧抖动直接翻倍。
 2. **两层的语言合起来才是技术栈决定**。单说「服务端用什么语言」说不清，核心与脚本要各选一个运行时。
 3. **热更边界要提前画**。没有脚本层用重启发版硬扛，有脚本层不画边界，权威口径跟着漂移。
+
+## 参考资料
+
+- [Wikipedia · Go](https://en.wikipedia.org/wiki/Go_(programming_language))
+- [Wikipedia · Rust](https://en.wikipedia.org/wiki/Rust_(programming_language))
+- [Wikipedia · C++](https://en.wikipedia.org/wiki/C%2B%2B)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [02](/client/engines/02.md)
+- [index](/client/engines/index.md)
+- [10](/glossary/10.md)
+- [index](index.md)
+- [map](map.md)

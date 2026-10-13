@@ -30,3 +30,15 @@ design / problem-domains 子树总览。覆盖：单局房间型（01）、强�
 - [长周期成长型架构](./04.md)：围绕“长周期成长型架构”补足 问题域附录 里的关键判断、成本与误区。
 - [经济平台型架构](./05.md)：围绕“经济平台型架构”补足 问题域附录 里的关键判断、成本与误区。
 - [这页的用途](./06.md)：围绕“这页的用途”补足 问题域附录 里的关键判断、成本与误区。
+
+## 参考资料
+
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+- [Wikipedia · Level design](https://en.wikipedia.org/wiki/Level_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/design/index.md)
+- [index](/games/index.md)
+- [genre-coverage](/system/genre-coverage.md)

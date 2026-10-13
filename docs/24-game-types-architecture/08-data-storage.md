@@ -646,3 +646,13 @@ result = conn.execute("""
 | 配置系统 | 结构化定义 + 自动校验 + 灰度发布 |
 
 > **最终建议**：《百万在线》告诉我们，数据架构的设计应该"从需求出发，而不是从技术出发"。先搞清楚你的游戏有哪些数据、每种数据的访问模式是什么、一致性要求有多高，然后再选择合适的存储组件。**不要为了用新技术而用新技术**。
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [expansion](expansion.md)

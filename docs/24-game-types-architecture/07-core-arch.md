@@ -683,3 +683,14 @@ CMD ["./server"]
 | 跨服合服 | 提前设计补偿方案 |
 
 > **最终建议**：《游戏服务器架构与优化》告诉我们，好的架构不是一步到位的，而是渐进式演进的。从最简单的 HTTP Server 开始，在遇到具体问题时再引入更复杂的解决方案。**不要过度设计，也不要完全不设计**。
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [01-authoritative-books](/research/01-authoritative-books.md)

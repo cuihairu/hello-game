@@ -17,3 +17,14 @@ design 树总览。节点定位：设计侧知识按问题域组织——先给�
 ## Reference
 
 节点清单见子树导览页。
+
+## 参考资料
+
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+- [Wikipedia · Level design](https://en.wikipedia.org/wiki/Level_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/design/problem-domains/index.md)
+- [career](/industry/career.md)

@@ -31,3 +31,15 @@ system / 脚本与热更子树总览。覆盖：脚本层定位（01）、宿主
 - [宿主运行时与脚本 VM 集成](./02.md)：讨论脚本 VM 接进宿主以后，绑定、生命周期、调试和性能问题为什么会一起出现。
 - [配置驱动与脚本驱动](./03.md)：解释配置和脚本分别适合承载什么变化，为什么两者不能互相替代。
 - [热更新体系](./04.md)：把补丁、签名、灰度、兼容、回滚和事故控制放回同一条发布链路里讨论。
+
+## 参考资料
+
+- [Lua 官方文档](https://www.lua.org/docs.html)
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [10](/glossary/10.md)
+- [genre-coverage](/system/genre-coverage.md)
+- [index](/system/index.md)

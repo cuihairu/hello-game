@@ -23,3 +23,17 @@ industry 树总览。节点定位：先回答「游戏行业里的项目是什�
 ## Reference
 
 节点清单见四棵子树的导览页。
+
+## 参考资料
+
+- [Wikipedia · Video game industry](https://en.wikipedia.org/wiki/Video_game_industry)
+- [Wikipedia · Video game platform](https://en.wikipedia.org/wiki/Video_game_platform)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [career](career.md)
+- [index](/industry/genres/index.md)
+- [index](/industry/methodology/index.md)
+- [index](/industry/models/index.md)
+- [index](/industry/platforms/index.md)

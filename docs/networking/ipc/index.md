@@ -28,3 +28,19 @@ networking / IPC 子树总览。覆盖：边界（01）、模式（02）、主/�
 - [低延迟与高吞吐取舍](./04.md)：把实时性、批处理、削峰、积压和背压放在同一张工程账本里讨论。
 - [消息语义、幂等与顺序](./05.md)：讨论至少一次、至多一次、顺序约束、重复投递和业务幂等为什么总是一起出现。
 - [如何选通信方案](./06.md)：给出更接近工程现实的选型方法，不按产品名词选，而按链路语义和失败代价选。
+
+## 参考资料
+
+- [Wikipedia · Inter-process communication](https://en.wikipedia.org/wiki/Inter-process_communication)
+- [Wikipedia · Netcode](https://en.wikipedia.org/wiki/Netcode)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/networking/index.md)
+- [01](01.md)
+- [02](02.md)
+- [03](03.md)
+- [04](04.md)
+- [05](05.md)
+- [06](06.md)

@@ -27,3 +27,17 @@ client / engines 子树总览。覆盖：引擎商业模式（01）、语言地�
 - [引擎选择与商业模式](./01.md)：围绕“引擎选择与商业模式”补足 引擎与工具附录 里的关键判断、成本与误区。
 - [编程语言与技术栈地图](./02.md)：围绕“编程语言与技术栈地图”补足 引擎与工具附录 里的关键判断、成本与误区。
 - [团队能力、项目类型与工具生态](./03.md)：围绕“团队能力、项目类型与工具生态”补足 引擎与工具附录 里的关键判断、成本与误区。
+
+## 参考资料
+
+- [Wikipedia · List of game engines](https://en.wikipedia.org/wiki/List_of_game_engines)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [01](01.md)
+- [02](02.md)
+- [03](03.md)
+- [language](/server/language.md)
+- [map](/server/map.md)

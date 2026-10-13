@@ -290,3 +290,14 @@ func Replay(recs []Record, handle func(req string) string) []int64 {
 1. **时间不是环境，是依赖**。第 5 节纪律 2 的原话——`time.Now()` 散落的每一处，测试都只能以日历为夹具；与第 07 讲案例「时间不是度量，是输入」是同一枚硬币的测试面与生产面
 2. **金字塔的每一层都可能共享同一个结构性盲区**。单测、回放、机器人、冒烟全绿仍然 0/31——层与层独立变绿，不会互相补齐没注入的时间维度；加用例补不了缺注入点的层
 3. **通过率 100% 与逃逸率 100% 可以同时为真**。第 1 节说 QA 是度量者：分母不进尺子，度量越精确越误导——第 13 讲「监控全绿」口径课的测试版
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [19-client-architecture](19-client-architecture.md)
+- [06](/client/web/06.md)

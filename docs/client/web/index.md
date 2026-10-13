@@ -28,3 +28,18 @@ Web 是游戏触达玩家成本最低的路径之一：浏览器打开即玩，�
 - [客户端内部分层：渲染、逻辑与资源](/client/web/06)
 
 建议阅读顺序即编号顺序：01/02 是渲染地基，03 是工程载体，04/05 是两类终端形态，06 把前三页收拢成可维护的结构。
+
+## 参考资料
+
+- [Wikipedia · HTML5](https://en.wikipedia.org/wiki/HTML5)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [01](01.md)
+- [02](02.md)
+- [03](03.md)
+- [04](04.md)
+- [05](05.md)
+- [06](06.md)

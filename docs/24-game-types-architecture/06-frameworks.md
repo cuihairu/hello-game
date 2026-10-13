@@ -3992,3 +3992,13 @@ Photon 在客户端自动做了三件事，从来不在功能清单上：**插�
 1. **隐式实现不是免费功能，是未登记的依赖**——SDK 替你做的事，清单上没有名字，迁移时就没了。
 2. **验收对照物决定迁移质量**：功能过 ≠ 行为对，录屏与分桶反馈比 API 清单更接近「手感」。
 3. **渐进式替换不是为了慢，是为了每一步都有对照组**——每次迁移只解决一个核心问题，才分得清回退是谁引起的。
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [01-authoritative-books](/research/01-authoritative-books.md)

@@ -34,3 +34,18 @@ client 树总览。覆盖：技术栈与引擎（01）、前后端边界（02）
 - [脚本语言与 ECS](./04.md)：讨论脚本层和数据驱动架构为什么会出现在客户端，以及它们分别适合解决什么问题。
 - [AI 在客户端与游戏系统中的应用场景](./05.md)：把 AI 放回真实工程语境里看，讨论它适合提升什么效率，不适合替代什么边界。
 - [交互与输入](./input.md)：把设备事件归一化成可复算的意图，输入映射是数据不是代码，手感的一半诞生在输入管线的延迟账里。
+
+## 参考资料
+
+- [Wikipedia · Video game console](https://en.wikipedia.org/wiki/Video_game_console)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [01](01.md)
+- [02](02.md)
+- [03](03.md)
+- [04](04.md)
+- [05](05.md)
+- [input](input.md)

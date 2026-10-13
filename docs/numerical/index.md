@@ -32,3 +32,13 @@ numerical 树总览。节点定位：数值是玩法的量化语言——从设�
 - [数值书单与资料](/numerical/08)
 
 建议阅读顺序即编号顺序：01 定口径，02/03 是两条主干（战斗与成长），04/05 是两个系统（经济与随机），06/07 是两类体验调参（付费与难度），08 是延伸阅读。
+
+## 参考资料
+
+- [Wikipedia · Video game economy](https://en.wikipedia.org/wiki/Virtual_economy)
+- [Wikipedia · Virtual economy](https://en.wikipedia.org/wiki/Virtual_economy)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [career](/industry/career.md)

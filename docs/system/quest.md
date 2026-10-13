@@ -107,3 +107,21 @@ quest_progress:                  # 运行态，每玩家每条任务一行
 - 本页为机制归纳；TrinityCore 的表结构以其公开仓库与 wiki 为准，不臆造表名与列名。
 - 奖励凭证与幂等口径：[结算](./settlement.md) 与 [交易、支付与经济系统](./services/03.md)。
 - 术语对照：Quest（任务）、Objective（任务目标）、Prerequisite（前置）、Turn-in（交付）、Daily Reset（每日重置）。
+
+## 参考资料
+
+- [Wikipedia · Quest (role-playing game)](https://en.wikipedia.org/wiki/Quest_(role-playing_game))
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [03-application-scenarios](/research/03-application-scenarios.md)
+- [achievement](achievement.md)
+- [battle-pass](battle-pass.md)
+- [checkin](checkin.md)
+- [genre-coverage](genre-coverage.md)
+- [marquee](marquee.md)
+- [stamina](stamina.md)
+- [territory](territory.md)

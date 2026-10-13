@@ -66,3 +66,12 @@ research / 调研一。节点定位：把游戏开发领域公认的书籍当作
 - 《游戏编程精粹》按 1–8 卷系列整体引用，只取其主题分区（同步网络、数学物理、AI、性能），不逐卷断言篇目。
 - 主题判定的检索口径：全库关键词与标题 grep，检索日期 2026-10-08；判定只针对本仓 `docs/` 下的 md。
 - 术语对照：Game Programming Patterns（游戏编程模式）、Data-Oriented Design（数据导向设计）、Frame Budget（帧预算）。
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [02-engine-middleware-docs](02-engine-middleware-docs.md)
+- [03-application-scenarios](03-application-scenarios.md)
+- [04-coverage-diff](04-coverage-diff.md)
+- [index](index.md)

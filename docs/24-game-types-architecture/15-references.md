@@ -392,3 +392,13 @@ Code Review是知识传递的最有效方式。资深员工评审新人的代码
 1. **坑踩两遍不是记忆问题，是机制问题**——群聊不是档案，人脑不是 checklist。
 2. **修复分两种：点修复救当次，类修复救下次**——只做点修复的复盘等于没复盘。
 3. **沉淀的验收标准是可检索**——「写过了」不算沉淀，「下次踩坑前能搜到」才算。
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [08](/numerical/08.md)

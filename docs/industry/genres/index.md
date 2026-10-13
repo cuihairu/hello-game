@@ -34,3 +34,16 @@ industry / genres 子树总览。覆盖：房间制与轻量在线（01）、强
 - [长周期成长与经营](./04.md)：看账号长期积累型产品为什么更像一套持续运营的数据系统。
 - [平台与生态型游戏](./05.md)：看 UGC、创作者生态和多平台分发会如何改变系统边界。
 - [如何使用这页](./06.md)：说明这一组附录该怎样用，才不会把“品类”误当成“答案”。
+
+## 参考资料
+
+- [Wikipedia · Video game genre](https://en.wikipedia.org/wiki/Video_game_genre)
+- [Wikipedia · Video game industry](https://en.wikipedia.org/wiki/Video_game_industry)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [10](/glossary/10.md)
+- [index](/industry/index.md)
+- [03-application-scenarios](/research/03-application-scenarios.md)
+- [genre-coverage](/system/genre-coverage.md)

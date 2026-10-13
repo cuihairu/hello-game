@@ -297,3 +297,13 @@
 1. 玩家最频繁的核心行为是什么？
 2. 哪些状态一旦错就会直接伤害体验？
 3. 哪些故障恢复不了，或者恢复成本远高于预防？
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [expansion](expansion.md)

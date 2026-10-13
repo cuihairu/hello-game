@@ -28,3 +28,14 @@ industry / platforms 子树总览。覆盖：平台与渠道生态（01）、小
 - [小游戏平台与技术约束](./02.md)：围绕“小游戏平台与技术约束”补足 平台与 SDK 里的关键判断、成本与误区。
 - [登录、支付、社交与广告 SDK](./03.md)：围绕“登录、支付、社交与广告 SDK”补足 平台与 SDK 里的关键判断、成本与误区。
 - [发布、版本与商业模式](./04.md)：围绕“发布、版本与商业模式”补足 平台与 SDK 里的关键判断、成本与误区。
+
+## 参考资料
+
+- [Wikipedia · Video game platform](https://en.wikipedia.org/wiki/Video_game_platform)
+- [Wikipedia · Video game industry](https://en.wikipedia.org/wiki/Video_game_industry)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [05](/client/web/05.md)
+- [index](/industry/index.md)

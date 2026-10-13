@@ -842,3 +842,13 @@ func (r *Room) handle(msg Message) {
 | 系统过载时靠什么活下来？ | 显式队列上限 + 超限策略 + 优先级隔离 + 预先设计的退化顺序 |
 | 锁竞争怎么办？ | 先问"这状态需要共享吗"：分片/复制/单写者/异步聚合，最后才是锁优化 |
 | 一开始该选哪种？ | 用最熟悉的模型跑通原型；规模上来后先做房间隔离，再做进程拆分，最后才谈多线程共享 |
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [expansion](expansion.md)

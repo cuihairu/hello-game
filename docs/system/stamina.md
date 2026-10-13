@@ -107,3 +107,18 @@ attempt_counter:
 - 本页为机制归纳；原神/FGO/Candy Crush/率土的具体数值以各自官方公开信息为准，本页只引口径不引数值细节。
 - 体力不可交易的红线为行业通行做法的归纳，非单一出处。
 - 术语对照：Stamina/Energy（体力）、Cap（上限）、Recovery Interval（恢复间隔）、Server Day（服务器日）、Attempt Limit（次数门控）、Lazy Evaluation（惰性结算）。
+
+## 参考资料
+
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+- [Wikipedia · Game balance](https://en.wikipedia.org/wiki/Game_balance)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [10](/glossary/10.md)
+- [knowledge](/knowledge.md)
+- [03-application-scenarios](/research/03-application-scenarios.md)
+- [battle-pass](battle-pass.md)
+- [checkin](checkin.md)
+- [genre-coverage](genre-coverage.md)

@@ -24,3 +24,17 @@ server 树总览。节点定位：服务端知识按问题域分五棵子树—�
 ## Reference
 
 节点清单见各子树导览页。
+
+## 参考资料
+
+- [Wikipedia · Game server](https://en.wikipedia.org/wiki/Game_server)
+- [Wikipedia · Microservices](https://en.wikipedia.org/wiki/Microservices)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/server/capacity/index.md)
+- [index](/server/runtime/index.md)
+- [index](/server/security/index.md)
+- [index](/server/services/index.md)
+- [index](/server/sync/index.md)

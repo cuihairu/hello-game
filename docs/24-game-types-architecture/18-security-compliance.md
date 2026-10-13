@@ -726,3 +726,13 @@ T+3 复核：净增回落到 **0.5 亿**/日（贴近基线 0.4），处置链�
 1. **先拆分子分母，再谈异常**。通胀排查第一步永远是产出 vs 回收——本次回收完全正常，方向定错的排查会在监控数据里打转
 2. **「未检出外挂」不等于「没有工作室」**。程序异常检测覆盖不了规模化正常行为，行为聚类（时长 × 产出 × 流向）才是农场的照妖镜（1.4/3.2）
 3. **渐进式风险不会撞单点告警**。收益提升是上月的、生长是缓慢的、越线是本月的——告警要对「趋势与结构」设，不只对「单点异常」设
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [expansion](expansion.md)

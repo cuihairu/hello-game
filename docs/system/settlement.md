@@ -87,3 +87,27 @@ rule_version:  season-12-v3
 - 本页为工程经验归纳；两家引擎事实以文内 commit 锚定的源码引用为准
 - 幂等与补偿的事务口径：[database 树事务与一致性](/database/03)
 - 术语对照：Settlement（结算）、Settlement Voucher（结算凭证）、Idempotency Key（幂等键）、Reconciliation（对账）
+
+## 参考资料
+
+- [Wikipedia · Game balance](https://en.wikipedia.org/wiki/Game_balance)
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [10](/glossary/10.md)
+- [01](/server/security/01.md)
+- [index](/server/sync/index.md)
+- [achievement](achievement.md)
+- [battle-pass](battle-pass.md)
+- [checkin](checkin.md)
+- [cosmetics](cosmetics.md)
+- [enhance](enhance.md)
+- [genre-coverage](genre-coverage.md)
+- [index](index.md)
+- [marquee](marquee.md)
+- [quest](quest.md)
+- [skill](skill.md)
+- [stamina](stamina.md)
+- [territory](territory.md)

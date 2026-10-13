@@ -28,3 +28,17 @@ production / config 子树总览。覆盖：驱动边界（01）、拆表协作�
 - [表结构设计与拆分](./02.md)：围绕“表结构设计与拆分”补足 配置管线附录 里的关键判断、成本与误区。
 - [校验、导出与代码生成](./03.md)：围绕“校验、导出与代码生成”补足 配置管线附录 里的关键判断、成本与误区。
 - [工作流、事故防呆与协作](./04.md)：围绕“工作流、事故防呆与协作”补足 配置管线附录 里的关键判断、成本与误区。
+
+## 参考资料
+
+- [Wikipedia · Software configuration management](https://en.wikipedia.org/wiki/Software_configuration_management)
+- [Wikipedia · Software deployment](https://en.wikipedia.org/wiki/Software_deployment)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [01](01.md)
+- [02](02.md)
+- [03](03.md)
+- [04](04.md)
+- [index](/production/index.md)

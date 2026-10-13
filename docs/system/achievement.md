@@ -96,3 +96,22 @@ achievement_progress:
 - 本页为机制归纳；TrinityCore 成就表结构以其公开仓库与 wiki 为准，不臆造表名。
 - 平台成就口径（Steam/Xbox）以各自开发者文档为准；站内成就与平台成就的账目分离是本页口径，非平台要求。
 - 术语对照：Achievement（成就）、Criteria（判定条件）、Unlock（解锁）、Collection（图鉴/收藏）、Codex（图鉴条目集）。
+
+## 参考资料
+
+- [Wikipedia · Achievement (video games)](https://en.wikipedia.org/wiki/Achievement_(video_games))
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [03-application-scenarios](/research/03-application-scenarios.md)
+- [battle-pass](battle-pass.md)
+- [cosmetics](cosmetics.md)
+- [enhance](enhance.md)
+- [genre-coverage](genre-coverage.md)
+- [marquee](marquee.md)
+- [quest](quest.md)
+- [stamina](stamina.md)
+- [territory](territory.md)

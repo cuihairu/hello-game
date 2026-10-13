@@ -101,3 +101,16 @@ pass_progress:                     # 每玩家每赛季一条
 
 - 本页为机制归纳；各商业案例的战令规则（等级数、经验曲线、价格）以各自官方公开信息为准，本页只引结构口径。
 - 术语对照：Battle Pass（战令）、Season（赛季）、Track（轨道）、Premium（付费轨）、Tier/Level（等级）、Season Reset（赛季重置）。
+
+## 参考资料
+
+- [Wikipedia · Battle pass](https://en.wikipedia.org/wiki/Battle_pass)
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [03-application-scenarios](/research/03-application-scenarios.md)
+- [cosmetics](cosmetics.md)
+- [genre-coverage](genre-coverage.md)

@@ -55,3 +55,14 @@ industry 树回答「项目是什么」，本节点回答「项目由哪些人�
 
 - 本页为工程经验归纳，不绑定具体公司的职级体系
 - 术语对照：Career Map（职业地图）、Job Family（岗位族）、T-shaped Skill（T 型能力）、Role Transition（角色迁移）
+
+## 参考资料
+
+- [Wikipedia · Video game developer](https://en.wikipedia.org/wiki/Video_game_developer)
+- [Wikipedia · Video game industry](https://en.wikipedia.org/wiki/Video_game_industry)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](index.md)
+- [05](/production/retro/05.md)

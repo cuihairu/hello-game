@@ -44,3 +44,14 @@ server / sync 子树总览。覆盖：时间模型（01）、同步模型（02�
 - [确定性与数值一致性](./06.md)：讨论为什么很多“同步问题”其实死在浮点、随机和更新顺序上。
 - [回放、观战与裁决](./07.md)：把输入日志、状态快照、仲裁证据和观战隔离统一进同步体系。
 - [技能系统设计](./08.md)：从运行时骨架、效果管线、Buff 和同步边界出发讨论战斗内容如何长期扩展。
+
+## 参考资料
+
+- [Valve《Source Multiplayer Networking》](https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking)
+- [Gaffer on Games · 游戏网络必读](https://gafferongames.com/post/what_every_programmer_needs_to_know_about_game_networking/)
+- [GitHub · pond3r/ggpo](https://github.com/pond3r/ggpo)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/server/index.md)

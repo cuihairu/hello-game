@@ -806,3 +806,16 @@ func (r *Replay) ReplayTo(w Writer, lastAck uint64) bool {
 1. **掉线是平台行为的函数，不是心跳的函数**——超时推导公式三项里的「最长合法静默时长」取错平台，后面两项算得再准也是错（2.1 节推导公式）。
 2. **会话生命周期要为「会回来的人」留一态**——销毁与挂起是两种成本结构：销毁省内存、把代价转嫁给回归玩家；挂起花一点内存、把重连变成一条 resume（2.1/2.3 节）。
 3. **风暴的账要连二级伤害一起算**——误判掉线本身是体验问题，切回高峰形成的重连尖峰会把登录服务打满、误伤没切后台的玩家；容量账要按风暴口径算，不按日常口径算（账本收敛）。
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [05](/client/web/05.md)
+- [index](/history/index.md)
+- [knowledge](/knowledge.md)
+- [02-engine-middleware-docs](/research/02-engine-middleware-docs.md)

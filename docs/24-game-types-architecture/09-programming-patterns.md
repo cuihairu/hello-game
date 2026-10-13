@@ -1622,3 +1622,15 @@ func (g *SpatialGrid) Query(x, y, radius float64) []*Entity {
 
 - Robert Nystrom, *Game Programming Patterns*, gameprogrammingpatterns.com
 - 本文档中的模式分类和核心思想来源于原书，游戏服务器场景根据实际开发经验补充
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [01-authoritative-books](/research/01-authoritative-books.md)
+- [genre-coverage](/system/genre-coverage.md)

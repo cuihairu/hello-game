@@ -19,3 +19,16 @@ system 树总览。节点定位：跨端共用的系统层知识——玩法系�
 ## Reference
 
 节点清单见各子树导览页与上方节点链接。
+
+## 参考资料
+
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+- [Wikipedia · Game balance](https://en.wikipedia.org/wiki/Game_balance)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/research/index.md)
+- [genre-coverage](genre-coverage.md)
+- [index](/system/scripting/index.md)
+- [index](/system/services/index.md)

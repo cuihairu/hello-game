@@ -29,3 +29,18 @@ production / retro 子树总览。覆盖：选型方法（01）、架构模式�
 - [关键问题清单](./03.md)：围绕“关键问题清单”补足 实践与复盘 里的关键判断、成本与误区。
 - [分析框架、误区与失败案例](./04.md)：围绕“分析框架、误区与失败案例”补足 实践与复盘 里的关键判断、成本与误区。
 - [个人查漏补缺清单](./05.md)：围绕“个人查漏补缺清单”补足 实践与复盘 里的关键判断、成本与误区。
+
+## 参考资料
+
+- [Wikipedia · Continuous integration](https://en.wikipedia.org/wiki/Continuous_integration)
+- [Wikipedia · Software deployment](https://en.wikipedia.org/wiki/Software_deployment)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/production/index.md)
+- [01](01.md)
+- [02](02.md)
+- [03](03.md)
+- [04](04.md)
+- [05](05.md)

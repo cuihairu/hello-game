@@ -56,3 +56,18 @@
 - **后端与引擎**上，商业引擎（Unreal、Unity、Godot 等开源新势力）与头部自行开发并行，引擎与客户端的分工、约束与协作边界见[第 03 讲](/24-game-types-architecture/03-frontend-engines)；同步模型则继续回答[第 04 讲](/24-game-types-architecture/04-network)的老问题：QuakeWorld 的预测插值，长成从接入、房间、到大世界的完整分层。
 
 > 历史不会重复，但会押韵：每当平台（街机→主机→PC→网页→移动→云）与网络条件变化，同步模型与服务器架构都会被重新回答一遍。读历史，是为了在新约束出现时认出那些老问题。
+
+## 参考资料
+
+- [Wikipedia · History of video games](https://en.wikipedia.org/wiki/History_of_video_games)
+- [Wikipedia · Video game industry](https://en.wikipedia.org/wiki/Video_game_industry)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [expansion](/24-game-types-architecture/expansion.md)
+- [index](/games/index.md)
+- [10](/glossary/10.md)
+- [knowledge](/knowledge.md)
+- [01-authoritative-books](/research/01-authoritative-books.md)
+- [04-coverage-diff](/research/04-coverage-diff.md)

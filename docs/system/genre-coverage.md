@@ -244,3 +244,20 @@ system / 玩法系统。节点定位：把市场常见的 21 个玩法品类拉�
 - 成熟件事实以各项目公开文档与源码为准，涉及的项目为 Nakama、Colyseus、KBEngine、BigWorld、skynet、TrinityCore、Pitaya、Orleans、Agones；未列具体实现的缺口条目按口径描述，不编造参照。
 - 判定与计数口径见上文，检索日期 2026-10-08；数量随本页表格同步更新，改表必改计数。
 - 术语对照：Genre（玩法品类）、Gameplay Feature（功能组件）、Coverage（覆盖判定）、Gap（缺口）。
+
+## 参考资料
+
+- [Wikipedia · Video game genre](https://en.wikipedia.org/wiki/Video_game_genre)
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [10](/glossary/10.md)
+- [knowledge](/knowledge.md)
+- [01-authoritative-books](/research/01-authoritative-books.md)
+- [02-engine-middleware-docs](/research/02-engine-middleware-docs.md)
+- [03-application-scenarios](/research/03-application-scenarios.md)
+- [04-coverage-diff](/research/04-coverage-diff.md)
+- [index](/research/index.md)
+- [index](index.md)

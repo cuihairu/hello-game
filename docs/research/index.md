@@ -38,3 +38,12 @@ research 树根。节点定位：三份维度调研与一份差异汇总的入�
 - 检索与判定日期：书籍与文档维度 2026-10-08；组件维度缺口补齐 2026-10-09 至 2026-10-10，逐篇落点见[覆盖差异表](/research/04-coverage-diff)。
 - 各维度的书目、文档入口与来源口径以对应篇目的 Reference 节为准，本页不重复。
 - 术语对照：Coverage Audit（覆盖审计）、Dimension（维度）、Gap（缺口）。
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [01-authoritative-books](01-authoritative-books.md)
+- [02-engine-middleware-docs](02-engine-middleware-docs.md)
+- [03-application-scenarios](03-application-scenarios.md)
+- [04-coverage-diff](04-coverage-diff.md)

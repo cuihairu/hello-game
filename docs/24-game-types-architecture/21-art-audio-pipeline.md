@@ -228,3 +228,17 @@ func CheckAsset(a Asset) Audit {
 1. **审计的单位是「规则进 CI」，不是「清单进 wiki」**——人工勾选的「通过」和工具输出的「通过」是两种证据等级，混在同一张检查单里就会出现本案 42MB 的口径差（第 20 讲门禁纪律的资源版）。
 2. **下线和上新一样是变更**——删引用只清了关系、没清文件；没有三步流程的下线，每一次迭代都在给包体埋账（2.3 节三步、4.1 节变更观）。
 3. **红线要覆盖每一个对外的分母**——主包有红线、补丁包没有，监控与门槛就整体对补丁包失明；缺的不是监控手段，是有人给这个分母立规矩（第 20 讲 §6 的红线只写了主包/整包）。
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [20-game-testing](20-game-testing.md)
+- [knowledge](/knowledge.md)
+- [01-authoritative-books](/research/01-authoritative-books.md)
+- [02-engine-middleware-docs](/research/02-engine-middleware-docs.md)
+- [04-coverage-diff](/research/04-coverage-diff.md)

@@ -44,3 +44,15 @@ industry / models 子树总览。覆盖：玩法标签转译（00）、六问分
 - [经济与平台型游戏问题模型](./06.md)：讨论支付、订单、渠道、风控和外部平台如何重塑系统边界。
 - [高频对象与重表现型游戏问题模型](./07.md)：讨论对象吞吐、资源组织和表现预算为何必须前置进架构设计。
 - [模型之间如何组合](./08.md)：说明真实项目如何识别主导模型和次级模型，而不是平均对待所有复杂度。
+
+## 参考资料
+
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+- [Wikipedia · Video game industry](https://en.wikipedia.org/wiki/Video_game_industry)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [career](/industry/career.md)
+- [index](/industry/index.md)
+- [map](/server/map.md)

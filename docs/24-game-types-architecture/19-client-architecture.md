@@ -264,3 +264,14 @@ Draw Call    旧地图 210 → 新地图 480（2.3 倍，超预算表单屏上�
 1. **平均帧率是给运营看的，分位帧率才是给玩家看的**。42 的平均配上 24 的尾帧，玩家活在 P05 里——第 13 讲「平均值口径」的客户端版
 2. **指令级账本是把「卡」变成「哪条指令贵」的唯一路径**。DC、材质、过绘、LOD 四本小账对上，根因不需要猜
 3. **渲染预算与内存水位同权**。4.3 节给内存设了水位，DC 与过绘同样需要按档位的红线——否则美术管线的审计无据可查
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [01-authoritative-books](/research/01-authoritative-books.md)

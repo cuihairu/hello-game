@@ -28,3 +28,13 @@ database / cache 子树总览。覆盖：缓存与锁（01）、热点与消息�
 - [singleflight、MQ 与事件流](./02.md)：围绕“singleflight、MQ 与事件流”补足 缓存与中间件 里的关键判断、成本与误区。
 - [注册中心、负载均衡与一致性哈希](./03.md)：围绕“注册中心、负载均衡与一致性哈希”补足 缓存与中间件 里的关键判断、成本与误区。
 - [对象存储、CDN 与资源分发](./04.md)：围绕“对象存储、CDN 与资源分发”补足 缓存与中间件 里的关键判断、成本与误区。
+
+## 参考资料
+
+- [Wikipedia · Cache (computing)](https://en.wikipedia.org/wiki/Cache_(computing))
+- [Wikipedia · Database](https://en.wikipedia.org/wiki/Database)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/games/index.md)

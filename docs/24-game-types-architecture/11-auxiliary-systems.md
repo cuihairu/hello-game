@@ -636,3 +636,13 @@ func (n *FriendNotifier) Flush() int {
 | 敏感词过滤的要点？ | Trie 匹配（与词库大小无关）+ 预处理抗变体，词库持续运营 |
 | 在线状态怎么判？ | 心跳续期 Redis TTL key，过期即离线，免清理、抗异常断连 |
 | 封禁为什么要分层级？ | 账号/角色/设备粒度不同，混在一级会让客服与风控互相掣肘 |
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [genre-coverage](/system/genre-coverage.md)

@@ -103,3 +103,15 @@ plot_state:                        # 一块家园/领地
 - 本页为机制归纳；Minecraft 服务端实现、动森/原神/梦幻西游家园规则以各自官方公开信息为准。
 - BigWorld/KBEngine 的源码级事实以 server 树引擎档案的 commit 锚定记录为准，本页不重复引行号。
 - 术语对照：Housing（家园）、Territory（领地）、Plot（地块）、Placement Validation（放置校验）、Permission Matrix（权限矩阵）、Read-only Replica（只读副本）。
+
+## 参考资料
+
+- [Wikipedia · Territory (video game)](https://en.wikipedia.org/wiki/Massively_multiplayer_online_game)
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [03-application-scenarios](/research/03-application-scenarios.md)
+- [genre-coverage](genre-coverage.md)

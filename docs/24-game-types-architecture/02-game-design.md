@@ -719,3 +719,17 @@ func produceConsumeRatio(logs []CurrencyLog, cur uint8) float64 {
 1. **资产级状态的敌人不是丢失，而是重建**——`Count`、`Guaranteed` 每次抽取都在正常持久化，换池时一次零值重建就全没了；状态机要为轮换、合并、回档这类生命周期事件写显式规则（4.3 节「显式处理而不是隐式沿用」）。
 2. **公示是承诺，不是文案**——概率能做「实际 vs 公示」的对账（4.4 节），保底规则同样能：公示文本与配置表之间缺一道机器对账，差的正好就是这条规则。
 3. **留痕是最便宜的保险**——`pity_count_before` 让 8000 人逐人回补零失败；没有留痕，同样的客诉只能拍脑袋补偿（1.2 节第 4 问「要不要留痕」）。
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [01](/numerical/01.md)
+- [02](/numerical/02.md)
+- [04](/numerical/04.md)
+- [05](/numerical/05.md)
+- [08](/numerical/08.md)

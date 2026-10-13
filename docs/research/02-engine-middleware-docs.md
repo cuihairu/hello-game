@@ -64,3 +64,12 @@ research / 调研二。节点定位：把成熟引擎与中间件的官方文档
 - 中间件能力描述只写文档明确给出的语义，接口签名以各文档最新版为准；本页不记录版本号，避免改版后失真。
 - 判定口径与检索日期同[权威书籍调研](/research/01-authoritative-books)：只认独立篇与专节，2026-10-08 全库 grep。
 - 术语对照：Interest Management（兴趣管理）、Replication（复制）、Ready Probe（就绪探针）、Middleware（中间件）。
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [01-authoritative-books](01-authoritative-books.md)
+- [03-application-scenarios](03-application-scenarios.md)
+- [04-coverage-diff](04-coverage-diff.md)
+- [index](index.md)

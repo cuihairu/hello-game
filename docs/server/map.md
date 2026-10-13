@@ -112,3 +112,20 @@ server / 横向节点 / 语言与选型。一句话：开源服务端不是一�
 1. **形态错配在第一天就写死**。帧同步项目选了状态同步框架，后面每一步都在为它还债。
 2. **自建清单要算钱**。薄框架的 12 项基础件全自建，工程量按清单算，不是按框架好不好用。
 3. **定制点不开放多是形态选错**。误判为要 fork，其实是形态与对局模型不匹配。
+
+## 参考资料
+
+- [GitHub · trinitycore/trinitycore](https://github.com/trinitycore/trinitycore)
+- [GitHub · heroiclabs/nakama](https://github.com/heroiclabs/nakama)
+- [GitHub · dotnet/orleans](https://github.com/dotnet/orleans)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [03](/client/engines/03.md)
+- [index](/client/engines/index.md)
+- [10](/glossary/10.md)
+- [index](index.md)
+- [language](language.md)
+- [genre-coverage](/system/genre-coverage.md)
+- [territory](/system/territory.md)

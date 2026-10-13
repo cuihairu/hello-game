@@ -39,3 +39,15 @@ server / security 子树总览。覆盖：反作弊与结算权威（01）、审
 - [行为风控与治理体系](./03.md)：讨论风控为什么不仅是识别模型，还必须覆盖处罚、申诉、人工复核和治理协同。
 - [合规、版号与平台约束](./04.md)：讨论发行、内容、未成年人保护、平台规则和多地区要求怎样反向塑造技术实现。
 - [许可风险与依赖治理](./05.md)：讨论第三方 SDK、开源依赖、许可证义务和供应链风险为什么不能等出事后再补。
+
+## 参考资料
+
+- [Wikipedia · Video game anti-cheat](https://en.wikipedia.org/wiki/Game_hacking)
+- [Wikipedia · Game server](https://en.wikipedia.org/wiki/Game_server)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [05](/client/web/05.md)
+- [05](/numerical/05.md)
+- [index](/server/index.md)

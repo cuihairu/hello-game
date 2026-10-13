@@ -37,3 +37,14 @@ import GamesLibrary from '../.vitepress/theme/components/GamesLibrary.vue'
 - 写「未公开」的字段是厂商没有公开资料的，不做猜测；纯单机游戏如实写「不适用」——留白本身就是分类学信息（对照[哈迪斯](#条目库)）。
 
 条目与技术标签会随批次扩充；发现史实或技术细节错漏，欢迎开 issue 指正。
+
+## 参考资料
+
+- [Wikipedia · List of best-selling video games](https://en.wikipedia.org/wiki/List_of_best-selling_video_games)
+- [Wikipedia · Video game](https://en.wikipedia.org/wiki/Video_game)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [expansion](/24-game-types-architecture/expansion.md)
+- [10](/glossary/10.md)

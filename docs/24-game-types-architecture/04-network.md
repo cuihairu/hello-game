@@ -813,3 +813,14 @@ func (r *Reassembler) Sweep(now time.Time) {
 1. **「送达」和「顺序」都对，状态照样会错**。2.3 把可靠、顺序、兼容拆成三件事，这个案例补上第四问：**新旧谁说了算**——丢旧保新是协议语义，不是客户端实现细节
 2. **平均口径又一次藏了事故**。RTT 中位 45ms 配 P95 210ms，第 13 讲「监控全绿」的网络版：分位不进看板，事故就只活在客诉里
 3. **广播成本 = 变更数 × 接收人数（10.1），预算要按房间人数定**。950 条/秒不是性能问题，是契约缺了预算条目——与第 19 讲「预算表没有渲染预算」同构
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/games/index.md)
+- [index](/history/index.md)

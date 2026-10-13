@@ -120,3 +120,17 @@ redeem_code:
 - 本页为机制归纳；商业案例的签到/兑换规则以各自官方公开信息为准，本页只引口径不引数值。
 - 兑换码防爆破与概率公示类合规口径以最新监管规定为准，本页给的是通用做法。
 - 术语对照：Check-in（签到）、Streak（连签）、Mail/Attachment（邮件/附件）、Redeem Code（兑换码）、Quota（配额）、Idempotency Key（幂等键）。
+
+## 参考资料
+
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+- [Wikipedia · Game balance](https://en.wikipedia.org/wiki/Game_balance)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [10](/glossary/10.md)
+- [knowledge](/knowledge.md)
+- [03-application-scenarios](/research/03-application-scenarios.md)
+- [battle-pass](battle-pass.md)
+- [genre-coverage](genre-coverage.md)

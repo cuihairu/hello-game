@@ -112,3 +112,15 @@ star_progress:
 - 本页为机制归纳；各商业案例的具体数值与规则以官方公开信息为准，本页只引口径。
 - 随机玩法概率公示为监管合规要求（国内出版监管口径），具体条文以最新规定为准。
 - 术语对照：Enhancement（强化）、Success Rate（成功率）、Fail Policy（失败策略）、Pity（保底）、Star/Ascension（升星）、Inheritance（传承）。
+
+## 参考资料
+
+- [Wikipedia · Loot box](https://en.wikipedia.org/wiki/Loot_box)
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [03-application-scenarios](/research/03-application-scenarios.md)
+- [genre-coverage](genre-coverage.md)

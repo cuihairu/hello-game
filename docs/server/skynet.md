@@ -302,3 +302,20 @@ skynet 把「正确的并发结构」做进内核，把「性能、运维、存�
 1. **框架的边界是选型的依据**。厘秒精度加消息调度不支持亚 10ms 帧同步，通用框架不能当专用对局服。
 2. **自由度以工程能力为前提**。skynet 把性能、运维、存储的选择权交给用户，配套要按正式项目立项。
 3. **服务粒度是内存账**。每服务一个常驻 Lua VM，细粒度服务海量时内存放大。
+
+## 参考资料
+
+- [GitHub · cloudwu/skynet](https://github.com/cloudwu/skynet)
+- [Wikipedia · Actor model](https://en.wikipedia.org/wiki/Actor_model)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [10](/glossary/10.md)
+- [knowledge](/knowledge.md)
+- [02-engine-middleware-docs](/research/02-engine-middleware-docs.md)
+- [index](index.md)
+- [map](map.md)
+- [leaderboard](/system/leaderboard.md)
+- [party-matchmaking](/system/party-matchmaking.md)
+- [pvp-matchmaking](/system/pvp-matchmaking.md)

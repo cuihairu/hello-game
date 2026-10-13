@@ -37,3 +37,16 @@ operation / bi 子树总览。覆盖：运营与商业化基础（01）、埋点
 - [经济、平衡与风控分析](./03.md)：讨论为什么经济观察、数值平衡和风险识别不能彼此割裂，以及它们共享哪些底层事实。
 - [触达体系与外部能力接入](./04.md)：讨论消息触达、推送、广告、CRM 和外部营销能力接入时的边界、成本和治理问题。
 - [AI 在运营、分析与风控中的应用](./05.md)：讨论 AI 适合放在哪些辅助环节，哪些地方必须保留明确规则、人工审核和可解释边界。
+
+## 参考资料
+
+- [Wikipedia · Business intelligence](https://en.wikipedia.org/wiki/Business_intelligence)
+- [Wikipedia · Software metric](https://en.wikipedia.org/wiki/Software_metric)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [01](/numerical/01.md)
+- [06](/numerical/06.md)
+- [08](/numerical/08.md)
+- [index](/operation/index.md)

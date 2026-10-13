@@ -140,3 +140,9 @@
 - 来源标注三级口径：可查出处给书名/出版方/官方站点，行业通行做法标「通行」，无单一出处的标「来源未考」——与[英文术语与词源](/glossary/10)同一口径。
 - 书目与文档的完整清单、出版信息与官方入口以对应调研篇目的 Reference 节为准。
 - 术语对照：Coverage Audit（覆盖审计）、Genre Density（品类需求密度）、Knowledge Digest（知识点总览）。
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [04-coverage-diff](/research/04-coverage-diff.md)
+- [index](/research/index.md)

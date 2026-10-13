@@ -117,3 +117,22 @@ AOI 把平方账压成线性账：每个客户端只收「可见集大小 × f�
 1. **裁剪一失效，平方账就回来**。同屏 200 实体时每秒 8 万条消息，可见集压不住就是带宽与 CPU 双爆。
 2. **迟滞是必选项**。进出场同半径，边界抖动产生的成对重复消息会吃掉一整块带宽。
 3. **可见集要按高峰配**。按均值配的上限，在密度翻倍时就是漏人的直接来源。
+
+## 参考资料
+
+- [Wikipedia · Spatial partitioning](https://en.wikipedia.org/wiki/Spatial_partitioning)
+- [Wikipedia · Distributed Interactive Simulation](https://en.wikipedia.org/wiki/Distributed_Interactive_Simulation)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [10](/glossary/10.md)
+- [knowledge](/knowledge.md)
+- [02-engine-middleware-docs](/research/02-engine-middleware-docs.md)
+- [index](index.md)
+- [map](map.md)
+- [skynet](skynet.md)
+- [cosmetics](/system/cosmetics.md)
+- [genre-coverage](/system/genre-coverage.md)
+- [territory](/system/territory.md)
+- [voice](/system/voice.md)

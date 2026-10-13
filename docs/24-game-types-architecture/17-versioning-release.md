@@ -661,3 +661,13 @@ T+2 复核：灰度组崩溃率回落到 **0.7%**、次日留存回升到 **38%*
 1. **留存是果，崩溃是因**。留存报警先下钻启动与崩溃链路——方向定错，回滚就成了「用错误答案交卷」
 2. **口径先统一，再争论方向**。混用口径把 2.7 倍渲染成 3 倍，也把「技术事故」包装成了「产品劝退」；统一口径后真差异自证、假方向自消
 3. **灰度的分层能力要在设计期备好**。按机型档位、按渠道独立停发，否则灰度退化成「全有或全无」的回滚（3.2/3.3）
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [expansion](expansion.md)

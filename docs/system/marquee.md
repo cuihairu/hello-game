@@ -91,3 +91,17 @@ broadcast_msg:
 - 本页为机制归纳；商业案例的喇叭定价与广播策略以各自官方公开信息为准。
 - 敏感词与内容安全口径需结合发行地区监管要求，本页给的是通用分层做法。
 - 术语对照：Marquee（走马灯）、Announcement（公告）、Shout/Horn（喇叭）、TTL（消息时效）、Rate Limit（限流）、Merge Window（合并窗口）。
+
+## 参考资料
+
+- [Wikipedia · Video game economy](https://en.wikipedia.org/wiki/Virtual_economy)
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [03-application-scenarios](/research/03-application-scenarios.md)
+- [cosmetics](cosmetics.md)
+- [genre-coverage](genre-coverage.md)
+- [voice](voice.md)

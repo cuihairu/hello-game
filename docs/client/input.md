@@ -111,3 +111,14 @@ client / 横向节点 / 交互与输入。一句话：输入是玩家与权威�
 
 - 本页为工程经验归纳；各平台输入 API（Gamepad、Pointer Events、触摸）以官方文档为准；页内实战案例为教学示例（数字取整简化）
 - 术语对照：Input Abstraction（输入抽象）、Input Mapping（输入映射）、Intent（意图）、Input Latency（输入延迟）
+
+## 参考资料
+
+- [Wikipedia · Input lag](https://en.wikipedia.org/wiki/Input_lag)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](index.md)
+- [04](/client/web/04.md)

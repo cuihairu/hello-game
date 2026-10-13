@@ -71,3 +71,12 @@ research / 调研三。节点定位：把调研抽出的主题放回具体玩法
 - 品类清单与「最先要求的功能组件」列引自[玩法品类与功能组件覆盖对照](/system/genre-coverage)，判定日期 2026-10-08；本页只做引用与合并，不改该页口径。
 - 补齐落点为本次调研的产出，文件路径以 `docs/system/` 下实际存在的篇目为准。
 - 术语对照：Genre Density（品类需求密度）、Application Scenario（应用场景）。
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [01-authoritative-books](01-authoritative-books.md)
+- [02-engine-middleware-docs](02-engine-middleware-docs.md)
+- [04-coverage-diff](04-coverage-diff.md)
+- [index](index.md)

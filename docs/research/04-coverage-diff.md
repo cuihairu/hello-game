@@ -53,3 +53,12 @@ research / 调研四。节点定位：把书籍、官方文档、功能组件三
 - 本页数字全部引自三个维度的对应篇目，判定日期 2026-10-08；组件缺口补齐 2026-10-09 至 2026-10-10。
 - 三个维度计数单位不同（主题 / 组件），不做跨维度加总，本页只并列。
 - 术语对照：Coverage Diff（覆盖差异）、Partial（部分）、Gap Closure（缺口补齐）。
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [01-authoritative-books](01-authoritative-books.md)
+- [02-engine-middleware-docs](02-engine-middleware-docs.md)
+- [03-application-scenarios](03-application-scenarios.md)
+- [index](index.md)

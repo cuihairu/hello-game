@@ -40,3 +40,15 @@ server / runtime 子树总览。覆盖：并发立场总览（00）、执行模�
 - [流控、背压与稳定性机制](./04.md)：说明高峰和慢消费者到来时，系统怎样限速、丢弃、降级和快速失败。
 - [锁竞争与性能代价](./05.md)：讨论共享状态、锁粒度、争用和尾延迟为什么会把“理论并行”变成现实阻塞。
 - [Epoch-driven Actor / Channel Runtime](./06.md)：用更具体的运行时例子说明，为什么某些游戏核心逻辑会选择时间优先、顺序优先、单写优先的执行内核。
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Game server](https://en.wikipedia.org/wiki/Game_server)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/server/index.md)
+- [language](/server/language.md)
+- [skynet](/server/skynet.md)

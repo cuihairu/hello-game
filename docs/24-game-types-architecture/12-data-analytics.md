@@ -717,3 +717,15 @@ T+1 报表的收入口径是**服务端订单完成金额**；实时看板是**�
 | 实时看板和 T+1 报表对不上？ | 口径不一致（如实时算了未支付订单），收入一律以支付成功事实为准 |
 | 触达体系最常被低估的能力？ | 频控（防骚扰）与归因（防盲投） |
 | 报表收入下滑的第一反应？ | 先解释口径分歧再下钻（一个持平一个暴跌=「支付后、入账前」）；静默失败靠告警与对账兜底 |
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [01](/numerical/01.md)
+- [06](/numerical/06.md)
+- [08](/numerical/08.md)

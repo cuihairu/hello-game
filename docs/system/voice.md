@@ -93,3 +93,15 @@ system / 玩法系统（实时通信件）。节点定位：游戏内语音把�
 - 本页为机制归纳；Opus/WebRTC/Mumble 以各自公开标准与项目文档为准，不引私有接口。
 - 语音合规（留存、转写、未成年人）以发行地区现行法规为准，本页只列通用口径。
 - 术语对照：Voice Chat（游戏内语音）、PTT/Push-to-Talk（按键说话）、SFU/Selective Forwarding Unit（选择性转发）、MCU（多点混音）、Opus（开放音频编码）、AEC/Acoustic Echo Cancellation（回声消除）、Spatial Audio（空间音频）。
+
+## 参考资料
+
+- [Wikipedia · Voice recognition](https://en.wikipedia.org/wiki/Speech_recognition)
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [03-application-scenarios](/research/03-application-scenarios.md)
+- [genre-coverage](genre-coverage.md)

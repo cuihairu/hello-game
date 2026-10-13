@@ -38,3 +38,13 @@ industry / methodology 子树总览。覆盖：知识地图（01）、三输入�
 - [客户端、服务端、平台与运营的边界](./05.md)：把责任划分讲清楚，减少长期扯皮和系统漂移。
 - [游戏项目生命周期与团队协作](./06.md)：解释同一个项目在不同阶段为什么需要不同工程重点。
 - [如何系统化积累游戏开发经验](./07.md)：把经验从“个人印象”变成可复用的团队资产。
+
+## 参考资料
+
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+- [Wikipedia · Video game industry](https://en.wikipedia.org/wiki/Video_game_industry)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/industry/index.md)

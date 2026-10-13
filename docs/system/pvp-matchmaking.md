@@ -119,3 +119,19 @@ ELO 源自国际象棋等级分体系，三行公式说完：
 
 - ELO 体系源自国际象棋等级分（Arpad Elo）；Glicko/Glicko-2 由 Mark Glickman 提出（哈佛统计系技术报告，1995/2012）；TrueSkill 见微软研究院论文 Herbrich, Minka, Graepel, 《TrueSkill: A Bayesian Skill Rating System》（NIPS 2006）
 - 术语对照：Skill Rating（评分体系）、Matchmaking Rating / MMR（匹配分）、Confidence Interval（评级偏差）、Skill Bucket（段位分桶）
+
+## 参考资料
+
+- [Wikipedia · Elo rating system](https://en.wikipedia.org/wiki/Elo_rating_system)
+- [Wikipedia · TrueSkill](https://en.wikipedia.org/wiki/TrueSkill)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [10](/glossary/10.md)
+- [skynet](/server/skynet.md)
+- [genre-coverage](genre-coverage.md)
+- [index](index.md)
+- [leaderboard](leaderboard.md)
+- [party-matchmaking](party-matchmaking.md)
+- [skill](skill.md)

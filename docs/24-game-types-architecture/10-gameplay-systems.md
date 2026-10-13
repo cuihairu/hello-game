@@ -860,3 +860,15 @@ func (b *MailBoard) Claim(uid uint64, mailID int64, now time.Time) (Reward, erro
 | 背包两阶段提交为什么可靠？ | 预检只读、执行独占——前提是单写者模型保证同一玩家数据无并发修改 |
 | 全服邮件为什么不能生成百万条记录？ | 模板一份 + 登录时判定 + 领取表记录凭证，把 O(N) 写入推迟为 O(1) |
 | 交易系统的第一道防线？ | 规则而非修补：价格区间、频率限制、同人限制、手续费、新获得物限制、异常检测 |
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [knowledge](/knowledge.md)
+- [01-authoritative-books](/research/01-authoritative-books.md)
+- [genre-coverage](/system/genre-coverage.md)

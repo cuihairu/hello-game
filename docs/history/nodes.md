@@ -131,3 +131,13 @@ co-1981-nintendo ↔ 代表作 ga-1985-smb → 确立 gp-1985-platform
 hw-2005-multicore → 催生 be-2009-go
 en-2020-ue5 → 抬高 ar-2020-fidelity（受 hw-2018-rtx 支撑）
 ```
+
+## 参考资料
+
+- [Wikipedia · History of video games](https://en.wikipedia.org/wiki/History_of_video_games)
+- [Wikipedia · Video game industry](https://en.wikipedia.org/wiki/Video_game_industry)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](index.md)

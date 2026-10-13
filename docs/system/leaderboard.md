@@ -136,3 +136,24 @@ CREATE TABLE leaderboard (
 - Redis 命令复杂度与 Lua 脚本原子性以官方文档为准（`redis.io/commands/zadd`、`zrevrange`、`zrevrank`、`redis.io/developers/learn-data-structure/lua-redis`）
 - 本页复杂度为标称值，内存与延迟量级需按实际数据实测
 - 术语对照：Leaderboard（排行榜）、Season Ladder（赛季梯）、Hot/Cold Split（热冷分层）
+
+## 参考资料
+
+- [Wikipedia · Leaderboard](https://en.wikipedia.org/wiki/Leaderboard)
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [01](/database/cache/01.md)
+- [knowledge](/knowledge.md)
+- [02-engine-middleware-docs](/research/02-engine-middleware-docs.md)
+- [skynet](/server/skynet.md)
+- [achievement](achievement.md)
+- [battle-pass](battle-pass.md)
+- [genre-coverage](genre-coverage.md)
+- [index](index.md)
+- [party-matchmaking](party-matchmaking.md)
+- [pvp-matchmaking](pvp-matchmaking.md)
+- [settlement](settlement.md)
+- [skill](skill.md)

@@ -26,3 +26,13 @@ operation / observability 子树总览。覆盖：日志指标 Tracing 与 OTel�
 - [Debug、故障定位与复盘](./04.md)：说明定位流程为什么比单点工具更重要。
 - [压测、容量规划与扩缩容](./05.md)：把上线准备和长期容量治理放到一起讨论。
 - [稳定性治理的真正目标](./06.md)：澄清稳定性工作不是“别报警”，而是系统在异常中依然可控。
+
+## 参考资料
+
+- [Wikipedia · Observability](https://en.wikipedia.org/wiki/Observability)
+- [Wikipedia · Software metric](https://en.wikipedia.org/wiki/Software_metric)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/operation/index.md)

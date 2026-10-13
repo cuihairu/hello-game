@@ -21,7 +21,7 @@ production 树总览。覆盖：版本体系（01–02）、发布安全（03）
 
 ## Related
 
-关系链：版本拆分（01–02）→ 发布安全（03）→ 协同（04）→ 配置管线（05 与 config 子树）→ 工作流（06）；选型与复盘的方法论收束在 retro 子树。上游：client 树（客户端构件的生产端）；下游：operation 树（运营与观察）、numerical 树（数值配置侧）。
+关系链：版本拆分（01–02）→ 发布安全（03）→ 协同（04）→ 配置管线（05 与 [config 子树](/production/config/)）→ 工作流（06）；选型与复盘的方法论收束在 [retro 子树](/production/retro/)。上游：client 树（客户端构件的生产端）；下游：operation 树（运营与观察）、numerical 树（数值配置侧）。
 
 ## Reference
 
@@ -36,3 +36,13 @@ production 树总览。覆盖：版本体系（01–02）、发布安全（03）
 - [配置表与数据驱动管线](./05.md)：把配置视作正式发布对象，而不是附属编辑产物。
 - [研发协作与发布工作流](./06.md)：解释为什么版本稳定性最终仍然会回到组织边界、责任界面和工作流设计上。
 - [工作室分工与质量门禁](./07.md)：把成熟工作室的角色分层、阶段门禁与质量证据收成可裁剪的参考结构。
+
+## 参考资料
+
+- [Wikipedia · Continuous integration](https://en.wikipedia.org/wiki/Continuous_integration)
+- [Wikipedia · Software deployment](https://en.wikipedia.org/wiki/Software_deployment)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [career](/industry/career.md)

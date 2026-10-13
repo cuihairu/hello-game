@@ -36,3 +36,16 @@ system / 通用服务子树总览。覆盖：账号与角色（01）、活动排
 - [活动、排行、匹配与社交](./02.md)：讨论高频运营能力如何在复用和项目差异之间取平衡，以及这些系统为什么经常变成线上流量尖峰来源。
 - [交易、支付与经济系统](./03.md)：讨论订单、发货、资产变更和经济循环为何必须按“可追账、可补偿、可对账”来设计。
 - [风控、审计、GM 与客服](./04.md)：讨论治理系统为什么不能只做检测，还必须覆盖证据、处置、申诉和人工干预闭环。
+
+## 参考资料
+
+- [Heroic Labs 文档](https://heroiclabs.com/docs/)
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/games/index.md)
+- [map](/server/map.md)
+- [index](/system/index.md)
+- [territory](/system/territory.md)

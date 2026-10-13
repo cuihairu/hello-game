@@ -35,3 +35,14 @@ server / services 子树总览。覆盖：拆分方法论（01）、服务角色
 - [协调层、跨服与控制平面](./03.md)：解释为什么系统一旦进入多区服、多玩法和动态调度阶段，就必须把“谁来指挥节点和迁移”单独做成正式能力。
 - [服务发现、路由与协作](./04.md)：讨论请求如何找到正确目标、绑定关系如何维护，以及服务之间怎样协作才不会把路由逻辑散落一地。
 - [一致性、恢复与重连](./05.md)：把跨服务失败、幂等、补偿、会话恢复和玩家重连放进同一套恢复语义里看待。
+
+## 参考资料
+
+- [Heroic Labs 文档](https://heroiclabs.com/docs/)
+- [Wikipedia · Game server](https://en.wikipedia.org/wiki/Game_server)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/server/index.md)
+- [skynet](/server/skynet.md)

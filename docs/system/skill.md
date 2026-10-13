@@ -71,3 +71,20 @@ system / 玩法系统。节点定位：把「技能」拆成配置、时间轴�
 - 本页为工程经验归纳；三家引擎事实以文内 commit 锚定的源码引用为准
 - 过程同步与技能的帧对齐、Buff 同步边界：[server 树 sync/08](/server/sync/08)
 - 术语对照：Ability/Skill（技能）、Cast Time（施法时间）、Effect Pipeline（效果管线）、Buff/Debuff（增益/减益）
+
+## 参考资料
+
+- [Wikipedia · Skill tree](https://en.wikipedia.org/wiki/Skill_tree)
+- [Wikipedia · Game design](https://en.wikipedia.org/wiki/Game_design)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [10](/glossary/10.md)
+- [knowledge](/knowledge.md)
+- [02-engine-middleware-docs](/research/02-engine-middleware-docs.md)
+- [08](/server/sync/08.md)
+- [genre-coverage](genre-coverage.md)
+- [index](index.md)
+- [quest](quest.md)
+- [settlement](settlement.md)

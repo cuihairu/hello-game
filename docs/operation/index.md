@@ -20,3 +20,14 @@ operation 树总览。节点定位：上线之后系统暴露的不再是设计�
 ## Reference
 
 节点清单见两棵子树的导览页。
+
+## 参考资料
+
+- [Wikipedia · Software metric](https://en.wikipedia.org/wiki/Software_metric)
+- [Wikipedia · Logging (software)](https://en.wikipedia.org/wiki/Logging_(software))
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/operation/bi/index.md)
+- [index](/operation/observability/index.md)

@@ -541,3 +541,13 @@ project-docs/
 | Sprint 之上还有什么节拍？ | 版本里程碑（预研 → 切片 → 量产 → 删档测试 → 上线），阶段门在沉没成本变大前给停止选项 |
 | 需求变更怎么管？ | 分级（文案/数值/系统），成本量化后交给产品决策；冻结期只冻系统级 |
 | 外包管理的底线？ | 规格先行 + 样品确认 + 自动校验；工具可以外包，玩家数据的访问权不能外包 |
+
+## 参考资料
+
+- [Wikipedia · Game programming](https://en.wikipedia.org/wiki/Game_programming)
+- [Wikipedia · Video game engine](https://en.wikipedia.org/wiki/Video_game_engine)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [expansion](expansion.md)
