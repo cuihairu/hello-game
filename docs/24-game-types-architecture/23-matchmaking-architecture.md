@@ -388,7 +388,6 @@ type RoomAllocator interface {
         matchID string,
     ) error
 }
-</CodeBlock>
 
 底层可以提供不同适配器：`ApolloAllocator` 调用 World/Instance 创建接口；`ChorusAllocator` 创建或绑定直播 Session；`AgonesAllocator` 申请专用服务器；`BigWorldAllocator` 分配进入已有 World/Space 的资源。
 
@@ -431,7 +430,6 @@ allocation:
   region_preference: lowest_latency
 
 timeout_seconds: 120
-</CodeBlock>
 
 这份配置是建议的通用策略格式，并不是 Cage 或 Open Match 已经原生支持的现成格式。
 
@@ -445,16 +443,6 @@ timeout_seconds: 120
 
 你已经有多个游戏服务器，它们的资源模型不一样。
 
-<box gap={3}>
-  <row align=start gap={2}>
-    <box background=
-
-====
-
-]}/>
-    </box>
-  </row>
-</box>
 
 **我的选型建议：用 Nakama 研究组队、Open Match 研究匹配、Agones 研究实例分配、Colyseus 研究房间与席位预留。**
 

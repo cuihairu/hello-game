@@ -170,7 +170,7 @@
 
 ## Mistlane 可直接借鉴的亮点（按优先级）
 
-Mistlane 当前目标划分 `gateway/login/coordinator/gameServer/crossServer/data`，并明确 player/scene、持久化写入权和跨区 ownership 仍有未实现部分（见 [`architecture.md`](./architecture.md)、[`process-roles.md`](./process-roles.md)）。以下是设计建议，不代表已实现：
+Mistlane 当前目标划分 `gateway/login/coordinator/gameServer/crossServer/data`，并明确 player/scene、持久化写入权和跨区 ownership 仍有未实现部分（见 [`architecture.md`](26-mmo-engine-survey.md)、[`process-roles.md`](26-mmo-engine-survey.md)）。以下是设计建议，不代表已实现：
 
 1. **P0：持久化写入的权威收束点与确认契约**（借 KBEngine Base 收束 Cell 权威态的边界，但不要照搬其仅内存周期备份）。为每个角色定义唯一 writer/generation，保存请求有幂等键、数据库事务边界、成功确认含义、超时后查询/重试路径；跨区返回 home data 时禁止双写。适用人物资产/奖励/支付；不适用于每 tick 位置快照。
 2. **P0：进程转移使用明确的 prepare → snapshot → destination-ack → route-switch → source-release 状态机**（借 RedDwarf 的身份到节点路由与 BigWorld 的 owner handoff）。为每步定义崩溃恢复、重复消息和 fencing epoch；仅靠负载路由或 heartbeat 不足以授予第二个写者。当前 Mistlane transfer handshake 明确未实现，适合先写协议/故障注入测试。

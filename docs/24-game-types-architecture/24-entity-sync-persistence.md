@@ -14,7 +14,7 @@
 
 本文核实“契约 → 运行时属性 → 可见副本 → 二进制表示 → 数据库 → 契约演进”的链路，讨论设计理由与代价。**这是引擎行为研究，不表示 Mistlane 已实现这些能力。** 数据保存指实体属性持久化，不是把 `.def` 文件存入数据库。
 
-[entity-contract.md](./entity-contract.md) 已覆盖 Mistlane 的 XML `.def` 提议、稳定 ID、生成物、受控 Lua 属性、嵌套增量、可见基线和数据版本迁移目标；其中 “Verified BigWorld and KBEngine behavior” 已核实两边的容器变更差异。本文保持该结论，新增两边实际的分发 flags、AOI、stream 编码、SQL 映射、写回/缓存和迁移入口对比。原提案的 sproto、home data、revision/ownership generation 不能倒推为两套引擎的现有机制。
+[entity-contract.md](24-entity-sync-persistence.md) 已覆盖 Mistlane 的 XML `.def` 提议、稳定 ID、生成物、受控 Lua 属性、嵌套增量、可见基线和数据版本迁移目标；其中 “Verified BigWorld and KBEngine behavior” 已核实两边的容器变更差异。本文保持该结论，新增两边实际的分发 flags、AOI、stream 编码、SQL 映射、写回/缓存和迁移入口对比。原提案的 sproto、home data、revision/ownership generation 不能倒推为两套引擎的现有机制。
 
 核实日期：2026-10-19。版本边界：
 
@@ -234,7 +234,7 @@ BW 倾向提供独立结构同步工具，并处理 secondary DB 的归并前置
 
 建议项目发布时：先备份并验证恢复，冻结/排空旧写入，处理未完成持久化；在旧数据副本上审阅 DDL 和业务转换，再部署匹配契约/客户端。需要滚动发布时采用新增字段 → 双读/受控双写 → 回填校验 → 切读 → 延后删除；这是一项额外工程方案，不是两套引擎已核实的默认功能。破坏性变更的回滚须同时规划数据恢复，不能只换回旧 `.def`。
 
-依据：上述两边的同步、默认值和旧表清理源码；已有 [Mistlane 持久化与兼容提案](./entity-contract.md#loading-and-persistence) 已要求显式迁移，本文不改变该选择。
+依据：上述两边的同步、默认值和旧表清理源码；已有 [Mistlane 持久化与兼容提案](24-entity-sync-persistence.md#loading-and-persistence) 已要求显式迁移，本文不改变该选择。
 
 ## 六项设计理由与取舍（设计分析）
 
