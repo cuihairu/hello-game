@@ -97,6 +97,7 @@ export default {
             { text: '20 游戏测试与质量保障', link: '/24-game-types-architecture/20-game-testing' },
             { text: '21 音频与美术管线协作', link: '/24-game-types-architecture/21-art-audio-pipeline' },
             { text: '匹配选型', link: '/24-game-types-architecture/22-matchmaking-oss' },
+            { text: '匹配架构落位', link: '/24-game-types-architecture/23-matchmaking-architecture' },
           ]
         }
       ],
