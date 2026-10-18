@@ -17,6 +17,8 @@
 
 设计稿：[design.md](./design.md) · 首批 76 条节点清单：[nodes.md](./nodes.md)
 
+> 口径说明：本页交互时间线读取 `docs/.vitepress/theme/data/timeline.mjs` 作为运行时数据；[节点清单](./nodes.md) 是对应的可读文档副本，包含同一批节点与字段。维护节点时以运行时数据为渲染依据，并同步更新清单；数据测试会校验条目标题对应，避免两份内容漂移。
+
 <HistoryAxis />
 
 ---

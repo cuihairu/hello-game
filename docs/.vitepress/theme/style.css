@@ -265,6 +265,42 @@ body {
   background: rgba(111, 181, 138, 0.05);
 }
 
+/* ---------- 历史节点清单：长文本卡片 ---------- */
+
+.vp-doc .history-node {
+  margin: 1rem 0;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--vp-c-border);
+  border-left: 3px solid var(--vp-c-brand-1);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+}
+.vp-doc .history-node-title {
+  margin: 0 0 0.65rem;
+  color: var(--vp-c-text-1);
+  font-size: 1.04rem;
+  font-weight: 700;
+  line-height: 1.55;
+}
+.vp-doc .history-node p {
+  margin: 0.45rem 0;
+  color: var(--vp-c-text-2);
+  text-indent: 0;
+  overflow-wrap: anywhere;
+}
+.vp-doc .history-node p:last-child {
+  margin-bottom: 0;
+}
+.vp-doc .history-node strong {
+  color: var(--vp-c-text-1);
+}
+
+@media (max-width: 640px) {
+  .vp-doc .history-node {
+    padding: 0.85rem 0.95rem;
+  }
+}
+
 /* ---------- 代码 ---------- */
 
 .vp-doc :not(pre, h1, h2, h3, h4, h5, h6) > code {
