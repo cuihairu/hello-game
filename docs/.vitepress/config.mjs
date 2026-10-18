@@ -95,7 +95,8 @@ export default {
           items: [
             { text: '19 客户端架构与性能基础', link: '/24-game-types-architecture/19-client-architecture' },
             { text: '20 游戏测试与质量保障', link: '/24-game-types-architecture/20-game-testing' },
-            { text: '21 音频与美术管线协作', link: '/24-game-types-architecture/21-art-audio-pipeline' }
+            { text: '21 音频与美术管线协作', link: '/24-game-types-architecture/21-art-audio-pipeline' },
+            { text: '匹配选型', link: '/24-game-types-architecture/22-matchmaking-oss' },
           ]
         }
       ],
@@ -495,7 +496,8 @@ export default {
             { text: '控制平面', link: '/glossary/07' },
             { text: '运营', link: '/glossary/08' },
             { text: '风控', link: '/glossary/09' },
-            { text: '英文术语与词源', link: '/glossary/10' }
+            { text: '英文术语与词源', link: '/glossary/10' },
+            { text: '角色、实体与 MMO 空间术语', link: '/glossary/11' }
           ]
         }
       ],
@@ -550,7 +552,8 @@ export default {
             { text: '控制平面', link: '/glossary/07' },
             { text: '运营', link: '/glossary/08' },
             { text: '风控', link: '/glossary/09' },
-            { text: '英文术语与词源', link: '/glossary/10' }
+            { text: '英文术语与词源', link: '/glossary/10' },
+            { text: '角色、实体与 MMO 空间术语', link: '/glossary/11' }
           ]
         },
         {

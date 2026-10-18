@@ -37,7 +37,8 @@ function resolves(url) {
   let rel = url
   if (rel.startsWith('/hello-game/')) rel = rel.slice('/hello-game/'.length)
   rel = rel.replace(/^\//, '')
-  const cands = rel === '' || rel.endsWith('/') ? [`${rel}index.md`] : [`${rel}.md`, `${rel}/index.md`]
+  const cands = rel.endsWith('.md') ? [rel]
+    : rel === '' || rel.endsWith('/') ? [`${rel}index.md`] : [`${rel}.md`, `${rel}/index.md`]
   return cands.some(c => existsSync(resolve(docs, c)))
 }
 
@@ -96,7 +97,8 @@ describe('站内链接与内容清单核对入档（expansion 第 6 节）', () 
         if (u.startsWith('http://') || u.startsWith('https://') || u.startsWith('mailto:')) continue
         if (u.startsWith('#') || u.includes('#')) frags.push([f, u])
         else if (u.startsWith('/')) abs.push([f, u])
-        else if (u.startsWith('./') || u.startsWith('../')) rel.push([f, u])
+        // Markdown permits bare relative paths such as index.md in generated backlinks.
+        else if (!/^[a-z][a-z0-9+.-]*:/i.test(u)) rel.push([f, u])
         else throw new Error(`未覆盖的链接形态: ${u}（${relative(root, f)}）`)
       }
     }
@@ -118,7 +120,8 @@ describe('站内链接与内容清单核对入档（expansion 第 6 节）', () 
       if (path) {
         if (path.startsWith('/')) {
           const rel2 = path.replace(/^\//, '').replace(/^hello-game\//, '')
-          const cands = rel2.endsWith('/') ? [`${rel2}index.md`] : [`${rel2}.md`, `${rel2}/index.md`]
+          const cands = rel2.endsWith('.md') ? [rel2]
+            : rel2.endsWith('/') ? [`${rel2}index.md`] : [`${rel2}.md`, `${rel2}/index.md`]
           const hit = cands.map(c => resolve(docs, c)).find(existsSync)
           if (!hit) { anchorBroken++; continue }
           target = hit
