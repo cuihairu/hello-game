@@ -101,6 +101,7 @@ export default {
             { text: '属性同步与持久化', link: '/24-game-types-architecture/24-entity-sync-persistence' },
             { text: '属性DB映射与设计哲学', link: '/24-game-types-architecture/25-entity-db-mapping-philosophy' },
             { text: 'MMO 引擎对比', link: '/24-game-types-architecture/26-mmo-engine-survey' },
+            { text: '引擎设计亮点', link: '/24-game-types-architecture/27-mmo-engine-design-highlights' },
           ]
         }
       ],
