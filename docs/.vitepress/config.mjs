@@ -99,6 +99,7 @@ export default {
             { text: '匹配选型', link: '/24-game-types-architecture/22-matchmaking-oss' },
             { text: '匹配架构落位', link: '/24-game-types-architecture/23-matchmaking-architecture' },
             { text: '属性同步与持久化', link: '/24-game-types-architecture/24-entity-sync-persistence' },
+            { text: 'MMO 引擎对比', link: '/24-game-types-architecture/26-mmo-engine-survey' },
           ]
         }
       ],
