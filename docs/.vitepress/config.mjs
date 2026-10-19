@@ -108,6 +108,7 @@ export default {
 
       '/server/': [
         { text: '服务端总览', link: '/server/' },
+        { text: '崩溃诊断：core 与 GDB', link: '/server/crash-diagnosis' },
         {
           text: '多人模型',
           collapsed: false,
