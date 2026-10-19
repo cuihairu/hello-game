@@ -18,29 +18,58 @@
 
 ### 客户端与服务器的职责划分
 
-```text
-┌─────────────┐     网络      ┌─────────────┐
-│   客户端     │ ←──────────→ │   服务器     │
-│  (Cocos/    │   TCP/UDP    │  (Go/C++/   │
-│   Unity)    │   WebSocket  │   Java)     │
-└─────────────┘              └─────────────┘
+```mermaid
+flowchart TB
+    subgraph CLIENT[客户端（Cocos / Unity）]
+        direction TB
+        subgraph C_PRESENT[表现与交互]
+            direction LR
+            C_RENDER[渲染表现]
+            C_UI[UI 交互]
+            C_INPUT[输入采集]
+        end
+        subgraph C_RUNTIME[运行支持]
+            direction LR
+            C_SYNC[本地预测与插值]
+            C_ASSET[资源加载]
+        end
+        C_PRESENT --> C_RUNTIME
+    end
+
+    NET[网络通道<br/>上行：输入与请求<br/>下行：状态与结果]
+
+    subgraph SERVER[服务器（Go / C++ / Java）]
+        direction TB
+        subgraph S_AUTH[权威主线]
+            direction LR
+            S_JUDGE[权威判定]
+            S_ANTI[反作弊]
+            S_STATE[状态持久化]
+        end
+        subgraph S_SERVICE[在线服务]
+            direction LR
+            S_MATCH[匹配与房间]
+            S_SOCIAL[社交与运营]
+        end
+        S_JUDGE --> S_STATE
+        S_ANTI --> S_JUDGE
+        S_MATCH --> S_JUDGE
+    end
+
+    CLIENT <-->|TCP / UDP / WebSocket| NET
+    NET <-->|TCP / UDP / WebSocket| SERVER
+
+    classDef clientNode fill:#eaf3ff,stroke:#3973b9,color:#17365d
+    classDef authorityNode fill:#fff0df,stroke:#c66a16,color:#63340b,stroke-width:2px
+    classDef serverNode fill:#edf7ee,stroke:#43834b,color:#204d25
+    classDef channel fill:#f2efff,stroke:#7662b3,color:#382c68,stroke-width:2px
+    class C_RENDER,C_UI,C_INPUT,C_SYNC,C_ASSET clientNode
+    class S_JUDGE,S_ANTI,S_STATE authorityNode
+    class S_MATCH,S_SOCIAL serverNode
+    class NET channel
 ```
 
-**客户端职责**（让玩家看到和操作）：
-
-- 渲染与表现（Unity/Cocos/Godot）
-- 用户输入采集（触摸、键盘、手柄）
-- 本地预测与插值（减少延迟感）
-- 资源加载与管理（图片、音频、动画）
-- UI 交互逻辑（按钮、弹窗、动画）
-
-**服务器职责**（让游戏公平可信）：
-
-- 游戏逻辑权威判定（伤害、掉落、升级）
-- 状态持久化（玩家数据不丢失）
-- 反作弊校验（检测外挂和异常行为）
-- 匹配与房间管理（找到合适的对手）
-- 社交与运营系统（公会、聊天、活动）
+服务端权威是职责划分的总原则，关键判定与状态由服务器负责。客户端负责表现与输入，并通过本地预测、插值改善操作反馈。
 
 ### 客户端架构选型：Cocos vs Unity
 
