@@ -1,8 +1,8 @@
 // 站点配置导出普通对象（defineConfig 仅为类型辅助）；
 // 首页 index.md 会把本文件作为数据源引入 client bundle，故不 import vitepress 包。
 export default {
-  title: '游戏知识体系',
-  description: '开源的、面向个人开发者的游戏开发知识图谱——覆盖设计、客户端、服务器、数值、美术、工具与运营，用成熟商业游戏与成熟开源项目连接知识节点',
+  title: '游戏开发笔记',
+  description: '面向个人开发者整理的游戏开发笔记与经验，覆盖设计、客户端、服务器、数值、美术、工具与运营，并以商业游戏、开源项目和官方资料为参照',
   lang: 'zh-CN',
   base: '/hello-game/',
   cleanUrls: true,
@@ -13,36 +13,36 @@ export default {
 
   themeConfig: {
     logo: '/logo.svg',
-    siteTitle: '游戏知识体系',
+    siteTitle: '游戏开发笔记',
 
     nav: [
       { text: '首页', link: '/' },
-      { text: '入门', link: '/24-game-types-architecture/01-entry' },
-      { text: '基础', link: '/24-game-types-architecture/02-game-design' },
-      { text: '架构', link: '/24-game-types-architecture/07-core-arch' },
-      { text: '网络', link: '/24-game-types-architecture/04-network' },
-      { text: '实现', link: '/24-game-types-architecture/09-programming-patterns' },
-      { text: '运维', link: '/24-game-types-architecture/13-tech-ops' },
+      { text: '技术全景', link: '/24-game-types-architecture/01-entry' },
+      { text: '设计与数值', link: '/24-game-types-architecture/02-game-design' },
+      { text: '架构记录', link: '/24-game-types-architecture/07-core-arch' },
+      { text: '网络与通信', link: '/24-game-types-architecture/04-network' },
+      { text: '编程与实现', link: '/24-game-types-architecture/09-programming-patterns' },
+      { text: '运营与生产', link: '/24-game-types-architecture/13-tech-ops' },
       { text: '历史线', link: '/history/' },
-      { text: '游戏库', link: '/games/' },
-      { text: '知识库', link: '/00-reading-guide/' }
+      { text: '游戏案例', link: '/games/' },
+      { text: '主题索引', link: '/00-reading-guide/' }
     ],
 
-    // 两套内容、两个侧边栏：
-    // - /24-game-types-architecture/ 入门到实战教程（21 讲）
-    // - / 其余路径为知识库主线（方法论 → 问题模型 → … → 稳定性 + 附录）
+    // 两种内容入口：
+    // - /24-game-types-architecture/ 编号专题笔记（01–27）
+    // - / 其余路径按主题与内容类型浏览
     sidebar: {
       '/24-game-types-architecture/': [
         { text: '游戏类型与架构选型对照', link: '/24-game-types-architecture/' },
         {
-          text: '入门',
+          text: '全景与定位',
           collapsed: false,
           items: [
             { text: '01 游戏后端技术全景', link: '/24-game-types-architecture/01-entry' }
           ]
         },
         {
-          text: '基础',
+          text: '设计与客户端',
           collapsed: false,
           items: [
             { text: '02 数值与经济系统', link: '/24-game-types-architecture/02-game-design' },
@@ -61,7 +61,7 @@ export default {
           ]
         },
         {
-          text: '实现',
+          text: '机制与实现',
           collapsed: false,
           items: [
             { text: '09 游戏编程模式', link: '/24-game-types-architecture/09-programming-patterns' },
@@ -70,7 +70,7 @@ export default {
           ]
         },
         {
-          text: '运营',
+          text: '运营与生产',
           collapsed: false,
           items: [
             { text: '12 游戏数据分析', link: '/24-game-types-architecture/12-data-analytics' },
@@ -79,25 +79,25 @@ export default {
           ]
         },
         {
-          text: '专题',
+          text: '工程专题',
           collapsed: false,
           items: [
-            { text: '15 学习资源', link: '/24-game-types-architecture/15-references' },
+            { text: '15 参考资料', link: '/24-game-types-architecture/15-references' },
             { text: '16 脚本热更新', link: '/24-game-types-architecture/16-scripting-hotfix' },
             { text: '17 版本发布与配置', link: '/24-game-types-architecture/17-versioning-release' },
             { text: '18 安全与风控合规', link: '/24-game-types-architecture/18-security-compliance' },
-            { text: '章节扩展规划', link: '/24-game-types-architecture/expansion' }
+            { text: '专题扩展规划', link: '/24-game-types-architecture/expansion' }
           ]
         },
         {
-          text: '扩展',
+          text: '匹配、数据与引擎专题',
           collapsed: false,
           items: [
             { text: '19 客户端架构与性能基础', link: '/24-game-types-architecture/19-client-architecture' },
             { text: '20 游戏测试与质量保障', link: '/24-game-types-architecture/20-game-testing' },
             { text: '21 音频与美术管线协作', link: '/24-game-types-architecture/21-art-audio-pipeline' },
-            { text: '匹配选型', link: '/24-game-types-architecture/22-matchmaking-oss' },
-            { text: '匹配架构落位', link: '/24-game-types-architecture/23-matchmaking-architecture' },
+            { text: '开源项目选型调研', link: '/24-game-types-architecture/22-matchmaking-oss' },
+            { text: '自建架构职责与落位', link: '/24-game-types-architecture/23-matchmaking-architecture' },
             { text: '属性同步与持久化', link: '/24-game-types-architecture/24-entity-sync-persistence' },
             { text: '属性DB映射与设计哲学', link: '/24-game-types-architecture/25-entity-db-mapping-philosophy' },
             { text: 'MMO 引擎对比', link: '/24-game-types-architecture/26-mmo-engine-survey' },
@@ -107,6 +107,7 @@ export default {
       ],
 
       '/server/': [
+        { text: '服务端总览', link: '/server/' },
         {
           text: '多人模型',
           collapsed: false,
@@ -301,7 +302,7 @@ export default {
           items: [
             { text: 'Web 游戏前端体系', link: '/client/web/' },
             { text: 'H5 与 Canvas 2D 渲染基础', link: '/client/web/01' },
-            { text: 'WebGL 与三维渲染入门', link: '/client/web/02' },
+            { text: 'WebGL 与三维渲染基础', link: '/client/web/02' },
             { text: '游戏引擎与 Cocos Creator', link: '/client/web/03' },
             { text: '游戏 UI 体系', link: '/client/web/04' },
             { text: '小游戏平台与浏览器环境', link: '/client/web/05' },
@@ -365,6 +366,7 @@ export default {
           text: '运营、商业化与数据分析',
           collapsed: false,
           items: [
+            { text: '运营与可观测性总览', link: '/operation/' },
             { text: '运营、商业化与数据分析', link: '/operation/bi/' },
             { text: '运营与商业化基础', link: '/operation/bi/01' },
             { text: '埋点、BI 与分析系统', link: '/operation/bi/02' },
@@ -393,6 +395,7 @@ export default {
           text: '总论与方法论',
           collapsed: false,
           items: [
+            { text: '行业与方法论总览', link: '/industry/' },
             { text: '总论与方法论', link: '/industry/methodology/' },
             { text: '游戏开发知识地图', link: '/industry/methodology/01' },
             { text: '游戏类型、平台与商业形态', link: '/industry/methodology/02' },
@@ -539,13 +542,12 @@ export default {
 
       '/': [
         {
-          text: '导读',
+          text: '索引与阅读说明',
           collapsed: false,
           items: [
-            { text: '如何阅读这套知识库', link: '/00-reading-guide/' },
-            { text: '推荐阅读顺序', link: '/00-reading-guide/01' },
+            { text: '内容组织说明', link: '/00-reading-guide/' },
             { text: '按问题进入', link: '/00-reading-guide/02' },
-            { text: '主线和附录的区别', link: '/00-reading-guide/03' },
+            { text: '主题内容与横向索引', link: '/00-reading-guide/03' },
             { text: '怎么用它做项目分析', link: '/00-reading-guide/04' },
             { text: '术语约定', link: '/glossary/' },
             { text: '服务端', link: '/glossary/01' },
@@ -562,7 +564,7 @@ export default {
           ]
         },
         {
-          text: '1. 总论与方法论',
+          text: '总论与方法论',
           collapsed: true,
           items: [
             { text: '总论与方法论', link: '/industry/methodology/' },
@@ -576,7 +578,7 @@ export default {
           ]
         },
         {
-          text: '2. 游戏类型与问题模型',
+          text: '游戏类型与问题模型',
           collapsed: true,
           items: [
             { text: '游戏类型与问题模型', link: '/industry/models/' },
@@ -592,7 +594,7 @@ export default {
           ]
         },
         {
-          text: '3. 网络与接入协议',
+          text: '网络与接入协议',
           collapsed: true,
           items: [
             { text: '网络与接入协议', link: '/networking/' },
@@ -606,7 +608,7 @@ export default {
           ]
         },
         {
-          text: '4. 同步、战斗与实时交互',
+          text: '同步、战斗与实时交互',
           collapsed: true,
           items: [
             { text: '同步、战斗与实时交互', link: '/server/sync/' },
@@ -621,7 +623,7 @@ export default {
           ]
         },
         {
-          text: '5. 执行模型与运行时',
+          text: '执行模型与运行时',
           collapsed: true,
           items: [
             { text: '执行模型与运行时', link: '/server/runtime/' },
@@ -635,7 +637,7 @@ export default {
           ]
         },
         {
-          text: '6. 服务拆分、分布式与控制平面',
+          text: '服务拆分、分布式与控制平面',
           collapsed: true,
           items: [
             { text: '服务拆分与控制平面', link: '/server/services/' },
@@ -647,7 +649,7 @@ export default {
           ]
         },
         {
-          text: '7. 消息系统与进程间通信',
+          text: '消息系统与进程间通信',
           collapsed: true,
           items: [
             { text: '消息系统与进程间通信', link: '/networking/ipc/' },
@@ -660,7 +662,7 @@ export default {
           ]
         },
         {
-          text: '8. 客户端架构与引擎体系',
+          text: '客户端架构与引擎体系',
           collapsed: true,
           items: [
             { text: '客户端架构与引擎体系', link: '/client/' },
@@ -672,7 +674,7 @@ export default {
           ]
         },
         {
-          text: '9. 脚本、热更新与逻辑扩展',
+          text: '脚本、热更新与逻辑扩展',
           collapsed: true,
           items: [
             { text: '脚本、热更新与逻辑扩展', link: '/system/scripting/' },
@@ -683,7 +685,7 @@ export default {
           ]
         },
         {
-          text: '10. 版本发布、配置与研发管线',
+          text: '版本发布、配置与研发管线',
           collapsed: true,
           items: [
             { text: '版本发布与研发管线', link: '/production/' },
@@ -697,7 +699,7 @@ export default {
           ]
         },
         {
-          text: '11. 数据建模与数据库',
+          text: '数据建模与数据库',
           collapsed: true,
           items: [
             { text: '数据建模与数据库', link: '/database/' },
@@ -708,7 +710,7 @@ export default {
           ]
         },
         {
-          text: '12. 缓存、中间件与基础设施',
+          text: '缓存、中间件与基础设施',
           collapsed: true,
           items: [
             { text: '缓存、中间件与基础设施', link: '/database/cache/' },
@@ -719,7 +721,7 @@ export default {
           ]
         },
         {
-          text: '13. 通用游戏服务',
+          text: '通用游戏服务',
           collapsed: true,
           items: [
             { text: '通用游戏服务', link: '/system/services/' },
@@ -730,7 +732,7 @@ export default {
           ]
         },
         {
-          text: '14. 运营、商业化与数据分析',
+          text: '运营、商业化与数据分析',
           collapsed: true,
           items: [
             { text: '运营、商业化与数据分析', link: '/operation/bi/' },
@@ -742,7 +744,7 @@ export default {
           ]
         },
         {
-          text: '15. 平台生态、渠道与 SDK',
+          text: '平台生态、渠道与 SDK',
           collapsed: true,
           items: [
             { text: '平台生态、渠道与 SDK', link: '/industry/platforms/' },
@@ -753,7 +755,7 @@ export default {
           ]
         },
         {
-          text: '16. 可观测性、性能、容量与稳定性',
+          text: '可观测性、性能、容量与稳定性',
           collapsed: true,
           items: [
             { text: '可观测性与稳定性', link: '/operation/observability/' },
@@ -766,7 +768,7 @@ export default {
           ]
         },
         {
-          text: '17. 安全、风控与合规',
+          text: '安全、风控与合规',
           collapsed: true,
           items: [
             { text: '安全、风控与合规', link: '/server/security/' },
@@ -778,7 +780,7 @@ export default {
           ]
         },
         {
-          text: '18. 选型、实践、复盘与清单',
+          text: '选型、实践、复盘与清单',
           collapsed: true,
           items: [
             { text: '选型、实践与复盘', link: '/production/retro/' },
@@ -790,7 +792,7 @@ export default {
           ]
         },
         {
-          text: '19. Web 游戏前端体系',
+          text: 'Web 游戏前端体系',
           collapsed: true,
           items: [
             { text: 'Web 游戏前端体系', link: '/client/web/' },
@@ -803,7 +805,7 @@ export default {
           ]
         },
         {
-          text: '20. 策划与数值体系',
+          text: '策划与数值体系',
           collapsed: true,
           items: [
             { text: '策划与数值体系', link: '/numerical/' },
@@ -818,18 +820,18 @@ export default {
           ]
         },
         {
-          text: '附录与横向索引',
+          text: '横向索引',
           collapsed: true,
           items: [
             { text: '附录与横向索引', link: '/90-appendix/' },
             { text: '按品类回看问题', link: '/90-appendix/01' },
             { text: '对主线做专题展开', link: '/90-appendix/02' },
             { text: '做横向选型与快速对照', link: '/90-appendix/03' },
-            { text: '如何使用附录', link: '/90-appendix/04' }
+            { text: '索引内容说明', link: '/90-appendix/04' }
           ]
         },
         {
-          text: '附录 A1. 游戏类型专题',
+          text: '游戏类型专题',
           collapsed: true,
           items: [
             { text: '游戏类型专题', link: '/industry/genres/' },
@@ -842,9 +844,10 @@ export default {
           ]
         },
         {
-          text: '附录 A2. 按问题域归纳各类游戏',
+          text: '按问题域归纳各类游戏',
           collapsed: true,
           items: [
+            { text: '设计总览', link: '/design/' },
             { text: '按问题域归纳各类游戏', link: '/design/problem-domains/' },
             { text: '单局房间型架构', link: '/design/problem-domains/01' },
             { text: '强实时对战型架构', link: '/design/problem-domains/02' },
@@ -855,7 +858,7 @@ export default {
           ]
         },
         {
-          text: '附录 A3. 配置表、数据驱动与研发协作',
+          text: '配置表、数据驱动与研发协作',
           collapsed: true,
           items: [
             { text: '配置管线与研发协作', link: '/production/config/' },
@@ -866,7 +869,7 @@ export default {
           ]
         },
         {
-          text: '附录 A4. 压测、容量规划与扩缩容',
+          text: '压测、容量规划与扩缩容',
           collapsed: true,
           items: [
             { text: '容量扩缩', link: '/server/capacity/' },
@@ -877,7 +880,7 @@ export default {
           ]
         },
         {
-          text: '附录 A5. 引擎选择、语言地图与工具生态',
+          text: '引擎选择、语言地图与工具生态',
           collapsed: true,
           items: [
             { text: '引擎、语言与工具生态', link: '/client/engines/' },
@@ -887,7 +890,7 @@ export default {
           ]
         },
         {
-          text: '附录 A6. 游戏后端引擎源码解析',
+          text: '游戏后端引擎源码解析',
           collapsed: true,
           items: [
             { text: 'Skynet：C 内核 + Lua Actor', link: '/server/skynet' }
