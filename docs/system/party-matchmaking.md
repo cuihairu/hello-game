@@ -1,5 +1,7 @@
 # 队伍匹配（组队）
 
+> 角度说明：本页记录组队撮合形态与队伍作为撮合单位的机制；匹配服务边界和房间分配设计见[自建架构落位](/24-game-types-architecture/23-matchmaking-architecture)，开源组件的能力取舍见[匹配项目选型调研](/24-game-types-architecture/22-matchmaking-oss)。这是同一主题的不同角度。
+
 ## Category
 
 system / 玩法系统。节点定位：队伍是撮合的原子单位——四种撮合形态（房间制 / 撮合池 / 段位分桶 / 等待队列+降级）的比对与选型，落点到跨服分片。

@@ -1,5 +1,7 @@
 # PVP 匹配
 
+> 角度说明：本页记录评分体系与匹配池的机制取舍；服务职责与房间分配见[自建架构落位](/24-game-types-architecture/23-matchmaking-architecture)，开源组件的能力取舍见[匹配项目选型调研](/24-game-types-architecture/22-matchmaking-oss)。这是同一主题的不同角度。
+
 ## Category
 
 system / 玩法系统。节点定位：评分体系与匹配池两层解耦、分别选型——评分选 ELO/Glicko/TrueSkill，撮合选窗口放宽、优先级队列与补位降级。组队与房间形态的姊妹节点是「队伍匹配」。

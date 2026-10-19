@@ -1,33 +1,25 @@
-# 玩家匹配：开源项目调研与自建架构落位
+# 玩家匹配：自建架构的职责与落位
 
 > 来源：https://chatgpt.com/s/t_6ad4f0bc70048191928126950fda2517
 > 取回：2026-10-18
 >
-> 本文分两部分：**一～二** 是开源项目调研，**三～四** 是把这些能力落到自建
-> 服务端架构时的职责划分与通用化设计。
->
-> **性质：外部建议，不是既有事实。** 涉及「某仓已明确规定」的断言，
-> 实施前需回到对应仓库的架构文档核对。
+> **性质：外部建议，不是既有事实。** 涉及「某仓已明确规定」的断言，实施前需回到对应仓库的架构文档核对。
 
----
+本文记录我对组队、匹配和房间分配如何落入现有服务边界的架构判断。开源项目的完整选型比较见[匹配功能：开源项目选型调研](/24-game-types-architecture/22-matchmaking-oss)；[队伍匹配](/system/party-matchmaking)与[PVP 匹配](/system/pvp-matchmaking)则分别从组队撮合、评分与匹配池机制展开。它们是同一主题的不同角度，保留各自内容并互相参照。
 
-]**
+通用的重点不是固定某一种匹配算法，而是组队、排队、匹配结果、房间预留和服务器分配之间的协议及生命周期。不同游戏可以采用不同策略，但不必各自重写组队管理、排队状态机、断线恢复和房间分配机制。
 
-TypeScript / Node.js · 实时多人房间框架
+## 一、先区分三个概念
 
-(最适合参考房间分配)
+| 能力 | 解决什么问题 | 示例 |
+|--------|--------|--------|
+| Party / 组队 | 哪些玩家想一起玩 | 3 个好友组队，邀请第 4 人 |
+| Matchmaking / 匹配 | 哪些玩家或队伍应该一起玩 | 按段位、延迟、地区匹配两支 5 人队伍 |
+| Room Allocation / 房间分配 | 匹配成功后去哪里玩 | 预留一间游戏房，找到或启动服务器，返回连接凭证 |
 
-`joinOrCreate`、`joinById`、`reserveSeatFor` 等 API 非常值得学习。它解决的是发现合适房间、创建房间、预留席位以及返回连接信息。
+这三个功能有关联，但不是同一件事。例如一场 5v5 对战会经过玩家鉴权、组队、匹配、房间预留和服务器入场；MMO 主世界则通常通过区服发现与路由进入，不需要每次登录都经过 Matchmaker。
 
-Colyseus 的机制与自身游戏运行时结合较紧。如果你希望 Apollo、Chorus、BigWorld 都使用同一个调度平台，应抽象它的协议思想，而不是直接依赖它的内部 Room 实现。
-
-urlGitHubhttps://github.com/colyseus/colyseus · urlMatchmaker 文档https://docs.colyseus.io/matchmaker citeturn984674search1turn984674search3
-
-**我的选型建议：用 Nakama 研究组队、Open Match 研究匹配、Agones 研究实例分配、Colyseus 研究房间与席位预留。**
-
-不建议把四套系统全部部署到你的生产环境。它们分别解决不同问题，有些还包含重复能力。
-
-## 三、在你现有项目中，应该放到哪里？
+## 二、在现有服务体系中的职责边界
 
 这里必须尊重 Atlas、Courier、Apollo、Chorus 已有的边界。
 
@@ -50,7 +42,7 @@ Courier 也明确把实时多人匹配排除在它当前的核心范围之外。
 
 我建议保持这两个设计决定。Courier 增加客户端匹配契约和 Provider 就够了，真正的调度服务独立运行。
 
-## 四、怎样把不同游戏的匹配做成通用系统？
+## 三、怎样把不同游戏的匹配做成通用系统？
 
 核心设计是 **固定协议 + 可配置策略 + 可替换适配器**。
 
@@ -122,7 +114,7 @@ timeout_seconds: 120
 
 **通用框架只负责执行策略接口，不应该把 5v5、MMR 或职业搭配写死在基础设施代码中。**
 
-## 五、房间分配是另一个必须抽象的关键
+## 四、房间分配是另一个必须抽象的关键
 
 你已经有多个游戏服务器，它们的资源模型不一样。
 
@@ -194,7 +186,7 @@ type RoomAllocator interface {
 
 客户端也不能仅靠拿到 IP 就直接加入。游戏服务器应校验绑定了玩家、游戏、房间和有效期的短期入场凭证，并确保凭证不可重复滥用。
 
-## 六、必须处理的生产级状态机
+## 五、必须处理的生产级状态机
 
 真正难的不是写匹配算法，而是处理失败、重复和重试。
 
@@ -212,7 +204,7 @@ type RoomAllocator interface {
 
 这些机制应成为框架的默认能力，游戏开发者只需要关注匹配策略和游戏逻辑。
 
-## 七、Courier 的支付、虚拟资产和商业化应该怎么扩展？
+## 六、Courier 的支付、虚拟资产和商业化应该怎么扩展？
 
 既然你决定把这一部分交给 Courier，我建议保留它原有的可替换 Provider 设计，但扩大支付域的能力范围。
 
@@ -237,7 +229,7 @@ Courier 可以管理充值货币和支付权益，提供可选的统一钱包或
 
 这条链路要支持重复回调、网络失败、发货重试、退款与补偿，并确保账本和订单状态可核对。
 
-## 八、实施路线：我建议先做小，再逐渐兼容更多游戏
+## 七、实施路线：我建议先做小，再逐渐兼容更多游戏
 
 (P0)
 
@@ -275,7 +267,7 @@ Courier 可以管理充值货币和支付权益，提供可选的统一钱包或
 
 增加多副本、原子队列认领、故障恢复、扩缩容、匹配质量指标、负载测试及跨区域调度。由 Oddsmaker 评估等待时间、对局质量与长期留存。
 
-## 最终推荐
+## 我的结论
 
 在你的现有项目体系下，我会这样决定：
 
@@ -289,180 +281,4 @@ Courier 可以管理充值货币和支付权益，提供可选的统一钱包或
 
 这样做出来的不是一套写死某种玩法的匹配系统，而是一套多游戏可复用的 **Game Session Coordination Platform**。
 
-它将补上你现有游戏服务端生态中很关键的一层，而且不会破坏 Courier、Atlas 和各游戏运行时已经明确的职责边界。
-
----
-
-If you want, I can:
-
-- 继续展开虚拟资产发放链路设计
-- 细化组队匹配系统的协议设计
-- 设计独立的多游戏会话协调服务架构
-
-====
-
-你的这个分工我赞成：
-
-**完整支付、虚拟资产与商业化归 Courier；通用组队、匹配、房间分配则建议建设一套独立的游戏会话协调能力。**
-
-但第二部分不一定需要重新开发一个大项目。市面上已经有成熟的开源组件，可以借鉴或直接集成。
-
-我查了 Open Match、Agones、Nakama、Colyseus 的官方架构，再结合你已有的 Atlas、Apollo、Chorus，发现有一个非常关键的设计原则：
-
-**通用的不是匹配算法本身，而是组队、排队、匹配结果、房间预留和服务器分配的协议及生命周期。**
-
-不同游戏可以采用不同的匹配策略，但不应该每个游戏都重写组队管理、排队状态机、断线恢复和房间分配机制。
-
-## 一、首先把三个概念分开
-
-| 能力 | 解决什么问题 | 示例 |
-|--------|--------|--------|
-| Party / 组队 | 哪些玩家想一起玩 | 3 个好友组队，邀请第 4 人 |
-| Matchmaking / 匹配 | 哪些玩家或队伍应该一起玩 | 按段位、延迟、地区匹配两支 5 人队伍 |
-| Room Allocation / 房间分配 | 匹配成功后去哪里玩 | 预留一间游戏房，找到或启动服务器，返回连接凭证 |
-
-这三个功能有关联，但不是同一件事。
-
-例如玩家进入一场 5v5 对战：
-
-**Courier SDK**
-
-玩家鉴权 · 发起组队 · 开始匹配
-
-**Party Service**
-
-组队、邀请、队长、准备状态
-
-**Matchmaker**
-
-规则、排队、分组、队伍平衡
-
-**Room Allocator**
-
-确定目标实例 · 预留房间与玩家席位 · 生成连接票据
-
-**Apollo / Chorus / 其他游戏服务器**
-
-验证入场票据 · 创建权威游戏会话 · 执行游戏逻辑
-
-这个结构对 MOBA、FPS、棋牌、回合制、PVE 副本、直播互动游戏都能适用，但每种游戏可以只启用其中部分能力。
-
-例如 MMO 的主世界通常直接使用 Atlas 的区服发现和路由，不需要每次登录都经过 Matchmaker。
-
-## 二、有哪些值得研究的开源项目？
-
-我最推荐下面四个，侧重点完全不同。
-
-image_group{
-
-====
-
- editable>
-type AllocationRequest struct {
-    GameID        string
-    Environment   string
-    MatchID       string
-    ModeID        string
-    Region        string
-    PlayerIDs     []string
-    ConfigVersion string
-}
-
-type AllocationResult struct {
-    RoomID      string
-    InstanceID  string
-    ServerID    string
-    Endpoint    string // 返回给客户端的安全接入端点
-    Reservation string // 短期预留凭据
-    ExpiresAt   time.Time
-}
-
-type RoomAllocator interface {
-    Allocate(
-        ctx context.Context,
-        req AllocationRequest,
-    ) (AllocationResult, error)
-
-    Release(
-        ctx context.Context,
-        matchID string,
-    ) error
-}
-
-底层可以提供不同适配器：`ApolloAllocator` 调用 World/Instance 创建接口；`ChorusAllocator` 创建或绑定直播 Session；`AgonesAllocator` 申请专用服务器；`BigWorldAllocator` 分配进入已有 World/Space 的资源。
-
-这里有一个很重要的并发问题：**Atlas 的服务器推荐不能直接当作原子预留。**
-
-比如 Atlas 返回某台服务器还有 10 个席位，两个并发分配请求都选择它，可能造成超额分配。Allocator 必须与对应的权威容量所有者完成原子预留，或者通过 Agones 这样的分配接口完成操作。<Cite refs={[
-
-====
-
- editable>
-game_id: arena
-mode_id: ranked_5v5
-
-teams:
-  count: 2
-  size: 5
-
-party:
-  max_size: 5
-  keep_together: true
-
-constraints:
-  strict:
-    - game_version
-    - platform_pool
-    - anti_cheat_pool
-
-  skill:
-    initial_mmr_delta: 100
-    widen_every_seconds: 10
-    widen_by: 50
-    max_mmr_delta: 400
-
-  network:
-    preferred_rtt_ms: 80
-    max_rtt_ms: 150
-
-allocation:
-  strategy: dedicated_server
-  region_preference: lowest_latency
-
-timeout_seconds: 120
-
-这份配置是建议的通用策略格式，并不是 Cage 或 Open Match 已经原生支持的现成格式。
-
-策略引擎先满足硬条件，比如游戏版本、反作弊分区和平台兼容性，再逐渐放宽 MMR、延迟等软约束。已组队玩家必须作为不可拆分的整体参与队伍组合。
-
-而棋牌游戏可以配置成四人房间、按先来先服务、房满即开。PVE 副本可以按职业和战力匹配。Chorus 直播互动玩法则可以按主播会话、参与人数、超时和机器人填充来决定是否开局。
-
-**通用框架只负责执行策略接口，不应该把 5v5、MMR 或职业搭配写死在基础设施代码中。**
-
-## 五、房间分配是另一个必须抽象的关键
-
-你已经有多个游戏服务器，它们的资源模型不一样。
-
-
-**我的选型建议：用 Nakama 研究组队、Open Match 研究匹配、Agones 研究实例分配、Colyseus 研究房间与席位预留。**
-
-不建议把四套系统全部部署到你的生产环境。它们分别解决不同问题，有些还包含重复能力。
-
-## 三、在你现有项目中，应该放到哪里？
-
-这里必须尊重 Atlas、Courier、Apollo、Chorus 已有的边界。
-
-| 项目 | 应该承担的职责 |
-|---|---|
-| **Courier** | 向客户端提供组队与匹配 SDK/API，验证玩家身份，通过 Provider 转发 |
-| **独立 Session Coordination Service** | Party、队列、匹配决策、房间分配、会话生命周期 |
-| **Atlas** | 提供可用服务器、地区、版本、负载、拓扑和接入候选 |
-| **Apollo / Chorus / BigWorld** | 创建真实游戏实例或房间，验证席位、接收玩家、执行游戏逻辑 |
-| **Cockpit / Agones** | 负责启动、托管、停止和扩缩容游戏进程 |
-| **Cage** | 编译和版本化匹配策略配置 |
-| **Croupier** | 配置、审批、灰度发布、GM 操作和匹配运维监控 |
-| **Oddsmaker** | 评价匹配质量、胜率偏差、匹配时长及玩家流失 |
-
-为什么我建议独立的 Session Coordination Service，而不是直接放进 Atlas？
-
-因为 Atlas 的架构文档已经明确规定：**匹配、排队、房间、实例分配属于 Scheduler 的职责，不属于 Atlas。** <Cite refs={[
+它将补上现有游戏服务端生态中很关键的一层，而且不会破坏 Courier、Atlas 和各游戏运行时已经明确的职责边界。
