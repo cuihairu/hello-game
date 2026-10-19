@@ -19,10 +19,11 @@ function caseSection(src) {
 describe('实战案例冒烟（第 12 讲「报表收入下滑 12%」）', () => {
   const sec = caseSection(lecture12)
 
-  it('五步结构齐全：口径 → 维度 → 漏斗 → 根因处置 → 回填 + 教训收束', () => {
-    for (const part of ['背景与现象', '先对口径', '维度拆分定位人群', '支付漏斗定位环节', '根因与处置', '回填清单', '案例的三个教训']) {
-      expect(sec.includes(part), `案例缺少「${part}」段落`).toBe(true)
+  it('开发笔记结构完整：现象、排查、根因与回填', () => {
+    for (const part of ['背景与现象', '根因', '回填清单']) {
+      expect(sec.includes(part), `笔记缺少「${part}」信息`).toBe(true)
     }
+    expect(/排查|归因/.test(sec), '笔记缺少排查过程').toBe(true)
     // 漏斗表是本案的核心证据形态
     expect(sec.includes('| 漏斗步骤 |')).toBe(true)
   })

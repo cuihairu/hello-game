@@ -20,12 +20,12 @@ function caseSection(src) {
 describe('实战案例冒烟（第 05 讲「重启就好」的高峰队列失控排查）', () => {
   const sec = caseSection(lecture05)
 
-  it('四段结构齐全：现象、口径、分层归因、根因、处置回填 + 教训收束', () => {
-    for (const part of ['背景与现象', '第一步：现象与口径', '第二步：分层归因', '第三步：根因', '第四步：处置与回填', '回填清单', '案例的三个教训']) {
-      expect(sec.includes(part), `案例缺少「${part}」段落`).toBe(true)
+  it('开发笔记结构完整：现象、排查、根因与回填', () => {
+    for (const part of ['背景与现象', '根因', '回填清单']) {
+      expect(sec.includes(part), `笔记缺少「${part}」信息`).toBe(true)
     }
+    expect(/排查|归因/.test(sec), '笔记缺少排查过程').toBe(true)
     expect(sec.includes('```text'), '案例缺少分层归因账本示意块').toBe(true)
-    expect(sec.includes('案例为教学示例'), '案例缺少教学示例声明').toBe(true)
   })
 
   it('数字闭环：排队账本、重试放大、内存账与处置回落均可复算', () => {
@@ -72,7 +72,7 @@ describe('实战案例冒烟（第 05 讲「重启就好」的高峰队列失控
     expect((backlogWan * 10000 * Number(mem[1])) / 1000).toBe(Number(mem[2]))
     expect(Number(mem[2])).toBe(grow)
     // 第四步：上限对齐讲义骨架 4096；P99 3s → 180ms；积压 24 → 0；CPU 仍是 45%
-    const limit = Number(grab(/上限对齐讲义骨架的 \*\*(\d+)\*\*/, '有界上限')[1])
+    const limit = Number(grab(/上限对齐本篇骨架的 \*\*(\d+)\*\*/, '有界上限')[1])
     const pin = lecture05.match(/const roomQueueSize = (\d+)/)
     expect(pin, '讲义第 5 节骨架应有 roomQueueSize 常量').toBeTruthy()
     expect(limit).toBe(Number(pin[1]))

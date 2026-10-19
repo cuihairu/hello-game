@@ -27,6 +27,19 @@ describe('HistoryTimeline.vue', () => {
     expect(cols.map(c => c.attributes('style')?.includes('--track-color'))).toEqual(new Array(8).fill(true))
   })
 
+  it('接收历史轴拖动事件：同步平移时间线视口', () => {
+    const wrapper = mount(HistoryTimeline, { props: { decade: '1970s' } })
+    const viewport = wrapper.find('.tl-grid-viewport').element
+    viewport.scrollLeft = 15
+    window.dispatchEvent(new CustomEvent('tl-axis-pan', { detail: { delta: 24 } }))
+    expect(viewport.scrollLeft).toBe(39)
+    wrapper.vm.gridViewportEl = null
+    window.dispatchEvent(new CustomEvent('tl-axis-pan', { detail: { delta: 10 } }))
+    wrapper.unmount()
+    window.dispatchEvent(new CustomEvent('tl-axis-pan', { detail: { delta: 10 } }))
+    expect(viewport.scrollLeft).toBe(39)
+  })
+
   it('列头按钮显示轨道名与条目数', () => {
     const wrapper = mount(HistoryTimeline, { props: { decade: '1970s' } })
     const btns = wrapper.findAll('.tl-col-btn')

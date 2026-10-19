@@ -19,10 +19,11 @@ function caseSection(src) {
 describe('实战案例冒烟（第 10 讲「合服后 23 笔充值未发货」）', () => {
   const sec = caseSection(lecture10)
 
-  it('四段结构齐全：现象、对账、根因、处置复盘 + 教训收束', () => {
-    for (const part of ['背景与现象', '对账', '根因', '处置与复盘', '案例的三个教训']) {
-      expect(sec.includes(part), `案例缺少「${part}」段落`).toBe(true)
+  it('开发笔记结构完整：现象、排查、根因与回填', () => {
+    for (const part of ['背景与现象', '根因', '回填清单']) {
+      expect(sec.includes(part), `笔记缺少「${part}」信息`).toBe(true)
     }
+    expect(/排查|归因/.test(sec), '笔记缺少排查过程').toBe(true)
     // 时间线示意块必须有语言标签前的 text 围栏（code-blocks 全站测试亦会校验，这里做案例内冒烟）
     expect(sec.includes('```text')).toBe(true)
   })

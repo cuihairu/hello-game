@@ -228,7 +228,7 @@ gdb /path/to/game-server
 
 进入 GDB 后，常用的第一轮排查命令：
 
-```gdb
+```text
 set pagination off
 info files
 info threads

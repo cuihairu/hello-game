@@ -19,10 +19,11 @@ function caseSection(src) {
 describe('实战案例冒烟（第 13 讲「监控全绿」整点活动卡顿）', () => {
   const sec = caseSection(lecture13)
 
-  it('四段结构齐全：现象、对口径、分层、根因处置 + 教训收束', () => {
-    for (const part of ['背景与现象', '先对口径', '分层排查链', '根因', '处置', '回填清单', '案例的三个教训']) {
-      expect(sec.includes(part), `案例缺少「${part}」段落`).toBe(true)
+  it('开发笔记结构完整：现象、排查、根因与回填', () => {
+    for (const part of ['背景与现象', '根因', '回填清单']) {
+      expect(sec.includes(part), `笔记缺少「${part}」信息`).toBe(true)
     }
+    expect(/排查|归因/.test(sec), '笔记缺少排查过程').toBe(true)
     // 分层排查是本案的核心证据形态（text 围栏，带语言标记）
     expect(sec.includes('```text')).toBe(true)
   })

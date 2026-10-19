@@ -28,9 +28,9 @@ function linkToFile(link) {
 
 describe('site config', () => {
   it('基础站点元信息', () => {
-    expect(config.title).toBe('游戏知识体系')
+    expect(config.title).toBe('游戏开发笔记')
     expect(config.description).toBe(
-      '开源的、面向个人开发者的游戏开发知识图谱——覆盖设计、客户端、服务器、数值、美术、工具与运营，用成熟商业游戏与成熟开源项目连接知识节点'
+      '面向个人开发者整理的游戏开发笔记与经验，覆盖设计、客户端、服务器、数值、美术、工具与运营，并以商业游戏、开源项目和官方资料为参照'
     )
     expect(config.lang).toBe('zh-CN')
     expect(config.base).toBe('/hello-game/')
@@ -83,12 +83,12 @@ describe('site config', () => {
     }
   })
 
-  it('教程 sidebar 覆盖 21 讲且每个链接对应真实文件', () => {
+  it('专题 sidebar 覆盖全部编号篇目且每个链接对应真实文件', () => {
     const tutorial = config.themeConfig.sidebar['/24-game-types-architecture/']
     const links = collectLinks(tutorial)
     // 精确锚定目录前缀：/\d{2}- 会误命中「24-game-types-architecture」的「24-」
     const lectures = links.filter(l => /^\/24-game-types-architecture\/\d{2}-/.test(l))
-    expect(lectures).toHaveLength(21)
+    expect(lectures).toHaveLength(27)
     for (const link of collectLinks(tutorial)) {
       expect(existsSync(linkToFile(link)), `缺失文件: ${link}`).toBe(true)
     }

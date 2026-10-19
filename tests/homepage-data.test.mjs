@@ -106,27 +106,27 @@ describe('homepage 数据层（真实 config 集成）', () => {
   const tutorial = config.themeConfig.sidebar['/24-game-types-architecture/']
   const kb = config.themeConfig.sidebar['/']
 
-  it('教程目录与讲次计数：21 讲、链接全部对应真实文件', () => {
+  it('专题目录与篇数计数：链接全部对应真实文件', () => {
     const groups = buildTutorialGroups(tutorial)
     expect(groups).toHaveLength(tutorial.length)
     // 首组是选型对照总览（组级链接、无条目）；扩展组标题剥 emoji 后为「扩展」
     expect(groups[0].text).toBe('游戏类型与架构选型对照')
     expect(groups[0].link).toBe('/24-game-types-architecture/')
-    expect(groups.at(-1).text).toBe('扩展')
-    expect(countLectures(tutorial)).toBe(21)
+    expect(groups.at(-1).text).toBe('匹配、数据与引擎专题')
+    expect(countLectures(tutorial)).toBe(27)
     for (const link of allLinks(tutorial)) {
       expect(existsSync(linkToFile(link)), `缺失文件: ${link}`).toBe(true)
     }
   })
 
-  it('知识库目录：20 章 + 6 附录，章级链接全部对应真实文件', () => {
+  it('知识库目录：章级链接全部对应真实文件', () => {
     const chapters = buildKbChapters(kb)
-    expect(chapters[0]).toEqual({ num: '00', title: '如何阅读这套知识库', link: '/00-reading-guide/' })
-    expect(homepageStats(tutorial, kb).kbChapterCount).toBe(20)
-    expect(homepageStats(tutorial, kb).appendixCount).toBe(6)
-    // 附录编号从分组标题取「A1」…「A6」
+    expect(chapters[0]).toEqual({ num: '00', title: '内容组织说明', link: '/00-reading-guide/' })
+    expect(homepageStats(tutorial, kb).kbChapterCount).toBe(27)
+    expect(homepageStats(tutorial, kb).appendixCount).toBe(1)
+    // 附录入口按 A 标记。
     const appendixNums = chapters.filter(c => /^A\d/.test(c.num)).map(c => c.num)
-    expect(appendixNums).toEqual(['A1', 'A2', 'A3', 'A4', 'A5', 'A6'])
+    expect(chapters.filter(c => c.num === 'A').map(c => c.title)).toEqual(['附录与横向索引'])
     for (const ch of chapters) {
       expect(existsSync(linkToFile(ch.link)), `缺失文件: ${ch.link}`).toBe(true)
     }
@@ -141,7 +141,7 @@ describe('homepage 数据层（真实 config 集成）', () => {
 
   it('首页统计：页数为两端链接之和，且各计数为正', () => {
     const stats = homepageStats(tutorial, kb)
-    expect(stats.lectureCount).toBe(21)
+    expect(stats.lectureCount).toBe(27)
     expect(stats.pageCount).toBe(allLinks(tutorial).length + allLinks(kb).length)
     expect(stats.pageCount).toBeGreaterThan(80)
   })

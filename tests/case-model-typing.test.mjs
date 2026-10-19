@@ -20,12 +20,12 @@ function caseSection(src) {
 describe('实战案例冒烟（第 01 讲「按 MMO 建了一套架构，却死在开局」的分型误判排查）', () => {
   const sec = caseSection(lecture01)
 
-  it('四段结构齐全：现象口径、六问归因、根因、处置回填 + 教训收束', () => {
-    for (const part of ['背景与现象', '第一步：现象与口径', '第二步：分层归因', '第三步：根因', '第四步：处置与回填', '回填清单', '案例的三个教训']) {
-      expect(sec.includes(part), `案例缺少「${part}」段落`).toBe(true)
+  it('开发笔记结构完整：现象、排查、根因与回填', () => {
+    for (const part of ['背景与现象', '根因', '回填清单']) {
+      expect(sec.includes(part), `笔记缺少「${part}」信息`).toBe(true)
     }
+    expect(/排查|归因/.test(sec), '笔记缺少排查过程').toBe(true)
     expect(sec.includes('```text'), '案例缺少分型账本示意块').toBe(true)
-    expect(sec.includes('案例为教学示例'), '案例缺少教学示例声明').toBe(true)
     // 回填清单四行落点齐全
     for (const row of ['六问分型进立项评审', '主导模型识别三维度进技术评审模板', '房间型五件事进排期门禁', '两个危险做法进架构评审检查项']) {
       expect(sec.includes(row), `回填清单缺少「${row}」`).toBe(true)

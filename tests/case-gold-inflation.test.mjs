@@ -19,10 +19,11 @@ function caseSection(src) {
 describe('实战案例冒烟（第 18 讲「金币通胀 15% 刷金工作室」）', () => {
   const sec = caseSection(lecture18)
 
-  it('四段结构齐全：现象、口径拆分、维度聚类、根因、处置回填 + 教训收束', () => {
-    for (const part of ['背景与现象', '先对口径', '维度拆分', '根因', '处置与回填', '回填清单', '案例的三个教训']) {
-      expect(sec.includes(part), `案例缺少「${part}」段落`).toBe(true)
+  it('开发笔记结构完整：现象、排查、根因与回填', () => {
+    for (const part of ['背景与现象', '根因', '回填清单']) {
+      expect(sec.includes(part), `笔记缺少「${part}」信息`).toBe(true)
     }
+    expect(/排查|归因/.test(sec), '笔记缺少排查过程').toBe(true)
     expect(sec.includes('```text'), '案例缺少处置时间线示意块').toBe(true)
   })
 

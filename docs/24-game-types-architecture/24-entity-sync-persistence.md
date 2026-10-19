@@ -130,7 +130,7 @@ Witness 处理 `ENTER_CLIENT_PENDING` 时调用 `addPositionAndDirectionToStream
 
 来源：KB-S [赋值入口][kb-m]、[Base 分发][kb-b]、[Cell 分发][kb-c]、[Witness 初始化/退场][kb-w]、[FixedDict][kb-fd]、[Sequence][kb-seq]、[EntityComponent][kb-comp]。
 
-## 3. 契约持久化：从定义到 SQL，再到写回
+## 3. 契约持久化：从定义到 SQL，再到写回 {#loading-and-persistence}
 
 ### BigWorld
 

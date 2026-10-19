@@ -45,9 +45,9 @@ describe('核心路径冒烟（访客链路 × 静态配置断言）', () => {
     }
   })
 
-  it('homepage 特殊编号映射与 config 分组闭合：导读 00、附录与横向索引 A', () => {
+  it('homepage 目录分组映射与 config 链接闭合：导读与附录入口可达', () => {
     const chapters = buildKbChapters(config.themeConfig.sidebar['/'])
-    expect(chapters).toContainEqual({ num: '00', title: '如何阅读这套知识库', link: '/00-reading-guide/' })
+    expect(chapters).toContainEqual({ num: '00', title: '内容组织说明', link: '/00-reading-guide/' })
     expect(chapters).toContainEqual({ num: 'A', title: '附录与横向索引', link: '/90-appendix/' })
   })
 

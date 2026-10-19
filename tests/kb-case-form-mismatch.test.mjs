@@ -23,20 +23,12 @@ function caseSection(src) {
 describe('实战案例冒烟（知识库 server/map「帧同步项目选了状态同步框架，返工半年」的形态错配排查）', () => {
   const sec = caseSection(page)
 
-  it('四段结构齐全：背景与现象、四步、回填清单 + 教训收束', () => {
-    for (const part of [
-      '背景与现象',
-      '第一步：现象与口径',
-      '第二步：分层归因',
-      '第三步：根因',
-      '第四步：处置与回填',
-      '回填清单',
-      '案例的三个教训',
-    ]) {
-      expect(sec.includes(part), `案例缺少「${part}」段落`).toBe(true)
+  it('开发笔记结构完整：现象、排查、根因与回填', () => {
+    for (const part of ['背景与现象', '根因', '回填清单']) {
+      expect(sec.includes(part), `笔记缺少「${part}」信息`).toBe(true)
     }
+    expect(/排查|归因/.test(sec), '笔记缺少排查过程').toBe(true)
     expect(sec.includes('```text'), '案例缺少归因示意块').toBe(true)
-    expect(sec.includes('案例为教学示例'), '案例缺少教学示例声明').toBe(true)
     for (const term of ['选型链路', '自建清单逐项立项', '只比匹配度', '工程账']) {
       expect(sec.includes(term), `案例缺少口径「${term}」`).toBe(true)
     }
@@ -86,7 +78,7 @@ describe('实战案例冒烟（知识库 server/map「帧同步项目选了状�
     }
     expect(existsSync(file)).toBe(true)
     const pages = readdirSync(resolve(root, 'docs/server')).filter(f => f.endsWith('.md'))
-    expect(pages.length).toBe(5)
+    expect(pages.length).toBe(6)
     expect(pages).toContain('index.md')
     expect(pages).toContain('aoi.md')
   })

@@ -65,6 +65,59 @@ describe('HistoryAxis.vue', () => {
     expect(chips.map(c => c.text())).toEqual(TRACKS.map(t => t.name))
   })
 
+  it('图例横向拖动：只响应左键按钮拖动，并拦截拖动后的点击', () => {
+    const wrapper = mountAxis()
+    const legend = wrapper.find('.tl-legend').element
+    const button = wrapper.find('.tl-chip').element
+    const down = (overButton, mouseButton = 0) => ({
+      button: mouseButton, pointerId: 7, clientX: 100, clientY: 20,
+      target: { closest: () => overButton ? button : null }
+    })
+
+    wrapper.vm.onLegendPointerDown(down(true, 2))
+    expect(legend.classList.contains('is-pointer-down')).toBe(false)
+    wrapper.vm.onLegendPointerDown(down(false))
+    expect(legend.classList.contains('is-pointer-down')).toBe(false)
+    wrapper.vm.onLegendPointerMove({ pointerId: 7, clientX: 80, clientY: 20, preventDefault: vi.fn() })
+
+    legend.scrollLeft = 30
+    wrapper.vm.onLegendPointerDown(down(true))
+    expect(legend.classList.contains('is-pointer-down')).toBe(true)
+    const ignored = { pointerId: 8, clientX: 80, clientY: 20, preventDefault: vi.fn() }
+    wrapper.vm.onLegendPointerMove(ignored)
+    expect(ignored.preventDefault).not.toHaveBeenCalled()
+    const underThreshold = { pointerId: 7, clientX: 103, clientY: 22, preventDefault: vi.fn() }
+    wrapper.vm.onLegendPointerMove(underThreshold)
+    expect(underThreshold.preventDefault).not.toHaveBeenCalled()
+
+    const pans = vi.fn()
+    window.addEventListener('tl-axis-pan', pans)
+    const drag = { pointerId: 7, clientX: 80, clientY: 20, preventDefault: vi.fn() }
+    wrapper.vm.onLegendPointerMove(drag)
+    expect(legend.scrollLeft).toBe(50)
+    expect(drag.preventDefault).toHaveBeenCalledOnce()
+    expect(pans).toHaveBeenCalledOnce()
+    expect(pans.mock.calls[0][0].detail.delta).toBe(20)
+    window.removeEventListener('tl-axis-pan', pans)
+
+    wrapper.vm.onLegendPointerUp({ pointerId: 8 })
+    expect(legend.classList.contains('is-pointer-down')).toBe(true)
+    wrapper.vm.onLegendPointerUp({ pointerId: 7 })
+    expect(legend.classList.contains('is-pointer-down')).toBe(false)
+    const click = { preventDefault: vi.fn(), stopImmediatePropagation: vi.fn() }
+    wrapper.vm.onLegendClickCapture(click)
+    expect(click.preventDefault).toHaveBeenCalledOnce()
+    expect(click.stopImmediatePropagation).toHaveBeenCalledOnce()
+    const nextClick = { preventDefault: vi.fn(), stopImmediatePropagation: vi.fn() }
+    wrapper.vm.onLegendClickCapture(nextClick)
+    expect(nextClick.preventDefault).not.toHaveBeenCalled()
+
+    wrapper.vm.onLegendPointerDown(down(true))
+    wrapper.vm.legendEl = null
+    wrapper.vm.onLegendPointerMove({ pointerId: 7, clientX: 80, clientY: 20, preventDefault: vi.fn() })
+    wrapper.vm.onLegendPointerUp({ pointerId: 7 })
+  })
+
   it('全部轨道 chip 仅在聚焦时显示', async () => {
     const wrapper = mountAxis()
     expect(wrapper.find('.tl-chip-reset').exists()).toBe(false)

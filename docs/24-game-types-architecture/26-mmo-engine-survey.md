@@ -38,7 +38,7 @@
 
 可继续核查的入口：[BigWorld Engine docs（本次不可访问/未核实）](https://docs.bigworldtech.com/)。目录版本名本身不能作为任何架构结论的来源。
 
-### 2. KBEngine — 资料完整度：部分（A–E、G 有代码证据；F 部分）
+### 2. KBEngine — 资料完整度：部分（A–E、G 有代码证据；F 部分） {#2-kbengine--资料完整度部分a–e-g-有代码证据f-部分}
 
 **A 契约**：`entity_defs/*.def` 声明属性的 `<Type>`、`<Flags>`、`<Persistent>`、默认值及 Base/Cell/Client 方法；`entities.xml` 决定实体有无 Base、Cell、Client。实体定义初始化代码建立 flags 映射，属性描述记录 flags/persistent/type。示例格式见本仓库现有的 KBEngine 定义文档和本机模板文件；当前模板 `Account.def` 是空属性示例，不能拿它证明字段集合。[K1][K2]
 

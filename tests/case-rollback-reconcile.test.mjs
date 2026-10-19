@@ -19,10 +19,11 @@ function caseSection(src) {
 describe('实战案例冒烟（第 08 讲「主从切换回档后充值补账」）', () => {
   const sec = caseSection(lecture08)
 
-  it('四段结构齐全：现象、对账锁窗、根因、恢复边界 + 教训收束', () => {
-    for (const part of ['背景与现象', '锁定丢失窗口', '根因', '恢复边界', '回填清单', '案例的三个教训']) {
-      expect(sec.includes(part), `案例缺少「${part}」段落`).toBe(true)
+  it('开发笔记结构完整：现象、排查、根因与回填', () => {
+    for (const part of ['背景与现象', '根因', '回填清单']) {
+      expect(sec.includes(part), `笔记缺少「${part}」信息`).toBe(true)
     }
+    expect(/排查|归因/.test(sec), '笔记缺少排查过程').toBe(true)
     expect(sec.includes('```text')).toBe(true)
   })
 

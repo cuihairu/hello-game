@@ -11,7 +11,7 @@
 
 一个完整匹配流程大致分四段，四个项目各占一段：
 
-```
+```text
 组队          匹配          分配房间/实例       进服
  ↑             ↑              ↑                  ↑
  Nakama      Open Match      Colyseus          Agones

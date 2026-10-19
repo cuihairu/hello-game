@@ -25,15 +25,15 @@ export function buildTutorialGroups(tutorial) {
   }))
 }
 
-// 知识库目录：每组取章主页；编号取自分组标题（导读 00、总索引 A，其余如「A1.」取自标题）
-const KB_NUM_SPECIAL = { 导读: '00', 附录与横向索引: 'A' }
+// 知识库目录：每组取章主页；导读与附录按入口路径标记，其余专题用 + 展示。
+const KB_NUM_SPECIAL = { '/00-reading-guide/': '00', '/90-appendix/': 'A', 导读: '00', 附录与横向索引: 'A' }
 export function buildKbChapters(kb) {
   return kb
     .filter(g => g.items?.length)
     .map(g => {
       const home = g.items[0]
       return {
-        num: KB_NUM_SPECIAL[g.text] ?? (g.text.match(/(?:^|\s)(A?\d+)[.\s]/) ?? [])[1] ?? '+',
+        num: KB_NUM_SPECIAL[home.link] ?? KB_NUM_SPECIAL[g.text] ?? (g.text.match(/(?:^|\s)(A?\d+)[.\s]/) ?? [])[1] ?? '+',
         title: home.text,
         link: home.link
       }
@@ -57,10 +57,13 @@ export function chunk3(items) {
 
 // 首页统计数字：编号专题篇数 / 知识库正文章数 / 附录篇数 / 全站页数
 export function homepageStats(tutorial, kb) {
+  const chapters = buildKbChapters(kb)
+  const legacyChapterCount = kb.filter(g => /^\d+\.\s/.test(g.text)).length
+  const legacyAppendixCount = kb.filter(g => /^附录 A\d/.test(g.text)).length
   return {
     lectureCount: countLectures(tutorial),
-    kbChapterCount: kb.filter(g => /^\d+\.\s/.test(g.text)).length,
-    appendixCount: kb.filter(g => /^附录 A\d/.test(g.text)).length,
+    kbChapterCount: legacyChapterCount || chapters.filter(ch => ch.num !== '00' && ch.num !== 'A').length,
+    appendixCount: legacyAppendixCount || chapters.filter(ch => ch.num === 'A').length,
     pageCount: allLinks(tutorial).length + allLinks(kb).length
   }
 }
