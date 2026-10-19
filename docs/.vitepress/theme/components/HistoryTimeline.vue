@@ -227,12 +227,12 @@ onUnmounted(() => {
   box-shadow: 0 0 0 1px var(--vp-c-brand-1);
 }
 
-.tl-card-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; min-width: 0; }
+.tl-card-header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin-bottom: 8px; min-width: 0; }
 .tl-card-year { color: var(--vp-c-brand-1); font-weight: 700; margin-right: 4px; font-size: 14px; white-space: nowrap; }
 .tl-card-year.approx::after { content: ' 约'; font-weight: 400; color: var(--vp-c-text-2); font-size: 11px; }
-.tl-card-title { min-width: 0; margin: 0; font-size: 15px; font-weight: 600; color: var(--vp-c-text-1); line-height: 1.3; }
+.tl-card-title { min-width: 0; overflow-wrap: anywhere; margin: 0; font-size: 15px; font-weight: 600; color: var(--vp-c-text-1); line-height: 1.3; }
 
-.tl-card-fields { margin: 0; font-size: 13px; line-height: 1.6; }
+.tl-card-fields { min-width: 0; margin: 0; font-size: 13px; line-height: 1.6; }
 .tl-card-row { margin-top: 6px; }
 .tl-card-row dt { font-weight: 600; font-size: 12px; color: var(--vp-c-text-2); margin-bottom: 2px; }
 .tl-card-row dd { margin: 0; color: var(--vp-c-text-1); overflow-wrap: anywhere; }
