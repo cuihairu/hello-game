@@ -1,6 +1,6 @@
 <template>
   <section class="tl-axis" ref="axisEl">
-    <div class="tl-legend">
+    <div class="tl-legend tl-legend-scroll" ref="legendEl" @pointerdown="onLegendPointerDown" @pointermove="onLegendPointerMove" @pointerup="onLegendPointerUp" @pointercancel="onLegendPointerUp" @click.capture="onLegendClickCapture">
       <span class="tl-legend-label">轨道：</span>
       <button
         v-for="track in tracks"
@@ -72,12 +72,13 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
-import { store, segments, AXIS, TRACKS, toggleFocus, loadGsap, initAxisCursor, prefersReduced } from '../data/timeline'
+import { store, segments, AXIS, TRACKS, toggleFocus, loadGsap, initAxisCursor, prefersReduced, shouldCancelClick } from '../data/timeline'
 
 const axisEl = ref(null)
 const overviewEl = ref(null)
 const scaleEl = ref(null)
 const cursorEl = ref(null)
+const legendEl = ref(null)
 
 const tracks = TRACKS
 const cursorProgress = ref(0)
@@ -90,6 +91,49 @@ let isDragging = false
 let dragStartX = 0
 /* v8 ignore next */
 let dragStartViewStart = 0
+let legendPointerId = null
+let legendPointerX = 0
+let legendPointerY = 0
+let legendLastX = 0
+let legendDidDrag = false
+let cancelNextLegendClick = false
+
+function onLegendPointerDown(event) {
+  if (event.button !== 0 || event.target.closest('button') == null) return
+  legendPointerId = event.pointerId
+  legendPointerX = legendLastX = event.clientX
+  legendPointerY = event.clientY
+  legendDidDrag = false
+  legendEl.value?.classList.add('is-pointer-down')
+  legendEl.value?.setPointerCapture?.(event.pointerId)
+}
+
+function onLegendPointerMove(event) {
+  if (legendPointerId === null || event.pointerId !== legendPointerId) return
+  const dx = event.clientX - legendPointerX
+  if (shouldCancelClick(dx, event.clientY - legendPointerY)) legendDidDrag = true
+  if (!legendDidDrag) return
+  const delta = legendLastX - event.clientX
+  legendLastX = event.clientX
+  if (legendEl.value) legendEl.value.scrollLeft += delta
+  window.dispatchEvent(new CustomEvent('tl-axis-pan', { detail: { delta } }))
+  event.preventDefault()
+}
+
+function onLegendPointerUp(event) {
+  if (legendPointerId === null || (event.pointerId != null && event.pointerId !== legendPointerId)) return
+  cancelNextLegendClick = legendDidDrag
+  legendEl.value?.releasePointerCapture?.(event.pointerId)
+  legendPointerId = null
+  legendEl.value?.classList.remove('is-pointer-down')
+}
+
+function onLegendClickCapture(event) {
+  if (!cancelNextLegendClick) return
+  cancelNextLegendClick = false
+  event.preventDefault()
+  event.stopImmediatePropagation()
+}
 
 const viewSpan = computed(() => viewEnd.value - viewStart.value)
 
@@ -250,6 +294,18 @@ export function setTimelineEl(el) { timelineEl = el }
   margin-bottom: 12px;
   font-size: 12px;
 }
+
+.tl-legend-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  scrollbar-width: thin;
+  scrollbar-color: var(--vp-c-divider) transparent;
+  cursor: grab;
+  touch-action: pan-y;
+}
+.tl-legend-scroll.is-pointer-down { cursor: grabbing; }
+.tl-legend-scroll > * { flex-shrink: 0; }
 
 .tl-legend-label {
   color: var(--vp-c-text-2);

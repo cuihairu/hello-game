@@ -13,7 +13,8 @@ import {
   loadGsap,
   fadeCardsOnScroll,
   initAxisCursor,
-  RELATIONS
+  RELATIONS,
+  shouldCancelClick
 } from '../docs/.vitepress/theme/data/timeline.mjs'
 
 describe('timeline data', () => {
@@ -21,6 +22,12 @@ describe('timeline data', () => {
     store.focus = null
     store.collapsed = {}
     vi.clearAllMocks()
+  })
+
+  it('shouldCancelClick：超过拖动阈值才抑制 tab 点击', () => {
+    expect(shouldCancelClick(6, 0)).toBe(false)
+    expect(shouldCancelClick(7, 0)).toBe(true)
+    expect(shouldCancelClick(0, -7)).toBe(true)
   })
 
   it('SEGMENTS：七个年代段、键名与范围正确', () => {

@@ -12,6 +12,10 @@ export const segments = SEGMENTS
 
 export const AXIS = { minYear: 1955, maxYear: 2026, minSpan: 30, maxSpan: 71 }
 
+export function shouldCancelClick(dx, dy, threshold = 6) {
+  return Math.abs(dx) > threshold || Math.abs(dy) > threshold
+}
+
 export const TRACKS = [
   {
     id: 'games',

@@ -86,7 +86,7 @@
 
 ### 1.3 编号文件抽取与异常编号
 
-按文件名数字前缀排序后，教程目录有 `01`–`27`；其余编号文件构成上表 28 组目录局部序列，均连续。**没有断档或重复编号异常**。需要解释的编号异常是“标签不匹配”：`24-game-types-architecture/` 实际有 27 个编号篇目，而 README 仍将其描述为 21 讲，侧栏也按 21 讲分段并继续列 22–27。证据：[`config.mjs:31-33`](../.vitepress/config.mjs)、[`config.mjs:96-104`](../.vitepress/config.mjs)、[`README.zh.md:67-92`](../../README.zh.md)。目录名本身是否代表曾规划 24 篇，无法仅凭当前文件核实。
+按文件名数字前缀排序后，教程目录有 `01`–`27`；其余编号文件构成上表 28 组目录局部序列，均连续。**没有断档或重复编号异常**。需要解释的编号异常是“标签不匹配”：`24-game-types-architecture/` 实际有 27 个编号篇目，而 README 仍将其描述为 21 讲，侧栏也按 21 讲分段并继续列 22–27。证据：[`config.mjs:31-33`](../.vitepress/config.mjs)、[`config.mjs:96-104`](../.vitepress/config.mjs)、[`README.zh.md:67-92`](https://github.com/cuihairu/hello-game/blob/main/README.zh.md)。目录名本身是否代表曾规划 24 篇，无法仅凭当前文件核实。
 
 ### 1.4 侧边栏、死链与孤儿
 
@@ -115,11 +115,11 @@
 
 ### P3. 历史说明与当前目录脱节（严重度：中）
 
-项目 README 一处仍描述旧的一级目录（如 `economy/`、`art/`、`audio/`、`tools/`），而当前 `docs/` 一级目录统计中没有这些目录；同一 README 后文已描述教程与知识库并行及编号章目录不一一对应 [`README.zh.md:48-62`](../../README.zh.md)、[`README.zh.md:67-122`](../../README.zh.md)。这是迁移过程留下的读者预期冲突，不等于这些领域完全没有内容（它们可能并入其他树），应先明确旧分类与现有落点的对应关系。
+项目 README 一处仍描述旧的一级目录（如 `economy/`、`art/`、`audio/`、`tools/`），而当前 `docs/` 一级目录统计中没有这些目录；同一 README 后文已描述教程与知识库并行及编号章目录不一一对应 [`README.zh.md:48-62`](https://github.com/cuihairu/hello-game/blob/main/README.zh.md)、[`README.zh.md:67-122`](https://github.com/cuihairu/hello-game/blob/main/README.zh.md)。这是迁移过程留下的读者预期冲突，不等于这些领域完全没有内容（它们可能并入其他树），应先明确旧分类与现有落点的对应关系。
 
 ### P4. 命名约定有多套、个别规模标签过期（严重度：中）
 
-目录名有 `00-`、`24-`、`90-` 数字前缀，也有 `server/`、`history/` 等纯英文主题名；子篇有 `01.md` 这种纯编号、`01-slug.md`、纯语义名（`aoi.md`、`career.md`）三种；英文 slug 大小写混合，如 `mmo-engine-survey.md` 与 `Epoch-driven Actor / Channel Runtime`（侧栏标题）[`config.mjs:159`](../.vitepress/config.mjs)。中英文并用主要出现在标题/slug，而目录名整体英文。最明显的约定漂移是 `24-` 名称与 27 篇，以及 README/注释的“21 讲”过期 [`README.zh.md:67-92`](../../README.zh.md)、[`config.mjs:31-33`](../.vitepress/config.mjs)。**判断：**文件命名风格不一致确实增加猜路径成本；但两种语言的标题、外来语和数字序号本身是内容属性，不宜机械统一。
+目录名有 `00-`、`24-`、`90-` 数字前缀，也有 `server/`、`history/` 等纯英文主题名；子篇有 `01.md` 这种纯编号、`01-slug.md`、纯语义名（`aoi.md`、`career.md`）三种；英文 slug 大小写混合，如 `mmo-engine-survey.md` 与 `Epoch-driven Actor / Channel Runtime`（侧栏标题）[`config.mjs:159`](../.vitepress/config.mjs)。中英文并用主要出现在标题/slug，而目录名整体英文。最明显的约定漂移是 `24-` 名称与 27 篇，以及 README/注释的“21 讲”过期 [`README.zh.md:67-92`](https://github.com/cuihairu/hello-game/blob/main/README.zh.md)、[`config.mjs:31-33`](../.vitepress/config.mjs)。**判断：**文件命名风格不一致确实增加猜路径成本；但两种语言的标题、外来语和数字序号本身是内容属性，不宜机械统一。
 
 ### P5. 内容量和侧栏重复使“看起来很多”加重（严重度：中）
 
@@ -133,7 +133,7 @@
 
 ### 现在有几套组织轴，应收成几套
 
-现状是 **8 套可识别的组织轴**（见第一节），核心导航体验实际是 **2 套主线 + 2 个横向入口**：教程、知识库、历史线、游戏库；其余指南、术语、研究、附录是知识库的辅助入口。仓库配置本身也明确说明“两套内容、两个侧边栏” [`config.mjs:31-33`](../.vitepress/config.mjs)，README 把历史线与游戏库定位为横向入口 [`README.zh.md:67`](../../README.zh.md)。
+现状是 **8 套可识别的组织轴**（见第一节），核心导航体验实际是 **2 套主线 + 2 个横向入口**：教程、知识库、历史线、游戏库；其余指南、术语、研究、附录是知识库的辅助入口。仓库配置本身也明确说明“两套内容、两个侧边栏” [`config.mjs:31-33`](../.vitepress/config.mjs)，README 把历史线与游戏库定位为横向入口 [`README.zh.md:67`](https://github.com/cuihairu/hello-game/blob/main/README.zh.md)。
 
 **建议长期收口为 3 个用户入口，而不是把全部文件硬并成一条目录树：**
 

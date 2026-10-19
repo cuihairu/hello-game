@@ -1,6 +1,7 @@
 <template>
   <section class="tl-timeline-wrapper" ref="timelineEl">
-    <div class="tl-grid" :class="{ 'has-focus': store.focus }">
+    <div class="tl-grid-viewport" ref="gridViewportEl">
+      <div class="tl-grid" :class="{ 'has-focus': store.focus }">
       <div
         v-for="trackData in trackDatas"
         :key="trackData.trackId"
@@ -78,6 +79,7 @@
           </span>
         </div>
       </div>
+      </div>
     </div>
   </section>
 </template>
@@ -91,9 +93,14 @@ const props = defineProps({
 })
 
 const timelineEl = ref(null)
+const gridViewportEl = ref(null)
 const trackDatas = ref([])
 let cleanupFade = null
 let timelineElRef = null
+
+function onAxisPan(event) {
+  if (gridViewportEl.value) gridViewportEl.value.scrollLeft += event.detail.delta
+}
 
 import { setTimelineEl } from '../components/HistoryAxis.vue'
 
@@ -145,11 +152,13 @@ watch(() => store.collapsed, triggerFade)
 
 onMounted(() => {
   initData()
+  window.addEventListener('tl-axis-pan', onAxisPan)
   /* v8 ignore next */
   triggerFade()
 })
 
 onUnmounted(() => {
+  window.removeEventListener('tl-axis-pan', onAxisPan)
   /* v8 ignore next */
   if (cleanupFade) cleanupFade()
 })
@@ -158,31 +167,51 @@ onUnmounted(() => {
 <style scoped>
 .tl-timeline-wrapper {
   padding: 16px 0;
+  min-width: 0;
+  max-width: 100%;
+  --tl-col-min: 240px;
 }
+
+.tl-grid-viewport {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--vp-c-divider) transparent;
+}
+
+.tl-grid-viewport::-webkit-scrollbar { height: 8px; }
+.tl-grid-viewport::-webkit-scrollbar-track { background: transparent; }
+.tl-grid-viewport::-webkit-scrollbar-thumb { background: var(--vp-c-divider); border-radius: 8px; }
+.tl-grid-viewport::-webkit-scrollbar-thumb:hover { background: var(--vp-c-text-3); }
 
 .tl-grid {
   display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-columns: repeat(8, minmax(var(--tl-col-min), 1fr));
+  width: 100%;
+  min-width: max(100%, calc(var(--tl-col-min) + var(--tl-col-min) + var(--tl-col-min) + var(--tl-col-min) + var(--tl-col-min) + var(--tl-col-min) + var(--tl-col-min) + var(--tl-col-min) + 70px));
   gap: 10px;
   transition: grid-template-columns 0.3s ease;
 }
 
 @media (max-width: 1440px) {
-  .tl-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .tl-grid { grid-template-columns: repeat(4, minmax(var(--tl-col-min), 1fr)); min-width: max(100%, calc(var(--tl-col-min) + var(--tl-col-min) + var(--tl-col-min) + var(--tl-col-min) + 30px)); }
 }
 @media (max-width: 768px) {
-  .tl-grid { grid-template-columns: 1fr; }
+  .tl-grid-viewport { overflow-x: visible; }
+  .tl-grid { grid-template-columns: minmax(0, 1fr); width: 100%; min-width: 0; }
 }
 
 .tl-grid.has-focus {
-  grid-template-columns: minmax(0, 1.6fr) repeat(7, minmax(0, 0.7fr));
+  grid-template-columns: minmax(var(--tl-col-min), 1.6fr) repeat(7, minmax(var(--tl-col-min), 0.7fr));
 }
 
 @media (max-width: 1440px) {
-  .tl-grid.has-focus { grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 0.6fr)); }
+  .tl-grid.has-focus { grid-template-columns: minmax(var(--tl-col-min), 1.5fr) repeat(3, minmax(var(--tl-col-min), 0.6fr)); }
 }
 @media (max-width: 768px) {
-  .tl-grid.has-focus { grid-template-columns: 1fr; }
+  .tl-grid.has-focus { grid-template-columns: minmax(0, 1fr); }
 }
 
 .tl-col { min-width: 0; }
