@@ -279,11 +279,17 @@ export function setTimelineEl(el) { timelineEl = el }
 <style scoped>
 .tl-axis {
   position: sticky;
-  top: 0;
+  top: var(--vp-nav-height, 4rem);
   z-index: 10;
   background: var(--vp-c-bg);
   border-bottom: 1px solid var(--vp-c-divider);
   padding: 12px 16px;
+}
+
+@media (max-width: 640px) {
+  .tl-axis {
+    position: static;
+  }
 }
 
 .tl-legend {
