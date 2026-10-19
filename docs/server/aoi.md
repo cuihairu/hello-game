@@ -63,11 +63,11 @@ AOI 把平方账压成线性账：每个客户端只收「可见集大小 × f�
 - BigWorld 14.4.1（本站分析基于 cuihairu fork，commit `088d3b84`；上游为 SourceForge 开源的 14.4.1 安装包）：`programming/bigworld/server/cellapp/witness.cpp:2489-2495`、`range_list_node.hpp:25-37`、`range_trigger.cpp:146-203`、`range_list_appeal_trigger.hpp:10-24`
 - KBEngine（本站分析基于 cuihairu fork，commit `0bc93d5`；上游 `https://github.com/kbengine/kbengine`）：`kbe/src/server/cellapp/coordinate_node.h:94-99`、`range_trigger.h:16-56`、`witness.cpp:356`
 - 术语对照：Interest Management（兴趣管理）、Visibility（可见性）、Witness（观察者）
-- 本页为工程经验归纳；页内实战案例为教学示例（数字取整简化）
+- 本页为工程经验归纳；页内实战案例为演示示例（数字取整简化）
 
 ### 实战案例：一次「主城里明明有人，屏幕上却空着」的可见集漏更新排查
 
-> 案例为教学示例（非摘自真实项目），数字经过取整简化。它把本页「Problem」的平方账与「Algorithm」的迟滞必选项用到深水区：裁剪一失效，平方账就回来——这是可见集维护跟不上的排查，也是「怎样让可见集在高峰也稳」的完整展开。
+> 案例为演示示例（非摘自真实项目），数字经过取整简化。它把本页「Problem」的平方账与「Algorithm」的迟滞必选项用到深水区：裁剪一失效，平方账就回来——这是可见集维护跟不上的排查，也是「怎样让可见集在高峰也稳」的完整展开。
 
 **背景与现象**：某 MMO 主城，玩家反馈「走过身边的人要等好几秒才出现」，晚高峰尤其明显，客服工单日均 **40** 起。同屏 **200** 个实体时，不做裁剪的账是每秒 **8** 万条消息——可见集本该把它压到几千条，现在压不住了。
 

@@ -3,7 +3,7 @@
 // lectureCount 正则误命中「24-」目录前缀的回归，抽出模块后纳入 coverage.include，
 // 受 vitest 100% 覆盖口径约束。函数只吃参数不碰配置，便于合成边界用例。
 
-// 展平分组里的全部链接（组级链接 + 条目链接），用于页数统计与讲次计数
+// 展平分组里的全部链接（组级链接 + 条目链接），用于页数统计与专题篇数统计
 export function allLinks(groups) {
   return groups.flatMap(g => [
     ...(g.link ? [g.link] : []),
@@ -11,7 +11,7 @@ export function allLinks(groups) {
   ])
 }
 
-// 教程目录：分组展示，组级链接（如选型对照总览）作为各组首行；
+// 编号专题目录：分组展示，组级链接（如选型对照总览）作为各组首行；
 // 组标题剥掉 emoji 前缀，与图纸标注的克制语言一致
 export function buildTutorialGroups(tutorial) {
   return tutorial.map(g => ({
@@ -40,7 +40,7 @@ export function buildKbChapters(kb) {
     })
 }
 
-// 教程讲次计数——精确锚定目录前缀：裸 /\/\d{2}-/ 会误命中「24-game-types-architecture」的「24-」
+// 编号专题篇数统计——精确锚定目录前缀：裸 /\/\d{2}-/ 会误命中「24-game-types-architecture」的「24-」
 export function countLectures(groups) {
   return allLinks(groups).filter(l => /^\/24-game-types-architecture\/\d{2}-/.test(l)).length
 }
@@ -55,7 +55,7 @@ export function chunk3(items) {
   ]
 }
 
-// 首页统计数字：教程讲次 / 知识库正文章数 / 附录篇数 / 全站页数
+// 首页统计数字：编号专题篇数 / 知识库正文章数 / 附录篇数 / 全站页数
 export function homepageStats(tutorial, kb) {
   return {
     lectureCount: countLectures(tutorial),

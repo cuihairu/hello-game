@@ -19,9 +19,9 @@ server / sync 子树总览。覆盖：时间模型（01）、同步模型（02�
 
 同步体系真正做的，不是选择一个时髦方案，而是在这些目标之间分配复杂度，并把代价变成可控的工程事实。
 
-这一章的阅读顺序也有明确逻辑：
+这组篇目之间有明确的依赖关系：
 
-- 先把时间推进讲清楚，因为同步问题往往先是时间模型问题。
+- 时间模型先于同步模型：很多同步问题首先是时间推进问题。
 - 再讲同步模型，因为裁决权和一致性时机决定后续所有系统。
 - 然后展开帧同步、暂停恢复、预测补偿和确定性这些最容易互相牵连的部分。
 - 最后把回放、观战、技能系统放回同一条链路，说明它们为什么不是后补功能。
@@ -48,7 +48,7 @@ server / sync 子树总览。覆盖：时间模型（01）、同步模型（02�
 ## 参考资料
 
 - [Valve《Source Multiplayer Networking》](https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking)
-- [Gaffer on Games · 游戏网络必读](https://gafferongames.com/post/what_every_programmer_needs_to_know_about_game_networking/)
+- [Gaffer on Games · 游戏网络参考资料](https://gafferongames.com/post/what_every_programmer_needs_to_know_about_game_networking/)
 - [GitHub · pond3r/ggpo](https://github.com/pond3r/ggpo)
 
 <!-- BACKLINKS-AUTO -->

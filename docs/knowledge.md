@@ -13,10 +13,10 @@
 | 覆盖判定口径 | 只认独立篇与专节，正文出现一次词不算覆盖 | [覆盖对照页](/system/genre-coverage)与两份调研共用 | [覆盖对照页](/system/genre-coverage) |
 | 品类需求密度 | 缺口按「哪类游戏先要」排序，不按实现难度排 | [应用场景对照](/research/03-application-scenarios) | [应用场景对照](/research/03-application-scenarios) |
 | 机制口径与接口签名分开 | 机制口径十年不变，接口签名随版本变——正文只记前者 | [官方文档调研](/research/02-engine-middleware-docs) | [官方文档调研](/research/02-engine-middleware-docs) |
-| 客户端按引擎分、服务端按机制分 | 两类官方文档各走一条路，引擎专属 API 不收录 | [官方文档调研](/research/02-engine-middleware-docs) | 教程 [03 前端引擎与客户端](/24-game-types-architecture/03-frontend-engines) |
+| 客户端按引擎分、服务端按机制分 | 两类官方文档各走一条路，引擎专属 API 不收录 | [官方文档调研](/research/02-engine-middleware-docs) | 专题笔记 [03 前端引擎与客户端](/24-game-types-architecture/03-frontend-engines) |
 | 数据表化 | 定义与运行态分离，加内容不改代码 | Game Programming Patterns（Nystrom）与 TrinityCore 工程惯例 | [任务系统](/system/quest) |
 | 服务端权威与客户端预测分工 | 关键状态只认服务端，客户端先动后校正 | Multiplayer Game Programming（Glazer、Shankar）、Photon 与 UE 官方文档 | [预测、补偿与纠正](/server/sync/05) |
-| 帧预算归因 | 把帧时间按渲染指令归因，再谈优化 | Real-Time Rendering（Akenine-Möller 等） | 教程 [19 客户端架构与性能基础](/24-game-types-architecture/19-client-architecture) |
+| 帧预算归因 | 把帧时间按渲染指令归因，再谈优化 | Real-Time Rendering（Akenine-Möller 等） | 专题笔记 [19 客户端架构与性能基础](/24-game-types-architecture/19-client-architecture) |
 | 产消先于定价 | 经济系统先算产出与消耗，再算定价 | Game Mechanics: Advanced Game Design（Adams、Dormann） | [经济循环与产出消耗](/numerical/04) |
 | 超时先于熔断 | 容错顺序是先给超时，再给熔断与退避 | Release It!（Nygard） | [Debug、故障定位与复盘](/operation/observability/04) |
 | 客户端完整性不等于服务端权威 | 反作弊中间件拦注入改内存，判定仍落服务端 | Easy Anti-Cheat、BattlEye 官方说明 | [安全与反作弊](/server/security/01) |
@@ -29,18 +29,18 @@
 
 | 书（作者，出版） | 要点 | 本仓落点 |
 | --- | --- | --- |
-| Game Programming Patterns（Robert Nystrom，自出版 2014） | 游戏主循环与时间推进；双缓冲、对象池、享元、原型、组件、事件队列；字节码与脚本虚拟机；数据导向设计与 ECS | 教程 [09 游戏编程模式](/24-game-types-architecture/09-programming-patterns)、[Tick 与时间推进](/server/sync/01)、[宿主运行时与脚本 VM 集成](/system/scripting/02)、[脚本语言与 ECS](/client/04) |
+| Game Programming Patterns（Robert Nystrom，自出版 2014） | 游戏主循环与时间推进；双缓冲、对象池、享元、原型、组件、事件队列；字节码与脚本虚拟机；数据导向设计与 ECS | 专题笔记 [09 游戏编程模式](/24-game-types-architecture/09-programming-patterns)、[Tick 与时间推进](/server/sync/01)、[宿主运行时与脚本 VM 集成](/system/scripting/02)、[脚本语言与 ECS](/client/04) |
 | Game Programming Gems 1–8（Charles River Media，2000–2007） | 同步、预测与网络抖动；确定性、回放与裁决；数学、物理与碰撞（部分，无专节） | [预测、补偿与纠正](/server/sync/05)、[确定性与数值一致性](/server/sync/06)、[回放、观战与裁决](/server/sync/07) |
-| Game Engine Architecture（Jason Gregory，CRC Press 第 3 版 2018） | 引擎分层与模块边界；资源系统与工具链；动画、音频与表现子系统 | [客户端技术栈与引擎](/client/01)、[资源系统与工具链](/client/03)、教程 [21 音频与美术管线协作](/24-game-types-architecture/21-art-audio-pipeline) |
+| Game Engine Architecture（Jason Gregory，CRC Press 第 3 版 2018） | 引擎分层与模块边界；资源系统与工具链；动画、音频与表现子系统 | [客户端技术栈与引擎](/client/01)、[资源系统与工具链](/client/03)、专题笔记 [21 音频与美术管线协作](/24-game-types-architecture/21-art-audio-pipeline) |
 | Multiplayer Game Programming（Glazer、Shankar，Pearson 2016） | 延迟、预测、补偿与权威 | [预测、补偿与纠正](/server/sync/05)、[安全与反作弊](/server/security/01) |
 | AI for Games（Ian Millington，CRC Press 第 3 版 2019） | 寻路、行为树与 NPC 决策（部分，只讲场景不讲机制） | [AI 在客户端与游戏系统中的应用场景](/client/05) |
 | Game Mechanics: Advanced Game Design（Adams、Dormann，New Riders 2014） | 经济循环、资源产出与消耗；进度、解锁与节奏 | [经济循环与产出消耗](/numerical/04)、[成长曲线模型](/numerical/03)、[关卡难度与新手节奏](/numerical/07) |
-| The Art of Game Design（Jesse Schell，CRC Press 第 2 版 2014） | 机制分解与体验设计方法 | [从玩法到架构的分析方法](/industry/methodology/03)、教程 [10 玩法系统设计](/24-game-types-architecture/10-gameplay-systems) |
-| Real-Time Rendering（Akenine-Möller 等，CRC Press 第 4 版 2018） | 渲染管线与帧预算 | 教程 [19 客户端架构与性能基础](/24-game-types-architecture/19-client-architecture)、[WebGL 与三维渲染入门](/client/web/02) |
-| Game Engine Black Book（Fabian Sanglard，独立出版 DOOM 卷 2017、Quake 卷 2019） | 经典引擎的整机拆解（部分，归历史线） | [游戏发展历史线](/history/)、教程 [01 游戏后端技术全景](/24-game-types-architecture/01-entry) |
-| Designing Games（Tynan Sylvester，O'Reilly 2013） | 系统之间的相互作用与迭代 | [模型之间如何组合](/industry/models/08)、教程 [10 玩法系统设计](/24-game-types-architecture/10-gameplay-systems) |
+| The Art of Game Design（Jesse Schell，CRC Press 第 2 版 2014） | 机制分解与体验设计方法 | [从玩法到架构的分析方法](/industry/methodology/03)、专题笔记 [10 玩法系统设计](/24-game-types-architecture/10-gameplay-systems) |
+| Real-Time Rendering（Akenine-Möller 等，CRC Press 第 4 版 2018） | 渲染管线与帧预算 | 专题笔记 [19 客户端架构与性能基础](/24-game-types-architecture/19-client-architecture)、[WebGL 渲染管线与性能归因](/client/web/02) |
+| Game Engine Black Book（Fabian Sanglard，独立出版 DOOM 卷 2017、Quake 卷 2019） | 经典引擎的整机拆解（部分，归历史线） | [游戏发展历史线](/history/)、专题笔记 [01 游戏后端技术全景](/24-game-types-architecture/01-entry) |
+| Designing Games（Tynan Sylvester，O'Reilly 2013） | 系统之间的相互作用与迭代 | [模型之间如何组合](/industry/models/08)、专题笔记 [10 玩法系统设计](/24-game-types-architecture/10-gameplay-systems) |
 | Free-to-Play（Will Luton，New Riders 2013） | 付费结构与商业模型 | [商业化数值示例模型](/numerical/06)、[发布、版本与商业模式](/industry/platforms/04) |
-| 《腾讯游戏开发精粹》系列（腾讯游戏学堂，分卷出版） | 国内项目的网络、性能与数据实践 | 教程 [07 架构总览](/24-game-types-architecture/07-core-arch)、[13 运维与基础设施实战](/24-game-types-architecture/13-tech-ops) |
+| 《腾讯游戏开发精粹》系列（腾讯游戏学堂，分卷出版） | 国内项目的网络、性能与数据实践 | 专题笔记 [07 架构总览](/24-game-types-architecture/07-core-arch)、[13 运维与基础设施实战](/24-game-types-architecture/13-tech-ops) |
 | Designing Data-Intensive Applications（Martin Kleppmann，O'Reilly 2017） | 事务、复制、分片与一致性 | [事务、一致性与分库分表](/database/03)、[数据同步、冷热分层与归档](/database/04) |
 | Site Reliability Engineering（Beyer 等，O'Reilly 2016） | 容量、SLO 与故障应对 | [压测、容量规划与扩缩容](/operation/observability/05)、[稳定性治理的真正目标](/operation/observability/06) |
 | Release It!（Michael T. Nygard，Pragmatic Bookshelf 第 2 版 2018） | 超时、熔断、退避与故障模式 | [Debug、故障定位与复盘](/operation/observability/04)、[一致性、恢复与重连](/server/services/05) |
@@ -53,12 +53,12 @@
 
 | 文档 | 归属 | 要点 | 本仓落点 |
 | --- | --- | --- | --- |
-| Unity Manual | 引擎 | 客户端网络层结构与会话 | 教程 [03 前端引擎与客户端](/24-game-types-architecture/03-frontend-engines) |
-| Netcode for GameObjects | 引擎多人 | 网络对象复制与客户端权威边界 | 教程 [03](/24-game-types-architecture/03-frontend-engines)、[同步模型](/server/sync/02) |
+| Unity Manual | 引擎 | 客户端网络层结构与会话 | 专题笔记 [03 前端引擎与客户端](/24-game-types-architecture/03-frontend-engines) |
+| Netcode for GameObjects | 引擎多人 | 网络对象复制与客户端权威边界 | 专题笔记 [03](/24-game-types-architecture/03-frontend-engines)、[同步模型](/server/sync/02) |
 | Unity Addressables | 引擎资源 | 资源分组、依赖与热更 | [资源系统与工具链](/client/03) |
-| Unreal Engine Documentation（Replication、GAS、专用服务器） | 引擎 | 权威服务器模型、预测纠偏、技能与效果 | 教程 [03](/24-game-types-architecture/03-frontend-engines)、[技能系统](/system/skill) |
-| Godot Documentation（High-level multiplayer、RPC） | 引擎 | 场景同步与 RPC 边界 | 教程 [03](/24-game-types-architecture/03-frontend-engines)、[数据帧与协议契约](/networking/04) |
-| Cocos Creator 手册 | 引擎 | 小游戏平台约束与登录链路 | 教程 [03](/24-game-types-architecture/03-frontend-engines)、[小游戏平台与浏览器环境](/client/web/05) |
+| Unreal Engine Documentation（Replication、GAS、专用服务器） | 引擎 | 权威服务器模型、预测纠偏、技能与效果 | 专题笔记 [03](/24-game-types-architecture/03-frontend-engines)、[技能系统](/system/skill) |
+| Godot Documentation（High-level multiplayer、RPC） | 引擎 | 场景同步与 RPC 边界 | 专题笔记 [03](/24-game-types-architecture/03-frontend-engines)、[数据帧与协议契约](/networking/04) |
+| Cocos Creator 手册 | 引擎 | 小游戏平台约束与登录链路 | 专题笔记 [03](/24-game-types-architecture/03-frontend-engines)、[小游戏平台与浏览器环境](/client/web/05) |
 | Mirror Documentation | 引擎联网 | 兴趣管理与传输层抽象 | [AOI：兴趣区域](/server/aoi)、[传输层与接入协议选择](/networking/03) |
 | Photon Fusion Documentation | 引擎联网 | 预测、回滚与状态复制 | [预测、补偿与纠正](/server/sync/05) |
 | skynet Wiki | 服务端框架 | 服务模型、定时器、内置库 | [Skynet：C 内核 + Lua Actor](/server/skynet) |
@@ -74,8 +74,8 @@
 | Steamworks Documentation | 平台 | 大厅、成就、内购与云存档 | [平台与渠道生态](/industry/platforms/01)、[登录、支付、社交与广告 SDK](/industry/platforms/03) |
 | OpenTelemetry Documentation | 可观测 | Trace、Metric、日志三态 | [日志、指标、Tracing 与 OTel](/operation/observability/01) |
 | Easy Anti-Cheat / BattlEye 官方说明 | 安全 | 客户端完整性与注入检测 | [安全与反作弊](/server/security/01) |
-| FMOD Studio Documentation | 音频中间件 | 音频资源、事件与混音总线（部分，只有管线专节） | 教程 [21 音频与美术管线协作](/24-game-types-architecture/21-art-audio-pipeline) |
-| Wwise Documentation | 音频中间件 | 事件驱动的音频触发与项目结构（部分，同上） | 教程 [21](/24-game-types-architecture/21-art-audio-pipeline) |
+| FMOD Studio Documentation | 音频中间件 | 音频资源、事件与混音总线（部分，只有管线专节） | 专题笔记 [21 音频与美术管线协作](/24-game-types-architecture/21-art-audio-pipeline) |
+| Wwise Documentation | 音频中间件 | 事件驱动的音频触发与项目结构（部分，同上） | 专题笔记 [21](/24-game-types-architecture/21-art-audio-pipeline) |
 
 ## 四、应用场景
 

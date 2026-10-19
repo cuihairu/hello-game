@@ -2,7 +2,7 @@
 
 ## Category
 
-research / 调研二。节点定位：把成熟引擎与中间件的官方文档当作能力清单，逐项列出「这份文档解决什么问题」，再对到本仓 `docs/` 的现有篇目上。选入标准与[权威书籍调研](/research/01-authoritative-books)一致：公开维护、被大量项目使用、主题能落进某一棵树；个人项目与一次性教程不入表。
+research / 调研二。节点定位：把成熟引擎与中间件的官方文档当作能力清单，逐项列出「这份文档解决什么问题」，再对到本仓 `docs/` 的现有篇目上。选入标准与[权威书籍调研](/research/01-authoritative-books)一致：公开维护、被大量项目使用、主题能落进某一棵树；个人项目与一次性教学文章不入表。
 
 ## Definition
 
@@ -16,12 +16,12 @@ research / 调研二。节点定位：把成熟引擎与中间件的官方文档
 
 | 官方文档 | 归属 | 抽出的主题 | 本仓落点 | 判定 |
 | --- | --- | --- | --- | --- |
-| Unity Manual | 引擎 | 客户端网络层结构与会话 | 教程 [03 前端引擎与客户端](/24-game-types-architecture/03-frontend-engines) 第 2 节 | 已覆盖 |
-| Netcode for GameObjects | 引擎多人 | 网络对象复制与客户端权威边界 | 教程 03 第 2 节、[同步模型](/server/sync/02) | 已覆盖 |
+| Unity Manual | 引擎 | 客户端网络层结构与会话 | 专题笔记 [03 前端引擎与客户端](/24-game-types-architecture/03-frontend-engines) 第 2 节 | 已覆盖 |
+| Netcode for GameObjects | 引擎多人 | 网络对象复制与客户端权威边界 | 专题笔记 03 第 2 节、[同步模型](/server/sync/02) | 已覆盖 |
 | Unity Addressables | 引擎资源 | 资源分组、依赖与热更 | [资源系统与工具链](/client/03) 资源分层与构建热更两节 | 已覆盖 |
-| Unreal Engine Documentation（Replication、Gameplay Ability System、专用服务器） | 引擎 | 权威服务器模型、预测纠偏、技能与效果 | 教程 03 第 4 节 4.1 与 4.4、[技能系统](/system/skill) | 已覆盖 |
-| Godot Documentation（High-level multiplayer、RPC） | 引擎 | 场景同步与 RPC 边界 | 教程 03 第 5 节、[数据帧与协议契约](/networking/04) | 已覆盖 |
-| Cocos Creator 手册 | 引擎 | 小游戏平台约束与登录链路 | 教程 03 第 3 节、[小游戏平台与浏览器环境](/client/web/05) | 已覆盖 |
+| Unreal Engine Documentation（Replication、Gameplay Ability System、专用服务器） | 引擎 | 权威服务器模型、预测纠偏、技能与效果 | 专题笔记 03 第 4 节 4.1 与 4.4、[技能系统](/system/skill) | 已覆盖 |
+| Godot Documentation（High-level multiplayer、RPC） | 引擎 | 场景同步与 RPC 边界 | 专题笔记 03 第 5 节、[数据帧与协议契约](/networking/04) | 已覆盖 |
+| Cocos Creator 手册 | 引擎 | 小游戏平台约束与登录链路 | 专题笔记 03 第 3 节、[小游戏平台与浏览器环境](/client/web/05) | 已覆盖 |
 | skynet Wiki | 服务端框架 | 服务模型、定时器、内置库 | [Skynet：C 内核 + Lua Actor](/server/skynet) | 已覆盖 |
 | Colyseus Documentation | 房间框架 | 房间生命周期、广播与状态同步 | [房间广播、弱网与国内网络环境](/networking/07)、[单局房间型游戏问题模型](/industry/models/02) | 已覆盖 |
 | Nakama Documentation | 后端框架 | 账号、撮合、排行、存储、通知 | [账号、角色与基础系统](/system/services/01)、[排行榜](/system/leaderboard) | 已覆盖 |
@@ -37,10 +37,10 @@ research / 调研二。节点定位：把成熟引擎与中间件的官方文档
 | Steamworks Documentation | 平台 | 大厅、成就、内购与云存档 | [平台与渠道生态](/industry/platforms/01)、[登录、支付、社交与广告 SDK](/industry/platforms/03) | 已覆盖 |
 | OpenTelemetry Documentation | 可观测 | Trace、Metric、日志三态 | [日志、指标、Tracing 与 OTel](/operation/observability/01) | 已覆盖 |
 | 反作弊中间件官方说明（Easy Anti-Cheat、BattlEye） | 安全 | 客户端完整性与注入检测 | [安全与反作弊](/server/security/01) | 已覆盖 |
-| FMOD Studio Documentation | 音频中间件 | 音频资源、事件与混音总线 | 教程 [21 音频与美术管线协作](/24-game-types-architecture/21-art-audio-pipeline) 第 3 节只讲管线不点中间件 | 部分 |
+| FMOD Studio Documentation | 音频中间件 | 音频资源、事件与混音总线 | 专题笔记 [21 音频与美术管线协作](/24-game-types-architecture/21-art-audio-pipeline) 第 3 节只讲管线不点中间件 | 部分 |
 | Wwise Documentation | 音频中间件 | 事件驱动的音频触发与项目结构 | 同上 | 部分 |
 
-**结论：23 个主题里 21 个已覆盖。引擎侧落点全部集中在教程 03 的分引擎专节，中间件侧落在 database、networking、server 三棵树的机制篇，两侧没有交叉，说明「客户端按引擎分、服务端按机制分」的分法能同时接住两类文档。2 个部分项都是音频中间件，第 3 节有音频管线专节，FMOD 与 Wwise 两个名字一次没出现；引擎专属 API 本仓按边界口径不收录，不计缺口。**
+**结论：23 个主题里 21 个已覆盖。引擎侧落点全部集中在专题笔记 03 的分引擎专节，中间件侧落在 database、networking、server 三棵树的机制篇，两侧没有交叉，说明「客户端按引擎分、服务端按机制分」的分法能同时接住两类文档。2 个部分项都是音频中间件，第 3 节有音频管线专节，FMOD 与 Wwise 两个名字一次没出现；引擎专属 API 本仓按边界口径不收录，不计缺口。**
 
 ## 三处值得单独说的对照
 
