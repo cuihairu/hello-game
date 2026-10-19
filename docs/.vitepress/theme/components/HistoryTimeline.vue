@@ -167,7 +167,7 @@ onUnmounted(() => {
   transition: grid-template-columns 0.3s ease;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1440px) {
   .tl-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 @media (max-width: 768px) {
@@ -178,7 +178,7 @@ onUnmounted(() => {
   grid-template-columns: minmax(0, 1.6fr) repeat(7, minmax(0, 0.7fr));
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1440px) {
   .tl-grid.has-focus { grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 0.6fr)); }
 }
 @media (max-width: 768px) {
@@ -207,9 +207,10 @@ onUnmounted(() => {
 .tl-col-caret { color: var(--vp-c-text-3); transition: transform 0.15s ease; font-size: 10px; }
 .tl-col-caret.rotated { transform: rotate(-90deg); }
 
-.tl-cards { display: flex; flex-direction: column; gap: 10px; }
+.tl-cards { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 
 .tl-card {
+  min-width: 0;
   border: 1px solid var(--vp-c-divider);
   border-radius: 8px;
   padding: 10px;
@@ -226,22 +227,23 @@ onUnmounted(() => {
   box-shadow: 0 0 0 1px var(--vp-c-brand-1);
 }
 
-.tl-card-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+.tl-card-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; min-width: 0; }
 .tl-card-year { color: var(--vp-c-brand-1); font-weight: 700; margin-right: 4px; font-size: 14px; white-space: nowrap; }
 .tl-card-year.approx::after { content: ' 约'; font-weight: 400; color: var(--vp-c-text-2); font-size: 11px; }
-.tl-card-title { margin: 0; font-size: 15px; font-weight: 600; color: var(--vp-c-text-1); line-height: 1.3; }
+.tl-card-title { min-width: 0; margin: 0; font-size: 15px; font-weight: 600; color: var(--vp-c-text-1); line-height: 1.3; }
 
 .tl-card-fields { margin: 0; font-size: 13px; line-height: 1.6; }
 .tl-card-row { margin-top: 6px; }
 .tl-card-row dt { font-weight: 600; font-size: 12px; color: var(--vp-c-text-2); margin-bottom: 2px; }
-.tl-card-row dd { margin: 0; color: var(--vp-c-text-1); }
+.tl-card-row dd { margin: 0; color: var(--vp-c-text-1); overflow-wrap: anywhere; }
 
 .tl-card-works { padding-left: 16px; font-size: 12px; color: var(--vp-c-text-2); margin-top: 8px; }
 .tl-card-works li { margin: 4px 0; }
 .tl-card-works strong { color: var(--vp-c-text-1); }
 
-.tl-card-links { margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.tl-card-links { margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
 .tl-link {
+  min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis;
   display: inline-flex; align-items: center; gap: 2px;
   font-size: 11px; padding: 2px 6px;
   border: 1px solid currentColor; border-radius: 4px;
