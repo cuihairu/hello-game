@@ -26,22 +26,22 @@ export const GENRES = [
 
 // 受控技术标签 → 站内互链（索引入口：标签即知识点）
 export const TAG_LINKS = {
-  帧同步: '/24-game-types-architecture/04-network',
-  状态同步: '/24-game-types-architecture/04-network',
-  服务端权威: '/24-game-types-architecture/04-network',
-  TCP: '/networking/',
-  UDP: '/networking/',
-  KCP: '/networking/',
-  分片分区: '/design/problem-domains/',
-  副本实例: '/design/problem-domains/',
-  跨服: '/server/capacity/',
-  匹配服务: '/system/services/',
-  排行榜: '/database/cache/',
-  存档: '/database/',
-  反作弊: '/24-game-types-architecture/18-security-compliance',
-  UGC: '/24-game-types-architecture/16-scripting-hotfix',
-  ECS: '/24-game-types-architecture/09-programming-patterns',
-  云游戏: '/24-game-types-architecture/13-tech-ops'
+  帧同步: '/zh/24-game-types-architecture/04-network',
+  状态同步: '/zh/24-game-types-architecture/04-network',
+  服务端权威: '/zh/24-game-types-architecture/04-network',
+  TCP: '/zh/networking/',
+  UDP: '/zh/networking/',
+  KCP: '/zh/networking/',
+  分片分区: '/zh/design/problem-domains/',
+  副本实例: '/zh/design/problem-domains/',
+  跨服: '/zh/server/capacity/',
+  匹配服务: '/zh/system/services/',
+  排行榜: '/zh/database/cache/',
+  存档: '/zh/database/',
+  反作弊: '/zh/24-game-types-architecture/18-security-compliance',
+  UGC: '/zh/24-game-types-architecture/16-scripting-hotfix',
+  ECS: '/zh/24-game-types-architecture/09-programming-patterns',
+  云游戏: '/zh/24-game-types-architecture/13-tech-ops'
 }
 
 export const ERAS = ['全部', '1970s', '1990s', '2000s', '2010s', '2020s']

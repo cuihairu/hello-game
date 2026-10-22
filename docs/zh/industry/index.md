@@ -1,0 +1,39 @@
+# 行业与方法论
+
+## Category
+
+industry 树总览。节点定位：先回答「游戏行业里的项目是什么」再谈技术——方法论子树给分析方法，问题模型子树给类型的技术形态，类型专题给速览入口，平台子树给外部约束的工程化，职业地图横向节点回答岗位与人的配置。
+
+## Definition
+
+游戏项目的工程现实由三个输入共同决定：玩法类型（决定主导矛盾）、平台（决定技术边界）、商业形态（决定版本与运营节奏）。industry 树把这三个输入展开成四棵子树：方法论给分析框架，问题模型给六种可对照的技术形态，类型专题做快速索引，平台子树处理外部世界的反向塑造；外加职业地图横向节点——三大输入最终由人执行，四族岗位配置与成长流动回答「项目由哪些人做」。
+
+## Related
+
+四棵子树的分工与衔接：
+
+- [总论与方法论](/zh/industry/methodology/)——地图 → 三输入 → 分析法 → 取舍 → 边界 → 生命周期 → 沉淀
+- [游戏类型与问题模型](/zh/industry/models/)——标签转译 → 六问分型 → 六种问题模型 → 组合主次
+- [游戏类型专题](/zh/industry/genres/)——五类速览，回指问题模型
+- [平台生态、渠道与 SDK](/zh/industry/platforms/)——设计输入 → 小游戏硬边界 → SDK 分级 → 发布与商业耦合
+- 横向节点：[职业地图](/zh/industry/career)——岗位四族 × 项目输入、成长与流动、与个人自检的接口
+
+上游：无（行业侧入口）；下游：server、system、networking、client 树（各问题模型的技术展开），production、operation 树（交付与运行面）。
+
+## Reference
+
+节点清单见四棵子树的导览页。
+
+## 参考资料
+
+- [Wikipedia · Video game industry](https://en.wikipedia.org/wiki/Video_game_industry)
+- [Wikipedia · Video game platform](https://en.wikipedia.org/wiki/Video_game_platform)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [career](career.md)
+- [index](/zh/industry/genres/index.md)
+- [index](/zh/industry/methodology/index.md)
+- [index](/zh/industry/models/index.md)
+- [index](/zh/industry/platforms/index.md)

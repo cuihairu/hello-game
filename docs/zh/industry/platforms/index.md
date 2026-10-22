@@ -1,0 +1,41 @@
+# 平台生态、渠道与 SDK
+
+## Category
+
+industry / platforms 子树总览。覆盖：平台与渠道生态（01）、小游戏平台约束（02）、四类 SDK（03）、发布版本与商业模式（04）。
+
+## Definition
+
+这一章解释平台生态为何会深刻改变项目技术形态。渠道、小游戏平台、登录支付、广告和社交 SDK 不只是接入工作，而是分发与商业模式的一部分。
+
+这组记录涉及的核心问题：
+
+- 平台能力对产品与技术方案的约束
+- SDK 集成中的风险隔离方式
+- 平台版本与商业模式的耦合点
+
+## Related
+
+关系链：平台约束（01）→ 小游戏硬边界（02）→ SDK 分类分级（03）→ 发布与商业耦合（04）。上游：methodology/05（平台边界）；下游：production/04（发布协同）、client/web/05（小游戏前端）、树根 [industry 总览](../index.md)。
+
+## Reference
+
+节点清单见下节。
+
+## 本章文章
+
+- [平台与渠道生态](./01.md)：围绕“平台与渠道生态”补足 平台与 SDK 里的关键判断、成本与误区。
+- [小游戏平台与技术约束](./02.md)：围绕“小游戏平台与技术约束”补足 平台与 SDK 里的关键判断、成本与误区。
+- [登录、支付、社交与广告 SDK](./03.md)：围绕“登录、支付、社交与广告 SDK”补足 平台与 SDK 里的关键判断、成本与误区。
+- [发布、版本与商业模式](./04.md)：围绕“发布、版本与商业模式”补足 平台与 SDK 里的关键判断、成本与误区。
+
+## 参考资料
+
+- [Wikipedia · Video game platform](https://en.wikipedia.org/wiki/Video_game_platform)
+- [Wikipedia · Video game industry](https://en.wikipedia.org/wiki/Video_game_industry)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [05](/zh/client/web/05.md)
+- [index](/zh/industry/index.md)

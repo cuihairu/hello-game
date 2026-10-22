@@ -1,0 +1,38 @@
+# 可观测性、性能、容量与稳定性
+
+## Category
+
+operation / observability 子树总览。覆盖：日志指标 Tracing 与 OTel（01）、专项可观测与 Tick 指标（02）、Profiling 与热点分析（03）、Debug 与故障复盘（04）、压测与容量（05）、稳定性治理目标（06）。
+
+## Definition
+
+上线之后，系统真正暴露出的不是设计图，而是运行行为。日志、指标、Tracing、Profiling、压测和稳定性治理，都是把这种运行行为转成可理解、可定位、可决策的信息。没有这层能力，团队只能靠经验和猜测处理线上问题。
+
+这一章关心的不是“监控平台怎么搭”，而是如何围绕游戏主链路建立观测视角：登录、匹配、房间、战斗、结算、活动和支付这些流程，应该留下哪些证据，出现抖动时靠什么迅速缩小问题面。
+
+## Related
+
+关系链：三支柱证据（01）→ 主链路指标（02）→ 性能取证（03）→ 故障定位（04）→ 容量推演（05）→ 稳定性可控性（06）。上游：server 树；下游：production/03 与 production/06（发布与工作流的稳定性面）、树根 [operation 总览](../index.md)。
+
+## Reference
+
+节点清单见下节。
+
+## 本章文章
+
+- [日志、指标、Tracing 与 OTel](./01.md)：建立通用可观测能力的基本框架。
+- [专项可观测与 Tick 指标](./02.md)：解释为什么游戏系统必须有围绕主链路的专项指标。
+- [Profiling、火焰图与热点分析](./03.md)：讨论性能问题如何从猜测变成证据。
+- [Debug、故障定位与复盘](./04.md)：说明定位流程为什么比单点工具更重要。
+- [压测、容量规划与扩缩容](./05.md)：把上线准备和长期容量治理放到一起讨论。
+- [稳定性治理的真正目标](./06.md)：澄清稳定性工作不是“别报警”，而是系统在异常中依然可控。
+
+## 参考资料
+
+- [Wikipedia · Observability](https://en.wikipedia.org/wiki/Observability)
+- [Wikipedia · Software metric](https://en.wikipedia.org/wiki/Software_metric)
+
+<!-- BACKLINKS-AUTO -->
+## 相关页面
+
+- [index](/zh/operation/index.md)

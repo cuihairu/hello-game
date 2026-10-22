@@ -26,7 +26,7 @@ export function buildTutorialGroups(tutorial) {
 }
 
 // 知识库目录：每组取章主页；导读与附录按入口路径标记，其余专题用 + 展示。
-const KB_NUM_SPECIAL = { '/00-reading-guide/': '00', '/90-appendix/': 'A', 导读: '00', 附录与横向索引: 'A' }
+const KB_NUM_SPECIAL = { '/zh/00-reading-guide/': '00', '/zh/90-appendix/': 'A', 导读: '00', 附录与横向索引: 'A' }
 export function buildKbChapters(kb) {
   return kb
     .filter(g => g.items?.length)
