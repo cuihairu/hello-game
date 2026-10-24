@@ -86,22 +86,22 @@ const { lectureCount, kbChapterCount, appendixCount, pageCount } = homepageStats
 </div>
 
 <p class="bp-note">
-  知识库与编号专题会从不同角度讨论相同问题：专题笔记记录项目中的取舍与实践，知识库按主题收拢概念和参照。可以从具体问题查找，也可以从<a :href="withBase('/industry/models/')">问题模型</a>进入。
+  知识库与编号专题会从不同角度讨论相同问题：专题笔记记录项目中的取舍与实践，知识库按主题收拢概念和参照。可以从具体问题查找，也可以从<a :href="withBase('/zh/industry/models/')">问题模型</a>进入。
 </p>
 
 <h2 class="bp-h2">三条阅读线索</h2>
 
 <ol class="bp-threads">
   <li>
-    <h3><a :href="withBase('/24-game-types-architecture/01-entry')">编号专题：从问题模型到工程实践</a></h3>
+    <h3><a :href="withBase('/zh/24-game-types-architecture/01-entry')">编号专题：从问题模型到工程实践</a></h3>
     <p>这组记录覆盖游戏与技术的关系、架构与运行维护，也延伸到客户端、测试和协作管线；编号便于顺序浏览，单篇也可以独立查阅。</p>
   </li>
   <li>
-    <h3><a :href="withBase('/00-reading-guide/')">知识库导读与问题索引</a></h3>
+    <h3><a :href="withBase('/zh/00-reading-guide/')">知识库导读与问题索引</a></h3>
     <p>按项目阶段和问题类型找到相关记录：立项时梳理主导矛盾，开发中核对方案边界，上线后回看事故处置。</p>
   </li>
   <li>
-    <h3><a :href="withBase('/24-game-types-architecture/expansion')">看站点扩展规划</a></h3>
+    <h3><a :href="withBase('/zh/24-game-types-architecture/expansion')">看站点扩展规划</a></h3>
     <p>这里记录内容扩展的范围与进展，包括客户端架构、测试质量、美术音频管线等专题的增补情况。</p>
   </li>
 </ol>

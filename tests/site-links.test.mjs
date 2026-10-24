@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const docs = resolve(root, 'docs')
-const lecDir = resolve(docs, '24-game-types-architecture')
+const lecDir = resolve(docs, 'zh/24-game-types-architecture')
 
 // 入档正文：expansion.md 第 6 节（站内链接与内容清单核对，位于文件末尾）
 const archive = readFileSync(resolve(lecDir, 'expansion.md'), 'utf8')
@@ -77,7 +77,7 @@ function lectureFiles() {
 describe('站内链接与内容清单核对入档（expansion 第 6 节）', () => {
   it('config nav/sidebar 链接全量解析，数量与入档一致', () => {
     const cfg = readFileSync(resolve(docs, '.vitepress/config.mjs'), 'utf8')
-    const links = [...new Set([...cfg.matchAll(/link:\s*'([^']+)'/g)].map(m => m[1]))]
+    const links = [...new Set([...cfg.matchAll(/link["']:\s*["']([^"']+)["']/g)].map(m => m[1]))]
     const claimed = Number(grab(/共 \*\*(\d+)\*\* 个 link/, 'config link 数')[1])
     expect(links.length).toBe(claimed)
     const internal = links.filter(u => !u.startsWith('http://') && !u.startsWith('https://') && !u.startsWith('mailto:'))
@@ -229,7 +229,7 @@ describe('站内链接与内容清单核对入档（expansion 第 6 节）', () 
   it('知识库实战案例口径：案例节 ↔ kb-case 用例一一对应，数量与入档一致', () => {
     // 知识库页（00–23 章 + 附录）内案例节；教程与两个横向入口不计入
     const kbFiles = mdFiles.filter(f => {
-      const top = relative(docs, f).split('/')[0]
+      const top = relative(docs, f).replace(/^zh\//, '').split('/')[0]
       return !top.startsWith('24-game-types-architecture') && top !== 'history' && top !== 'games'
     })
     const kbCase = kbFiles.filter(f => /^##+ .*实战案例：/m.test(readFileSync(f, 'utf8')))

@@ -21,8 +21,8 @@ function linkToFile(link) {
 }
 
 const sidebarLinks = [
-  ...allLinks(config.themeConfig.sidebar['/24-game-types-architecture/']),
-  ...allLinks(config.themeConfig.sidebar['/'])
+  ...allLinks(config.locales.zh.themeConfig.sidebar['/zh/24-game-types-architecture/']),
+  ...allLinks(config.locales.zh.themeConfig.sidebar['/zh/'])
 ]
 
 describe('核心路径冒烟（访客链路 × 静态配置断言）', () => {
@@ -37,7 +37,7 @@ describe('核心路径冒烟（访客链路 × 静态配置断言）', () => {
   })
 
   it('首页模板 withBase 字面量路径全部对应真实文件', () => {
-    const src = readFileSync(resolve(root, 'docs/index.md'), 'utf8')
+    const src = readFileSync(resolve(root, 'docs/zh/index.md'), 'utf8')
     const hardcoded = [...src.matchAll(/withBase\('([^']+)'\)/g)].map(m => m[1])
     expect(hardcoded.length).toBeGreaterThanOrEqual(4)
     for (const path of hardcoded) {
@@ -46,13 +46,13 @@ describe('核心路径冒烟（访客链路 × 静态配置断言）', () => {
   })
 
   it('homepage 目录分组映射与 config 链接闭合：导读与附录入口可达', () => {
-    const chapters = buildKbChapters(config.themeConfig.sidebar['/'])
-    expect(chapters).toContainEqual({ num: '00', title: '内容组织说明', link: '/00-reading-guide/' })
-    expect(chapters).toContainEqual({ num: 'A', title: '附录与横向索引', link: '/90-appendix/' })
+    const chapters = buildKbChapters(config.locales.zh.themeConfig.sidebar['/zh/'])
+    expect(chapters).toContainEqual({ num: '00', title: '内容组织说明', link: '/zh/00-reading-guide/' })
+    expect(chapters).toContainEqual({ num: 'A', title: '附录与横向索引', link: '/zh/90-appendix/' })
   })
 
   it('教程分组标题剥 emoji 后全部非空（剥除逻辑失配时在此报警）', () => {
-    const groups = buildTutorialGroups(config.themeConfig.sidebar['/24-game-types-architecture/'])
+    const groups = buildTutorialGroups(config.locales.zh.themeConfig.sidebar['/zh/24-game-types-architecture/'])
     for (const g of groups) {
       expect(g.text.trim().length, `分组「${g.text}」剥 emoji 后为空`).toBeGreaterThan(0)
       expect(g.text.startsWith(' ')).toBe(false)

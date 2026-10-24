@@ -1,4 +1,4 @@
-// 首页（docs/index.md）目录数据的纯函数层：从 sidebar 配置推导首页展示结构。
+// 首页（docs/zh/index.md）目录数据的纯函数层：从 sidebar 配置推导首页展示结构。
 // 这段逻辑原本内联在 index.md 的 <script setup> 里，零测试覆盖且出过
 // lectureCount 正则误命中「24-」目录前缀的回归，抽出模块后纳入 coverage.include，
 // 受 vitest 100% 覆盖口径约束。函数只吃参数不碰配置，便于合成边界用例。
@@ -42,7 +42,7 @@ export function buildKbChapters(kb) {
 
 // 编号专题篇数统计——精确锚定目录前缀：裸 /\/\d{2}-/ 会误命中「24-game-types-architecture」的「24-」
 export function countLectures(groups) {
-  return allLinks(groups).filter(l => /^\/24-game-types-architecture\/\d{2}-/.test(l)).length
+  return allLinks(groups).filter(l => /^\/zh\/24-game-types-architecture\/\d{2}-/.test(l)).length
 }
 
 // 列表均分 3 栏（知识库章级入口拆 3 栏用）；空列表返回三份空数组

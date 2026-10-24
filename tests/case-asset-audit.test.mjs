@@ -4,7 +4,7 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const dir = resolve(root, 'docs/24-game-types-architecture')
+const dir = resolve(root, 'docs/zh/24-game-types-architecture')
 const lecture21 = readFileSync(resolve(dir, '21-art-audio-pipeline.md'), 'utf8')
 const lecture20 = readFileSync(resolve(dir, '20-game-testing.md'), 'utf8')
 

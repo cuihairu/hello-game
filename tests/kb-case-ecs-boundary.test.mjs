@@ -4,7 +4,7 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const file = resolve(root, 'docs/client/04.md')
+const file = resolve(root, 'docs/zh/client/04.md')
 const page = readFileSync(file, 'utf8')
 
 // 本页案例标题（声明式：tests/site-links 对账按此逐字核对页面标题）
@@ -136,7 +136,7 @@ describe('实战案例冒烟（知识库 client/04「重构三个月，帧率没
     }
     expect(existsSync(file)).toBe(true)
     // 同章页面清单未被改动（案例是页内小节，不新增页；07 起新增交互与输入横向节点 input.md）
-    const pages = readdirSync(resolve(root, 'docs/client')).filter(f => f.endsWith('.md'))
+    const pages = readdirSync(resolve(root, 'docs/zh/client')).filter(f => f.endsWith('.md'))
     expect(pages.length).toBe(7)
     expect(pages).toContain('index.md')
     expect(pages).toContain('input.md')

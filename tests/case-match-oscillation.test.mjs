@@ -4,7 +4,7 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const dir = resolve(root, 'docs/24-game-types-architecture')
+const dir = resolve(root, 'docs/zh/24-game-types-architecture')
 const lecture11 = readFileSync(resolve(dir, '11-auxiliary-systems.md'), 'utf8')
 
 // 案例切片：从「## 12. 实战案例」到「## 本章小结」（小结无编号，案例为小结前最后一个编号节）

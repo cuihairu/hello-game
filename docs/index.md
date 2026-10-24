@@ -12,9 +12,8 @@ official documentation as references.
 > **Language note:** the full content of this site is written in Chinese.
 > Open the Chinese edition for the complete knowledge base and game library:
 
-- [完整内容（中文版）](/zh/)
-- [游戏库（按玩法分类）](/zh/games/)
-- [知识库目录](/zh/)
+- [Full content (Chinese edition)](/zh/)
+- [Game library (by genre)](/zh/games/)
 
 This English entry page is intentionally minimal — content pages are not machine
 translated; switch to the Chinese edition via the language menu above.

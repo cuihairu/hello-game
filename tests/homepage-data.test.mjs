@@ -73,8 +73,8 @@ describe('homepage 数据层（合成边界用例）', () => {
     const groups = [{
       text: 'g',
       items: [
-        { text: 'a', link: '/24-game-types-architecture/expansion' },
-        { text: 'b', link: '/24-game-types-architecture/19-client-architecture' },
+        { text: 'a', link: '/zh/24-game-types-architecture/expansion' },
+        { text: 'b', link: '/zh/24-game-types-architecture/19-client-architecture' },
         { text: 'c', link: '/other/01-x' }
       ]
     }]
@@ -103,15 +103,15 @@ describe('homepage 数据层（合成边界用例）', () => {
 })
 
 describe('homepage 数据层（真实 config 集成）', () => {
-  const tutorial = config.themeConfig.sidebar['/24-game-types-architecture/']
-  const kb = config.themeConfig.sidebar['/']
+  const tutorial = config.locales.zh.themeConfig.sidebar['/zh/24-game-types-architecture/']
+  const kb = config.locales.zh.themeConfig.sidebar['/zh/']
 
   it('专题目录与篇数计数：链接全部对应真实文件', () => {
     const groups = buildTutorialGroups(tutorial)
     expect(groups).toHaveLength(tutorial.length)
     // 首组是选型对照总览（组级链接、无条目）；扩展组标题剥 emoji 后为「扩展」
     expect(groups[0].text).toBe('游戏类型与架构选型对照')
-    expect(groups[0].link).toBe('/24-game-types-architecture/')
+    expect(groups[0].link).toBe('/zh/24-game-types-architecture/')
     expect(groups.at(-1).text).toBe('匹配、数据与引擎专题')
     expect(countLectures(tutorial)).toBe(27)
     for (const link of allLinks(tutorial)) {
@@ -121,7 +121,7 @@ describe('homepage 数据层（真实 config 集成）', () => {
 
   it('知识库目录：章级链接全部对应真实文件', () => {
     const chapters = buildKbChapters(kb)
-    expect(chapters[0]).toEqual({ num: '00', title: '内容组织说明', link: '/00-reading-guide/' })
+    expect(chapters[0]).toEqual({ num: '00', title: '内容组织说明', link: '/zh/00-reading-guide/' })
     expect(homepageStats(tutorial, kb).kbChapterCount).toBe(27)
     expect(homepageStats(tutorial, kb).appendixCount).toBe(1)
     // 附录入口按 A 标记。

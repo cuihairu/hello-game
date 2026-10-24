@@ -49,6 +49,7 @@ export default {
     "zh": {
       "label": "简体中文",
       "lang": "zh-CN",
+      "link": "/zh/",
       "title": "游戏开发笔记",
       "description": "面向个人开发者整理的游戏开发笔记与经验，覆盖设计、客户端、服务器、数值、美术、工具与运营，并以商业游戏、开源项目和官方资料为参照",
       "themeConfig": {

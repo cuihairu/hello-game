@@ -86,7 +86,7 @@
 
 ### 1.3 编号文件抽取与异常编号
 
-按文件名数字前缀排序后，教程目录有 `01`–`27`；其余编号文件构成上表 28 组目录局部序列，均连续。**没有断档或重复编号异常**。需要解释的编号异常是“标签不匹配”：`24-game-types-architecture/` 实际有 27 个编号篇目，而 README 仍将其描述为 21 讲，侧栏也按 21 讲分段并继续列 22–27。证据：[`config.mjs:31-33`](../.vitepress/config.mjs)、[`config.mjs:96-104`](../.vitepress/config.mjs)、[`README.zh.md:67-92`](https://github.com/cuihairu/hello-game/blob/main/README.zh.md)。目录名本身是否代表曾规划 24 篇，无法仅凭当前文件核实。
+按文件名数字前缀排序后，教程目录有 `01`–`27`；其余编号文件构成上表 28 组目录局部序列，均连续。**没有断档或重复编号异常**。需要解释的编号异常是“标签不匹配”：`24-game-types-architecture/` 实际有 27 个编号篇目，而 README 仍将其描述为 21 讲，侧栏也按 21 讲分段并继续列 22–27。证据：[`config.mjs:31-33`](../../.vitepress/config.mjs)、[`config.mjs:96-104`](../../.vitepress/config.mjs)、[`README.zh.md:67-92`](https://github.com/cuihairu/hello-game/blob/main/README.zh.md)。目录名本身是否代表曾规划 24 篇，无法仅凭当前文件核实。
 
 ### 1.4 侧边栏、死链与孤儿
 
@@ -97,7 +97,7 @@
 | 不在侧边栏但被 Markdown 链接的文件 | 6 个：`docs/design/index.md`、`docs/history/design.md`、`docs/history/nodes.md`、`docs/industry/index.md`、`docs/operation/index.md`、`docs/server/index.md`。它们并非孤儿，均有正文入口或被父页引用。 |
 | 孤儿文件 | 在可检查的本地 Markdown 引用图中，未发现既不进侧边栏、也无入链的 Markdown 文件。外部搜索引擎或站外链接未纳入。 |
 
-侧栏配置有两个主要入口（教程前缀与其余知识库路径），与配置注释一致，参见 [`config.mjs:31-35`](../.vitepress/config.mjs)。主要差异不是坏链，而是部分概览/历史支持页不在侧栏中；例如 `history/index.md` 明确链接设计稿和节点清单 [`history/index.md:18-20`](../history/index.md)，而侧栏只提供历史线导航入口 [`config.mjs:26-28`](../.vitepress/config.mjs)。
+侧栏配置有两个主要入口（教程前缀与其余知识库路径），与配置注释一致，参见 [`config.mjs:31-35`](../../.vitepress/config.mjs)。主要差异不是坏链，而是部分概览/历史支持页不在侧栏中；例如 `history/index.md` 明确链接设计稿和节点清单 [`history/index.md:18-20`](../history/index.md)，而侧栏只提供历史线导航入口 [`config.mjs:26-28`](../../.vitepress/config.mjs)。
 
 ### 1.5 根目录与非 docs 文件
 
@@ -107,7 +107,7 @@
 
 ### P1. 主题跨轴重复，读者难判断权威页面（严重度：高）
 
-同一主题被教程、行业问题模型、设计问题域、工程专题多次讲到，交叉引用存在，但入口没有统一说明“概念定义 / 推导 / 速查 / 实现”各由哪页负责。匹配是直观例子：教程有“匹配选型”和“匹配架构落位” [`config.mjs:99-100`](../.vitepress/config.mjs)，系统域又有队伍匹配、PVP 匹配 [`config.mjs:212-213`](../.vitepress/config.mjs)；房间/对战问题也同时出现在模型篇与速查篇，且速查页说明其为横向版本 [`design/problem-domains/01.md:10-16`](../design/problem-domains/01.md)、[`design/problem-domains/06.md:53-65`](../design/problem-domains/06.md)。**判断：**交叉本身合理，但当前“谁是规范展开、谁是摘要”主要靠读者自行推断，增加找资料和维护成本。
+同一主题被教程、行业问题模型、设计问题域、工程专题多次讲到，交叉引用存在，但入口没有统一说明“概念定义 / 推导 / 速查 / 实现”各由哪页负责。匹配是直观例子：教程有“匹配选型”和“匹配架构落位” [`config.mjs:99-100`](../../.vitepress/config.mjs)，系统域又有队伍匹配、PVP 匹配 [`config.mjs:212-213`](../../.vitepress/config.mjs)；房间/对战问题也同时出现在模型篇与速查篇，且速查页说明其为横向版本 [`design/problem-domains/01.md:10-16`](../design/problem-domains/01.md)、[`design/problem-domains/06.md:53-65`](../design/problem-domains/06.md)。**判断：**交叉本身合理，但当前“谁是规范展开、谁是摘要”主要靠读者自行推断，增加找资料和维护成本。
 
 ### P2. 导航与文件树是不同信息架构，部分索引页隐身（严重度：中）
 
@@ -119,21 +119,21 @@
 
 ### P4. 命名约定有多套、个别规模标签过期（严重度：中）
 
-目录名有 `00-`、`24-`、`90-` 数字前缀，也有 `server/`、`history/` 等纯英文主题名；子篇有 `01.md` 这种纯编号、`01-slug.md`、纯语义名（`aoi.md`、`career.md`）三种；英文 slug 大小写混合，如 `mmo-engine-survey.md` 与 `Epoch-driven Actor / Channel Runtime`（侧栏标题）[`config.mjs:159`](../.vitepress/config.mjs)。中英文并用主要出现在标题/slug，而目录名整体英文。最明显的约定漂移是 `24-` 名称与 27 篇，以及 README/注释的“21 讲”过期 [`README.zh.md:67-92`](https://github.com/cuihairu/hello-game/blob/main/README.zh.md)、[`config.mjs:31-33`](../.vitepress/config.mjs)。**判断：**文件命名风格不一致确实增加猜路径成本；但两种语言的标题、外来语和数字序号本身是内容属性，不宜机械统一。
+目录名有 `00-`、`24-`、`90-` 数字前缀，也有 `server/`、`history/` 等纯英文主题名；子篇有 `01.md` 这种纯编号、`01-slug.md`、纯语义名（`aoi.md`、`career.md`）三种；英文 slug 大小写混合，如 `mmo-engine-survey.md` 与 `Epoch-driven Actor / Channel Runtime`（侧栏标题）[`config.mjs:159`](../../.vitepress/config.mjs)。中英文并用主要出现在标题/slug，而目录名整体英文。最明显的约定漂移是 `24-` 名称与 27 篇，以及 README/注释的“21 讲”过期 [`README.zh.md:67-92`](https://github.com/cuihairu/hello-game/blob/main/README.zh.md)、[`config.mjs:31-33`](../../.vitepress/config.mjs)。**判断：**文件命名风格不一致确实增加猜路径成本；但两种语言的标题、外来语和数字序号本身是内容属性，不宜机械统一。
 
 ### P5. 内容量和侧栏重复使“看起来很多”加重（严重度：中）
 
-教程目录有 29 个 Markdown、19,738 行，占全 docs 行数约 40%；顶部总览页本身也是长篇内容（`24-game-types-architecture/index.md` 共约 400 行）。侧栏另将教程编号组织为 21 讲注释及多个分组，并在根知识库下重复一部分工程树链接（例如 server 内容在 `'/server/'` 和 `'/'` 两个侧栏定义中都有），见 [`config.mjs:31-35`](../.vitepress/config.mjs)、[`config.mjs:109-194`](../.vitepress/config.mjs)、[`config.mjs:545-620`](../.vitepress/config.mjs)。双入口可以降低“教程/参考”切换成本，但当前 README 旧目录说明、两份侧栏和多套主题入口叠加，容易让人以为存在数套完全独立的知识库。
+教程目录有 29 个 Markdown、19,738 行，占全 docs 行数约 40%；顶部总览页本身也是长篇内容（`24-game-types-architecture/index.md` 共约 400 行）。侧栏另将教程编号组织为 21 讲注释及多个分组，并在根知识库下重复一部分工程树链接（例如 server 内容在 `'/server/'` 和 `'/'` 两个侧栏定义中都有），见 [`config.mjs:31-35`](../../.vitepress/config.mjs)、[`config.mjs:109-194`](../../.vitepress/config.mjs)、[`config.mjs:545-620`](../../.vitepress/config.mjs)。双入口可以降低“教程/参考”切换成本，但当前 README 旧目录说明、两份侧栏和多套主题入口叠加，容易让人以为存在数套完全独立的知识库。
 
 ### P6. 侧栏目标检查通过，但不能等同于链接质量全通过（严重度：低）
 
-脚本没有发现配置目标丢失或常规 Markdown 链接本地目标缺失。脚本范围不含锚点、外网可用性、动态 Vue 链接及全部 HTML 引用；故这是“未发现”，不是对全站链接的绝对保证。侧栏中未直接展示的 6 篇文件有入链，不是死文件。证据入口见 [`config.mjs:26-35`](../.vitepress/config.mjs)、[`history/index.md:18-20`](../history/index.md)。
+脚本没有发现配置目标丢失或常规 Markdown 链接本地目标缺失。脚本范围不含锚点、外网可用性、动态 Vue 链接及全部 HTML 引用；故这是“未发现”，不是对全站链接的绝对保证。侧栏中未直接展示的 6 篇文件有入链，不是死文件。证据入口见 [`config.mjs:26-35`](../../.vitepress/config.mjs)、[`history/index.md:18-20`](../history/index.md)。
 
 ## 第三节：判断与推荐
 
 ### 现在有几套组织轴，应收成几套
 
-现状是 **8 套可识别的组织轴**（见第一节），核心导航体验实际是 **2 套主线 + 2 个横向入口**：教程、知识库、历史线、游戏库；其余指南、术语、研究、附录是知识库的辅助入口。仓库配置本身也明确说明“两套内容、两个侧边栏” [`config.mjs:31-33`](../.vitepress/config.mjs)，README 把历史线与游戏库定位为横向入口 [`README.zh.md:67`](https://github.com/cuihairu/hello-game/blob/main/README.zh.md)。
+现状是 **8 套可识别的组织轴**（见第一节），核心导航体验实际是 **2 套主线 + 2 个横向入口**：教程、知识库、历史线、游戏库；其余指南、术语、研究、附录是知识库的辅助入口。仓库配置本身也明确说明“两套内容、两个侧边栏” [`config.mjs:31-33`](../../.vitepress/config.mjs)，README 把历史线与游戏库定位为横向入口 [`README.zh.md:67`](https://github.com/cuihairu/hello-game/blob/main/README.zh.md)。
 
 **建议长期收口为 3 个用户入口，而不是把全部文件硬并成一条目录树：**
 
