@@ -60,6 +60,17 @@ describe('homepage 数据层（合成边界用例）', () => {
     expect(groups[3].link).toBeNull()
   })
 
+  it('buildTutorialGroups：英文分组标题不被剥掉首个词', () => {
+    // 回归口径：剥 emoji 前缀只认「首个字符不是字母/数字」的 token，
+    // 否则英文标题 "Architecture" 会被误剥成 "and Positioning"
+    const groups = buildTutorialGroups([
+      { text: 'Architecture', items: [{ text: '01 Entry', link: '/t/01' }] },
+      { text: '🔵 Panorama and Positioning', items: [{ text: '章节扩展规划', link: '/t/expansion' }] }
+    ])
+    expect(groups.map(g => g.text)).toEqual(['Architecture', 'Panorama and Positioning'])
+    expect(groups[0].items).toEqual([{ num: '01', title: 'Entry', link: '/t/01' }])
+  })
+
   it('buildKbChapters：特殊编号映射、标题取号、空组过滤、无编号回退', () => {
     const chapters = buildKbChapters(syntheticKb)
     expect(chapters.map(c => c.num)).toEqual(['00', '1', 'A1', 'A', '+'])

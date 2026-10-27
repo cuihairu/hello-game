@@ -21,6 +21,7 @@ export default {
       "title": "Game Dev Notes",
       "description": "Game development notes for indie developers. Full content is available in Chinese.",
       "themeConfig": {
+        "logo": "/logo.svg",
         "siteTitle": "Game Dev Notes",
         "nav": [
           {
@@ -28,22 +29,2233 @@ export default {
             "link": "/"
           },
           {
-            "text": "中文版",
-            "link": "/zh/"
+            "text": "Technology Map",
+            "link": "/24-game-types-architecture/01-entry"
+          },
+          {
+            "text": "Design & Numbers",
+            "link": "/24-game-types-architecture/02-game-design"
+          },
+          {
+            "text": "Architecture Notes",
+            "link": "/24-game-types-architecture/07-core-arch"
+          },
+          {
+            "text": "Networking & Comms",
+            "link": "/24-game-types-architecture/04-network"
+          },
+          {
+            "text": "Programming & Implementation",
+            "link": "/24-game-types-architecture/09-programming-patterns"
+          },
+          {
+            "text": "Operations & Production",
+            "link": "/24-game-types-architecture/13-tech-ops"
+          },
+          {
+            "text": "History",
+            "link": "/history/"
+          },
+          {
+            "text": "Game Cases",
+            "link": "/games/"
+          },
+          {
+            "text": "Topic Index",
+            "link": "/00-reading-guide/"
           }
         ],
         "sidebar": {
-          "/": [
+          "/24-game-types-architecture/": [
             {
-              "text": "Home",
-              "link": "/"
+              "text": "Game Types and Architecture Selection Comparison",
+              "link": "/24-game-types-architecture/"
             },
             {
-              "text": "Full content (Chinese)",
-              "link": "/zh/"
+              "text": "Panorama and Positioning",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "01 The Game Backend Technology Map",
+                  "link": "/24-game-types-architecture/01-entry"
+                }
+              ]
+            },
+            {
+              "text": "Design and Client",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "02 Numerical Design and Economy Systems",
+                  "link": "/24-game-types-architecture/02-game-design"
+                },
+                {
+                  "text": "03 Frontend Engines and Clients",
+                  "link": "/24-game-types-architecture/03-frontend-engines"
+                }
+              ]
+            },
+            {
+              "text": "Architecture",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "04 Communication Protocol Design",
+                  "link": "/24-game-types-architecture/04-network"
+                },
+                {
+                  "text": "05 Concurrency Models",
+                  "link": "/24-game-types-architecture/05-concurrency-models"
+                },
+                {
+                  "text": "06 Common Frameworks",
+                  "link": "/24-game-types-architecture/06-frameworks"
+                },
+                {
+                  "text": "07 Architecture Overview",
+                  "link": "/24-game-types-architecture/07-core-arch"
+                },
+                {
+                  "text": "08 Data Storage and Middleware",
+                  "link": "/24-game-types-architecture/08-data-storage"
+                }
+              ]
+            },
+            {
+              "text": "Mechanics and Implementation",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "09 Game Programming Patterns",
+                  "link": "/24-game-types-architecture/09-programming-patterns"
+                },
+                {
+                  "text": "10 Gameplay System Design",
+                  "link": "/24-game-types-architecture/10-gameplay-systems"
+                },
+                {
+                  "text": "11 Auxiliary System Design",
+                  "link": "/24-game-types-architecture/11-auxiliary-systems"
+                }
+              ]
+            },
+            {
+              "text": "Operations & Production",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "12 Game Data Analytics",
+                  "link": "/24-game-types-architecture/12-data-analytics"
+                },
+                {
+                  "text": "13 Ops in Practice",
+                  "link": "/24-game-types-architecture/13-tech-ops"
+                },
+                {
+                  "text": "14 Dev Organizations",
+                  "link": "/24-game-types-architecture/14-dev-organization"
+                }
+              ]
+            },
+            {
+              "text": "Engineering Topics",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "15 References",
+                  "link": "/24-game-types-architecture/15-references"
+                },
+                {
+                  "text": "16 Script Hot Updates",
+                  "link": "/24-game-types-architecture/16-scripting-hotfix"
+                },
+                {
+                  "text": "17 Versioning, Release and Configuration",
+                  "link": "/24-game-types-architecture/17-versioning-release"
+                },
+                {
+                  "text": "18 Security, Risk Control and Compliance",
+                  "link": "/24-game-types-architecture/18-security-compliance"
+                },
+                {
+                  "text": "Topic Expansion Plan",
+                  "link": "/24-game-types-architecture/expansion"
+                }
+              ]
+            },
+            {
+              "text": "Matchmaking, Data and Engine Topics",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "19 Client Architecture and Performance Fundamentals",
+                  "link": "/24-game-types-architecture/19-client-architecture"
+                },
+                {
+                  "text": "20 Game Testing and Quality Assurance",
+                  "link": "/24-game-types-architecture/20-game-testing"
+                },
+                {
+                  "text": "21 Audio and Art Pipeline Collaboration",
+                  "link": "/24-game-types-architecture/21-art-audio-pipeline"
+                },
+                {
+                  "text": "Open Source Project Selection Survey",
+                  "link": "/24-game-types-architecture/22-matchmaking-oss"
+                },
+                {
+                  "text": "Self-Built Architecture: Responsibilities and Placement",
+                  "link": "/24-game-types-architecture/23-matchmaking-architecture"
+                },
+                {
+                  "text": "Attribute Sync and Persistence",
+                  "link": "/24-game-types-architecture/24-entity-sync-persistence"
+                },
+                {
+                  "text": "Attribute DB Mapping and Design Philosophy",
+                  "link": "/24-game-types-architecture/25-entity-db-mapping-philosophy"
+                },
+                {
+                  "text": "MMO Engine Comparison",
+                  "link": "/24-game-types-architecture/26-mmo-engine-survey"
+                },
+                {
+                  "text": "Engine Design Highlights",
+                  "link": "/24-game-types-architecture/27-mmo-engine-design-highlights"
+                }
+              ]
+            }
+          ],
+          "/server/": [
+            {
+              "text": "Server Overview",
+              "link": "/server/"
+            },
+            {
+              "text": "Crash Diagnosis: Core Dumps and GDB",
+              "link": "/server/crash-diagnosis"
+            },
+            {
+              "text": "Multiplayer Models",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "AOI: Area of Interest",
+                  "link": "/server/aoi"
+                }
+              ]
+            },
+            {
+              "text": "Source Code Analysis",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Skynet: C Kernel + Lua Actor",
+                  "link": "/server/skynet"
+                }
+              ]
+            },
+            {
+              "text": "Languages and Selection",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Server Languages and Runtimes",
+                  "link": "/server/language"
+                },
+                {
+                  "text": "Open Source Server Map",
+                  "link": "/server/map"
+                }
+              ]
+            },
+            {
+              "text": "Sync, Combat and Real-Time Interaction",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Sync, Combat and Real-Time Interaction",
+                  "link": "/server/sync/"
+                },
+                {
+                  "text": "Tick and Time Advancement",
+                  "link": "/server/sync/01"
+                },
+                {
+                  "text": "Sync Models",
+                  "link": "/server/sync/02"
+                },
+                {
+                  "text": "Frame Sync (Lockstep) Explained",
+                  "link": "/server/sync/03"
+                },
+                {
+                  "text": "Pause, Resume, Frame Catch-Up and Reconnection",
+                  "link": "/server/sync/04"
+                },
+                {
+                  "text": "Prediction, Compensation and Correction",
+                  "link": "/server/sync/05"
+                },
+                {
+                  "text": "Determinism and Numerical Consistency",
+                  "link": "/server/sync/06"
+                },
+                {
+                  "text": "Replay, Spectating and Adjudication",
+                  "link": "/server/sync/07"
+                },
+                {
+                  "text": "Skill System Design",
+                  "link": "/server/sync/08"
+                }
+              ]
+            },
+            {
+              "text": "Execution Models and Runtimes",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Execution Models and Runtimes",
+                  "link": "/server/runtime/"
+                },
+                {
+                  "text": "Concurrency Models Overview: From Seven Concurrency Models in Seven Weeks to Game Runtimes",
+                  "link": "/server/runtime/00"
+                },
+                {
+                  "text": "Single Thread, Multithreading and Actor",
+                  "link": "/server/runtime/01"
+                },
+                {
+                  "text": "Coroutines, State Machines and Task Queues",
+                  "link": "/server/runtime/02"
+                },
+                {
+                  "text": "Tick-Driven Logic Execution",
+                  "link": "/server/runtime/03"
+                },
+                {
+                  "text": "Flow Control, Backpressure and Stability Mechanisms",
+                  "link": "/server/runtime/04"
+                },
+                {
+                  "text": "Lock Contention and Performance Cost",
+                  "link": "/server/runtime/05"
+                },
+                {
+                  "text": "Epoch-driven Actor / Channel Runtime",
+                  "link": "/server/runtime/06"
+                }
+              ]
+            },
+            {
+              "text": "Service Decomposition and Control Plane",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Service Decomposition and Control Plane",
+                  "link": "/server/services/"
+                },
+                {
+                  "text": "Service Decomposition Methodology",
+                  "link": "/server/services/01"
+                },
+                {
+                  "text": "Core Service Roles",
+                  "link": "/server/services/02"
+                },
+                {
+                  "text": "Coordination Layer, Cross-Server and Control Plane",
+                  "link": "/server/services/03"
+                },
+                {
+                  "text": "Service Discovery, Routing and Collaboration",
+                  "link": "/server/services/04"
+                },
+                {
+                  "text": "Consistency, Recovery and Reconnection",
+                  "link": "/server/services/05"
+                }
+              ]
+            },
+            {
+              "text": "Capacity Scaling",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Capacity Scaling",
+                  "link": "/server/capacity/"
+                },
+                {
+                  "text": "Load Testing and Capacity Planning",
+                  "link": "/server/capacity/01"
+                },
+                {
+                  "text": "Scale-Up, Scale-Down and Dynamic Server Addition",
+                  "link": "/server/capacity/02"
+                },
+                {
+                  "text": "Partitioning, Migration, Server Merge and Decommissioning",
+                  "link": "/server/capacity/03"
+                },
+                {
+                  "text": "Platform-Based Ops and Multi-Region Architecture",
+                  "link": "/server/capacity/04"
+                }
+              ]
+            },
+            {
+              "text": "Security, Risk Control and Compliance",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Security, Risk Control and Compliance",
+                  "link": "/server/security/"
+                },
+                {
+                  "text": "Security and Anti-Cheating",
+                  "link": "/server/security/01"
+                },
+                {
+                  "text": "Auditing, Privacy and Data Security",
+                  "link": "/server/security/02"
+                },
+                {
+                  "text": "Behavioral Risk Control and Governance",
+                  "link": "/server/security/03"
+                },
+                {
+                  "text": "Compliance, Game License and Platform Constraints",
+                  "link": "/server/security/04"
+                },
+                {
+                  "text": "Licensing Risks and Dependency Governance",
+                  "link": "/server/security/05"
+                }
+              ]
+            }
+          ],
+          "/system/": [
+            {
+              "text": "System Overview",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "System Overview",
+                  "link": "/system/"
+                }
+              ]
+            },
+            {
+              "text": "Gameplay Systems",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Leaderboard: Comparing Four Implementations",
+                  "link": "/system/leaderboard"
+                },
+                {
+                  "text": "Team Matchmaking: Four Matching Patterns",
+                  "link": "/system/party-matchmaking"
+                },
+                {
+                  "text": "PVP Matchmaking: Ratings and Match Pools",
+                  "link": "/system/pvp-matchmaking"
+                },
+                {
+                  "text": "Skill System: Component Boundaries and Extension",
+                  "link": "/system/skill"
+                },
+                {
+                  "text": "Settlement: Vouchers and Idempotency",
+                  "link": "/system/settlement"
+                },
+                {
+                  "text": "Quest System: Progress and Chained Prerequisites",
+                  "link": "/system/quest"
+                },
+                {
+                  "text": "Achievements and Collections",
+                  "link": "/system/achievement"
+                },
+                {
+                  "text": "Stamina and Attempt Gating",
+                  "link": "/system/stamina"
+                },
+                {
+                  "text": "Equipment Enhancement and Star Upgrades",
+                  "link": "/system/enhance"
+                },
+                {
+                  "text": "Check-In, Rewards and Redemption Codes",
+                  "link": "/system/checkin"
+                },
+                {
+                  "text": "Battle Pass and Season Tracks",
+                  "link": "/system/battle-pass"
+                },
+                {
+                  "text": "Marquee and Announcements",
+                  "link": "/system/marquee"
+                },
+                {
+                  "text": "Cosmetics, Skins and Outfits",
+                  "link": "/system/cosmetics"
+                },
+                {
+                  "text": "Homeland, Territory and Building Permissions",
+                  "link": "/system/territory"
+                },
+                {
+                  "text": "In-Game Voice",
+                  "link": "/system/voice"
+                },
+                {
+                  "text": "Genre and Component Coverage Map",
+                  "link": "/system/genre-coverage"
+                }
+              ]
+            },
+            {
+              "text": "Scripting and Hot Updates",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Scripting, Hot Updates and Logic Extension",
+                  "link": "/system/scripting/"
+                },
+                {
+                  "text": "Script Layer Role and Language Choice",
+                  "link": "/system/scripting/01"
+                },
+                {
+                  "text": "Host Runtime and Script VM Integration",
+                  "link": "/system/scripting/02"
+                },
+                {
+                  "text": "Config-Driven and Script-Driven",
+                  "link": "/system/scripting/03"
+                },
+                {
+                  "text": "Hot Update Systems",
+                  "link": "/system/scripting/04"
+                }
+              ]
+            },
+            {
+              "text": "Common Services",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Common Game Services",
+                  "link": "/system/services/"
+                },
+                {
+                  "text": "Accounts, Characters and Base Systems",
+                  "link": "/system/services/01"
+                },
+                {
+                  "text": "Events, Leaderboards, Matchmaking and Social",
+                  "link": "/system/services/02"
+                },
+                {
+                  "text": "Trading, Payments and Economy Systems",
+                  "link": "/system/services/03"
+                },
+                {
+                  "text": "Risk Control, Auditing, GM and Customer Service",
+                  "link": "/system/services/04"
+                }
+              ]
+            }
+          ],
+          "/database/": [
+            {
+              "text": "Data Modeling and Databases",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Data Modeling and Databases",
+                  "link": "/database/"
+                },
+                {
+                  "text": "Game Data Classification and Modeling",
+                  "link": "/database/01"
+                },
+                {
+                  "text": "Relational and Non-Relational Databases",
+                  "link": "/database/02"
+                },
+                {
+                  "text": "Transactions, Consistency and Sharding",
+                  "link": "/database/03"
+                },
+                {
+                  "text": "Data Sync, Hot-Cold Tiering and Archiving",
+                  "link": "/database/04"
+                }
+              ]
+            },
+            {
+              "text": "Caching, Middleware and Infrastructure",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Caching, Middleware and Infrastructure",
+                  "link": "/database/cache/"
+                },
+                {
+                  "text": "Redis, Leaderboards and Locks",
+                  "link": "/database/cache/01"
+                },
+                {
+                  "text": "singleflight, MQ and Event Streams",
+                  "link": "/database/cache/02"
+                },
+                {
+                  "text": "Service Registry, Load Balancing and Consistent Hashing",
+                  "link": "/database/cache/03"
+                },
+                {
+                  "text": "Object Storage, CDN and Asset Distribution",
+                  "link": "/database/cache/04"
+                }
+              ]
+            }
+          ],
+          "/client/": [
+            {
+              "text": "Client Architecture and Engines",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Client Architecture and Engines",
+                  "link": "/client/"
+                },
+                {
+                  "text": "Client Tech Stacks and Engines",
+                  "link": "/client/01"
+                },
+                {
+                  "text": "Client-Server Boundary and Network Layer",
+                  "link": "/client/02"
+                },
+                {
+                  "text": "Asset Systems and Toolchains",
+                  "link": "/client/03"
+                },
+                {
+                  "text": "Scripting Languages and ECS",
+                  "link": "/client/04"
+                },
+                {
+                  "text": "AI Use Cases in Clients and Game Systems",
+                  "link": "/client/05"
+                }
+              ]
+            },
+            {
+              "text": "Interaction and Input",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Interaction and Input: Intent and Mapping",
+                  "link": "/client/input"
+                }
+              ]
+            },
+            {
+              "text": "Web Game Frontend Systems",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Web Game Frontend Systems",
+                  "link": "/client/web/"
+                },
+                {
+                  "text": "H5 and Canvas 2D Rendering Basics",
+                  "link": "/client/web/01"
+                },
+                {
+                  "text": "WebGL and 3D Rendering Basics",
+                  "link": "/client/web/02"
+                },
+                {
+                  "text": "Game Engines and Cocos Creator",
+                  "link": "/client/web/03"
+                },
+                {
+                  "text": "Game UI Systems",
+                  "link": "/client/web/04"
+                },
+                {
+                  "text": "Mini-Game Platforms and Browser Environments",
+                  "link": "/client/web/05"
+                },
+                {
+                  "text": "Client Internal Layers: Rendering, Logic and Assets",
+                  "link": "/client/web/06"
+                }
+              ]
+            },
+            {
+              "text": "Engines, Languages and Tool Ecosystem",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Engines, Languages and Tool Ecosystem",
+                  "link": "/client/engines/"
+                },
+                {
+                  "text": "Engine Choice and Business Models",
+                  "link": "/client/engines/01"
+                },
+                {
+                  "text": "Programming Languages and Tech Stack Map",
+                  "link": "/client/engines/02"
+                },
+                {
+                  "text": "Team Capabilities, Project Types and Tool Ecosystem",
+                  "link": "/client/engines/03"
+                }
+              ]
+            }
+          ],
+          "/production/": [
+            {
+              "text": "Versioning, Release and Dev Pipeline",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Versioning, Release and Dev Pipeline",
+                  "link": "/production/"
+                },
+                {
+                  "text": "Version Scheme Overview",
+                  "link": "/production/01"
+                },
+                {
+                  "text": "Client, Asset, Config and Protocol Versions",
+                  "link": "/production/02"
+                },
+                {
+                  "text": "Gray Release, Rollback and Compatibility Windows",
+                  "link": "/production/03"
+                },
+                {
+                  "text": "Client-Server Coordination and Platform Constraints",
+                  "link": "/production/04"
+                },
+                {
+                  "text": "Config Tables and Data-Driven Pipelines",
+                  "link": "/production/05"
+                },
+                {
+                  "text": "Dev Collaboration and Release Workflow",
+                  "link": "/production/06"
+                },
+                {
+                  "text": "Studio Roles and Quality Gates",
+                  "link": "/production/07"
+                }
+              ]
+            },
+            {
+              "text": "Config Pipeline and Dev Collaboration",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Config Pipeline and Dev Collaboration",
+                  "link": "/production/config/"
+                },
+                {
+                  "text": "Config-Table-Driven Development",
+                  "link": "/production/config/01"
+                },
+                {
+                  "text": "Table Schema Design and Splitting",
+                  "link": "/production/config/02"
+                },
+                {
+                  "text": "Validation, Export and Code Generation",
+                  "link": "/production/config/03"
+                },
+                {
+                  "text": "Workflows, Mistake-Proofing and Collaboration",
+                  "link": "/production/config/04"
+                }
+              ]
+            },
+            {
+              "text": "Selection, Practice and Retrospectives",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Selection, Practice and Retrospectives",
+                  "link": "/production/retro/"
+                },
+                {
+                  "text": "Engine, Language and Tech Selection",
+                  "link": "/production/retro/01"
+                },
+                {
+                  "text": "Architecture Patterns and Selection Comparison",
+                  "link": "/production/retro/02"
+                },
+                {
+                  "text": "Key Question Checklist",
+                  "link": "/production/retro/03"
+                },
+                {
+                  "text": "Analysis Frameworks, Pitfalls and Failure Cases",
+                  "link": "/production/retro/04"
+                },
+                {
+                  "text": "Personal Gap-Filling Checklist",
+                  "link": "/production/retro/05"
+                }
+              ]
+            }
+          ],
+          "/operation/": [
+            {
+              "text": "Operations, Monetization and Data Analytics",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Operations and Observability Overview",
+                  "link": "/operation/"
+                },
+                {
+                  "text": "Operations, Monetization and Data Analytics",
+                  "link": "/operation/bi/"
+                },
+                {
+                  "text": "Operations and Monetization Basics",
+                  "link": "/operation/bi/01"
+                },
+                {
+                  "text": "Event Tracking, BI and Analytics Systems",
+                  "link": "/operation/bi/02"
+                },
+                {
+                  "text": "Economy, Balance and Risk Control Analytics",
+                  "link": "/operation/bi/03"
+                },
+                {
+                  "text": "Reach Systems and External Capability Integration",
+                  "link": "/operation/bi/04"
+                },
+                {
+                  "text": "AI in Operations, Analytics and Risk Control",
+                  "link": "/operation/bi/05"
+                }
+              ]
+            },
+            {
+              "text": "Observability, Performance, Capacity and Stability",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Observability and Stability",
+                  "link": "/operation/observability/"
+                },
+                {
+                  "text": "Logs, Metrics, Tracing and OTel",
+                  "link": "/operation/observability/01"
+                },
+                {
+                  "text": "Game-Specific Observability and Tick Metrics",
+                  "link": "/operation/observability/02"
+                },
+                {
+                  "text": "Profiling, Flame Graphs and Hotspot Analysis",
+                  "link": "/operation/observability/03"
+                },
+                {
+                  "text": "Debugging, Fault Localization and Retrospectives",
+                  "link": "/operation/observability/04"
+                },
+                {
+                  "text": "Load Testing, Capacity Planning and Autoscaling",
+                  "link": "/operation/observability/05"
+                },
+                {
+                  "text": "The Real Goal of Stability Governance",
+                  "link": "/operation/observability/06"
+                }
+              ]
+            }
+          ],
+          "/industry/": [
+            {
+              "text": "Fundamentals and Methodology",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Industry and Methodology Overview",
+                  "link": "/industry/"
+                },
+                {
+                  "text": "Fundamentals and Methodology",
+                  "link": "/industry/methodology/"
+                },
+                {
+                  "text": "Game Development Knowledge Map",
+                  "link": "/industry/methodology/01"
+                },
+                {
+                  "text": "Game Types, Platforms and Business Models",
+                  "link": "/industry/methodology/02"
+                },
+                {
+                  "text": "Analysis Method from Gameplay to Architecture",
+                  "link": "/industry/methodology/03"
+                },
+                {
+                  "text": "Core Trade-offs in Game Backend Design",
+                  "link": "/industry/methodology/04"
+                },
+                {
+                  "text": "Boundaries of Client, Server, Platform and Operations",
+                  "link": "/industry/methodology/05"
+                },
+                {
+                  "text": "Game Project Lifecycle and Team Collaboration",
+                  "link": "/industry/methodology/06"
+                },
+                {
+                  "text": "How to Systematically Build Game Development Experience",
+                  "link": "/industry/methodology/07"
+                }
+              ]
+            },
+            {
+              "text": "Career Map",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Career Map: Roles, Growth and Mobility",
+                  "link": "/industry/career"
+                }
+              ]
+            },
+            {
+              "text": "Game Types and Problem Models",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Game Types and Problem Models",
+                  "link": "/industry/models/"
+                },
+                {
+                  "text": "Common Gameplay Types Overview",
+                  "link": "/industry/models/00"
+                },
+                {
+                  "text": "How to Classify Game Types",
+                  "link": "/industry/models/01"
+                },
+                {
+                  "text": "Problem Model of Session-Room Games",
+                  "link": "/industry/models/02"
+                },
+                {
+                  "text": "Problem Model of Real-Time Competitive Games",
+                  "link": "/industry/models/03"
+                },
+                {
+                  "text": "Problem Model of Persistent Online World Games",
+                  "link": "/industry/models/04"
+                },
+                {
+                  "text": "Problem Model of Long-Term Progression and Async Interaction Games",
+                  "link": "/industry/models/05"
+                },
+                {
+                  "text": "Problem Model of Economy and Platform Games",
+                  "link": "/industry/models/06"
+                },
+                {
+                  "text": "Problem Model of High-Frequency Object and Presentation-Heavy Games",
+                  "link": "/industry/models/07"
+                },
+                {
+                  "text": "How the Models Combine",
+                  "link": "/industry/models/08"
+                }
+              ]
+            },
+            {
+              "text": "Game Type Topics",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Game Type Topics",
+                  "link": "/industry/genres/"
+                },
+                {
+                  "text": "Room-Based and Lightweight Online",
+                  "link": "/industry/genres/01"
+                },
+                {
+                  "text": "Real-Time Competitive",
+                  "link": "/industry/genres/02"
+                },
+                {
+                  "text": "Persistent Online Worlds",
+                  "link": "/industry/genres/03"
+                },
+                {
+                  "text": "Long-Term Progression and Management",
+                  "link": "/industry/genres/04"
+                },
+                {
+                  "text": "Platform and Ecosystem Games",
+                  "link": "/industry/genres/05"
+                },
+                {
+                  "text": "How to Use This Page",
+                  "link": "/industry/genres/06"
+                }
+              ]
+            },
+            {
+              "text": "Platform Ecosystems, Channels and SDKs",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Platform Ecosystems, Channels and SDKs",
+                  "link": "/industry/platforms/"
+                },
+                {
+                  "text": "Platform and Channel Ecosystems",
+                  "link": "/industry/platforms/01"
+                },
+                {
+                  "text": "Mini-Game Platforms and Technical Constraints",
+                  "link": "/industry/platforms/02"
+                },
+                {
+                  "text": "Login, Payment, Social and Ad SDKs",
+                  "link": "/industry/platforms/03"
+                },
+                {
+                  "text": "Release, Versioning and Business Models",
+                  "link": "/industry/platforms/04"
+                }
+              ]
+            }
+          ],
+          "/design/": [
+            {
+              "text": "Games Organized by Problem Domain",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Games Organized by Problem Domain",
+                  "link": "/design/problem-domains/"
+                },
+                {
+                  "text": "Session-Room Architecture",
+                  "link": "/design/problem-domains/01"
+                },
+                {
+                  "text": "Real-Time Competitive Architecture",
+                  "link": "/design/problem-domains/02"
+                },
+                {
+                  "text": "Persistent Online World Architecture",
+                  "link": "/design/problem-domains/03"
+                },
+                {
+                  "text": "Long-Term Progression Architecture",
+                  "link": "/design/problem-domains/04"
+                },
+                {
+                  "text": "Economy Platform Architecture",
+                  "link": "/design/problem-domains/05"
+                },
+                {
+                  "text": "What This Page Is For",
+                  "link": "/design/problem-domains/06"
+                }
+              ]
+            }
+          ],
+          "/numerical/": [
+            {
+              "text": "Game Design and Numerical Systems",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Game Design and Numerical Systems",
+                  "link": "/numerical/"
+                },
+                {
+                  "text": "The Numerical Designer's Work and Conventions",
+                  "link": "/numerical/01"
+                },
+                {
+                  "text": "Combat Numbers and Damage Formula Families",
+                  "link": "/numerical/02"
+                },
+                {
+                  "text": "Progression Curve Models",
+                  "link": "/numerical/03"
+                },
+                {
+                  "text": "Economy Loops: Output and Consumption",
+                  "link": "/numerical/04"
+                },
+                {
+                  "text": "Drops and Probability Design",
+                  "link": "/numerical/05"
+                },
+                {
+                  "text": "Monetization Numerical Example Models",
+                  "link": "/numerical/06"
+                },
+                {
+                  "text": "Level Difficulty and New-Player Pacing",
+                  "link": "/numerical/07"
+                },
+                {
+                  "text": "Numerical Design Books and Resources",
+                  "link": "/numerical/08"
+                }
+              ]
+            }
+          ],
+          "/glossary/": [
+            {
+              "text": "Terminology Conventions",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Terminology Conventions",
+                  "link": "/glossary/"
+                },
+                {
+                  "text": "Server Side",
+                  "link": "/glossary/01"
+                },
+                {
+                  "text": "Access Layer",
+                  "link": "/glossary/02"
+                },
+                {
+                  "text": "Primary Path / Peripheral Path",
+                  "link": "/glossary/03"
+                },
+                {
+                  "text": "Authoritative State",
+                  "link": "/glossary/04"
+                },
+                {
+                  "text": "Config-Driven / Script-Driven",
+                  "link": "/glossary/05"
+                },
+                {
+                  "text": "Hot Update",
+                  "link": "/glossary/06"
+                },
+                {
+                  "text": "Control Plane",
+                  "link": "/glossary/07"
+                },
+                {
+                  "text": "Operations",
+                  "link": "/glossary/08"
+                },
+                {
+                  "text": "Risk Control",
+                  "link": "/glossary/09"
+                },
+                {
+                  "text": "English Terms and Etymology",
+                  "link": "/glossary/10"
+                },
+                {
+                  "text": "Character, Entity and MMO Space Terms",
+                  "link": "/glossary/11"
+                }
+              ]
+            }
+          ],
+          "/networking/": [
+            {
+              "text": "Networking and Access Protocols",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Networking and Access Protocols",
+                  "link": "/networking/"
+                },
+                {
+                  "text": "Game Networking Basics",
+                  "link": "/networking/01"
+                },
+                {
+                  "text": "I/O Models and Event Notification",
+                  "link": "/networking/02"
+                },
+                {
+                  "text": "Transport Layer and Access Protocol Choice",
+                  "link": "/networking/03"
+                },
+                {
+                  "text": "Data Frames and Protocol Contracts",
+                  "link": "/networking/04"
+                },
+                {
+                  "text": "Message Patterns and Event Dispatch",
+                  "link": "/networking/05"
+                },
+                {
+                  "text": "Reliability, Ordering and Compatibility",
+                  "link": "/networking/06"
+                },
+                {
+                  "text": "Room Broadcast, Weak Networks and China's Network Conditions",
+                  "link": "/networking/07"
+                }
+              ]
+            },
+            {
+              "text": "Message Systems and IPC",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Message Systems and IPC",
+                  "link": "/networking/ipc/"
+                },
+                {
+                  "text": "IPC Basics and Use-Case Boundaries",
+                  "link": "/networking/ipc/01"
+                },
+                {
+                  "text": "Communication Patterns",
+                  "link": "/networking/ipc/02"
+                },
+                {
+                  "text": "Primary Path vs. Peripheral Path",
+                  "link": "/networking/ipc/03"
+                },
+                {
+                  "text": "Low Latency vs. High Throughput Trade-offs",
+                  "link": "/networking/ipc/04"
+                },
+                {
+                  "text": "Message Semantics, Idempotency and Ordering",
+                  "link": "/networking/ipc/05"
+                },
+                {
+                  "text": "How to Choose a Communication Approach",
+                  "link": "/networking/ipc/06"
+                }
+              ]
+            }
+          ],
+          "/": [
+            {
+              "text": "Indexes and Reading Guide",
+              "collapsed": false,
+              "items": [
+                {
+                  "text": "Content Organization",
+                  "link": "/00-reading-guide/"
+                },
+                {
+                  "text": "Enter by Problem",
+                  "link": "/00-reading-guide/02"
+                },
+                {
+                  "text": "Topic Content and Cross Indexes",
+                  "link": "/00-reading-guide/03"
+                },
+                {
+                  "text": "How to Use It for Project Analysis",
+                  "link": "/00-reading-guide/04"
+                },
+                {
+                  "text": "Terminology Conventions",
+                  "link": "/glossary/"
+                },
+                {
+                  "text": "Server Side",
+                  "link": "/glossary/01"
+                },
+                {
+                  "text": "Access Layer",
+                  "link": "/glossary/02"
+                },
+                {
+                  "text": "Primary Path / Peripheral Path",
+                  "link": "/glossary/03"
+                },
+                {
+                  "text": "Authoritative State",
+                  "link": "/glossary/04"
+                },
+                {
+                  "text": "Config-Driven / Script-Driven",
+                  "link": "/glossary/05"
+                },
+                {
+                  "text": "Hot Update",
+                  "link": "/glossary/06"
+                },
+                {
+                  "text": "Control Plane",
+                  "link": "/glossary/07"
+                },
+                {
+                  "text": "Operations",
+                  "link": "/glossary/08"
+                },
+                {
+                  "text": "Risk Control",
+                  "link": "/glossary/09"
+                },
+                {
+                  "text": "English Terms and Etymology",
+                  "link": "/glossary/10"
+                },
+                {
+                  "text": "Character, Entity and MMO Space Terms",
+                  "link": "/glossary/11"
+                }
+              ]
+            },
+            {
+              "text": "Fundamentals and Methodology",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Fundamentals and Methodology",
+                  "link": "/industry/methodology/"
+                },
+                {
+                  "text": "Game Development Knowledge Map",
+                  "link": "/industry/methodology/01"
+                },
+                {
+                  "text": "Game Types, Platforms and Business Models",
+                  "link": "/industry/methodology/02"
+                },
+                {
+                  "text": "Analysis Method from Gameplay to Architecture",
+                  "link": "/industry/methodology/03"
+                },
+                {
+                  "text": "Core Trade-offs in Game Backend Design",
+                  "link": "/industry/methodology/04"
+                },
+                {
+                  "text": "Boundaries of Client, Server, Platform and Operations",
+                  "link": "/industry/methodology/05"
+                },
+                {
+                  "text": "Game Project Lifecycle and Team Collaboration",
+                  "link": "/industry/methodology/06"
+                },
+                {
+                  "text": "How to Systematically Build Game Development Experience",
+                  "link": "/industry/methodology/07"
+                }
+              ]
+            },
+            {
+              "text": "Game Types and Problem Models",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Game Types and Problem Models",
+                  "link": "/industry/models/"
+                },
+                {
+                  "text": "Common Gameplay Types Overview",
+                  "link": "/industry/models/00"
+                },
+                {
+                  "text": "How to Classify Game Types",
+                  "link": "/industry/models/01"
+                },
+                {
+                  "text": "Problem Model of Session-Room Games",
+                  "link": "/industry/models/02"
+                },
+                {
+                  "text": "Problem Model of Real-Time Competitive Games",
+                  "link": "/industry/models/03"
+                },
+                {
+                  "text": "Problem Model of Persistent Online World Games",
+                  "link": "/industry/models/04"
+                },
+                {
+                  "text": "Problem Model of Long-Term Progression and Async Interaction Games",
+                  "link": "/industry/models/05"
+                },
+                {
+                  "text": "Problem Model of Economy and Platform Games",
+                  "link": "/industry/models/06"
+                },
+                {
+                  "text": "Problem Model of High-Frequency Object and Presentation-Heavy Games",
+                  "link": "/industry/models/07"
+                },
+                {
+                  "text": "How the Models Combine",
+                  "link": "/industry/models/08"
+                }
+              ]
+            },
+            {
+              "text": "Networking and Access Protocols",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Networking and Access Protocols",
+                  "link": "/networking/"
+                },
+                {
+                  "text": "Game Networking Basics",
+                  "link": "/networking/01"
+                },
+                {
+                  "text": "I/O Models and Event Notification",
+                  "link": "/networking/02"
+                },
+                {
+                  "text": "Transport Layer and Access Protocol Choice",
+                  "link": "/networking/03"
+                },
+                {
+                  "text": "Data Frames and Protocol Contracts",
+                  "link": "/networking/04"
+                },
+                {
+                  "text": "Message Patterns and Event Dispatch",
+                  "link": "/networking/05"
+                },
+                {
+                  "text": "Reliability, Ordering and Compatibility",
+                  "link": "/networking/06"
+                },
+                {
+                  "text": "Room Broadcast, Weak Networks and China's Network Conditions",
+                  "link": "/networking/07"
+                }
+              ]
+            },
+            {
+              "text": "Sync, Combat and Real-Time Interaction",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Sync, Combat and Real-Time Interaction",
+                  "link": "/server/sync/"
+                },
+                {
+                  "text": "Tick and Time Advancement",
+                  "link": "/server/sync/01"
+                },
+                {
+                  "text": "Sync Models",
+                  "link": "/server/sync/02"
+                },
+                {
+                  "text": "Frame Sync (Lockstep) Explained",
+                  "link": "/server/sync/03"
+                },
+                {
+                  "text": "Pause, Resume, Frame Catch-Up and Reconnection",
+                  "link": "/server/sync/04"
+                },
+                {
+                  "text": "Prediction, Compensation and Correction",
+                  "link": "/server/sync/05"
+                },
+                {
+                  "text": "Determinism and Numerical Consistency",
+                  "link": "/server/sync/06"
+                },
+                {
+                  "text": "Replay, Spectating and Adjudication",
+                  "link": "/server/sync/07"
+                },
+                {
+                  "text": "Skill System Design",
+                  "link": "/server/sync/08"
+                }
+              ]
+            },
+            {
+              "text": "Execution Models and Runtimes",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Execution Models and Runtimes",
+                  "link": "/server/runtime/"
+                },
+                {
+                  "text": "Concurrency Models Overview: From Seven Concurrency Models in Seven Weeks to Game Runtimes",
+                  "link": "/server/runtime/00"
+                },
+                {
+                  "text": "Single Thread, Multithreading and Actor",
+                  "link": "/server/runtime/01"
+                },
+                {
+                  "text": "Coroutines, State Machines and Task Queues",
+                  "link": "/server/runtime/02"
+                },
+                {
+                  "text": "Tick-Driven Logic Execution",
+                  "link": "/server/runtime/03"
+                },
+                {
+                  "text": "Flow Control, Backpressure and Stability Mechanisms",
+                  "link": "/server/runtime/04"
+                },
+                {
+                  "text": "Lock Contention and Performance Cost",
+                  "link": "/server/runtime/05"
+                },
+                {
+                  "text": "Epoch-driven Actor / Channel Runtime",
+                  "link": "/server/runtime/06"
+                }
+              ]
+            },
+            {
+              "text": "Service Decomposition, Distribution and Control Plane",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Service Decomposition and Control Plane",
+                  "link": "/server/services/"
+                },
+                {
+                  "text": "Service Decomposition Methodology",
+                  "link": "/server/services/01"
+                },
+                {
+                  "text": "Core Service Roles",
+                  "link": "/server/services/02"
+                },
+                {
+                  "text": "Coordination Layer, Cross-Server and Control Plane",
+                  "link": "/server/services/03"
+                },
+                {
+                  "text": "Service Discovery, Routing and Collaboration",
+                  "link": "/server/services/04"
+                },
+                {
+                  "text": "Consistency, Recovery and Reconnection",
+                  "link": "/server/services/05"
+                }
+              ]
+            },
+            {
+              "text": "Message Systems and IPC",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Message Systems and IPC",
+                  "link": "/networking/ipc/"
+                },
+                {
+                  "text": "IPC Basics and Use-Case Boundaries",
+                  "link": "/networking/ipc/01"
+                },
+                {
+                  "text": "Communication Patterns",
+                  "link": "/networking/ipc/02"
+                },
+                {
+                  "text": "Primary Path vs. Peripheral Path",
+                  "link": "/networking/ipc/03"
+                },
+                {
+                  "text": "Low Latency vs. High Throughput Trade-offs",
+                  "link": "/networking/ipc/04"
+                },
+                {
+                  "text": "Message Semantics, Idempotency and Ordering",
+                  "link": "/networking/ipc/05"
+                },
+                {
+                  "text": "How to Choose a Communication Approach",
+                  "link": "/networking/ipc/06"
+                }
+              ]
+            },
+            {
+              "text": "Client Architecture and Engines",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Client Architecture and Engines",
+                  "link": "/client/"
+                },
+                {
+                  "text": "Client Tech Stacks and Engines",
+                  "link": "/client/01"
+                },
+                {
+                  "text": "Client-Server Boundary and Network Layer",
+                  "link": "/client/02"
+                },
+                {
+                  "text": "Asset Systems and Toolchains",
+                  "link": "/client/03"
+                },
+                {
+                  "text": "Scripting Languages and ECS",
+                  "link": "/client/04"
+                },
+                {
+                  "text": "AI Use Cases in Clients and Game Systems",
+                  "link": "/client/05"
+                }
+              ]
+            },
+            {
+              "text": "Scripting, Hot Updates and Logic Extension",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Scripting, Hot Updates and Logic Extension",
+                  "link": "/system/scripting/"
+                },
+                {
+                  "text": "Script Layer Role and Language Choice",
+                  "link": "/system/scripting/01"
+                },
+                {
+                  "text": "Host Runtime and Script VM Integration",
+                  "link": "/system/scripting/02"
+                },
+                {
+                  "text": "Config-Driven and Script-Driven",
+                  "link": "/system/scripting/03"
+                },
+                {
+                  "text": "Hot Update Systems",
+                  "link": "/system/scripting/04"
+                }
+              ]
+            },
+            {
+              "text": "Versioning, Config and Dev Pipeline",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Versioning, Release and Dev Pipeline",
+                  "link": "/production/"
+                },
+                {
+                  "text": "Version Scheme Overview",
+                  "link": "/production/01"
+                },
+                {
+                  "text": "Client, Asset, Config and Protocol Versions",
+                  "link": "/production/02"
+                },
+                {
+                  "text": "Gray Release, Rollback and Compatibility Windows",
+                  "link": "/production/03"
+                },
+                {
+                  "text": "Client-Server Coordination and Platform Constraints",
+                  "link": "/production/04"
+                },
+                {
+                  "text": "Config Tables and Data-Driven Pipelines",
+                  "link": "/production/05"
+                },
+                {
+                  "text": "Dev Collaboration and Release Workflow",
+                  "link": "/production/06"
+                },
+                {
+                  "text": "Studio Roles and Quality Gates",
+                  "link": "/production/07"
+                }
+              ]
+            },
+            {
+              "text": "Data Modeling and Databases",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Data Modeling and Databases",
+                  "link": "/database/"
+                },
+                {
+                  "text": "Game Data Classification and Modeling",
+                  "link": "/database/01"
+                },
+                {
+                  "text": "Relational and Non-Relational Databases",
+                  "link": "/database/02"
+                },
+                {
+                  "text": "Transactions, Consistency and Sharding",
+                  "link": "/database/03"
+                },
+                {
+                  "text": "Data Sync, Hot-Cold Tiering and Archiving",
+                  "link": "/database/04"
+                }
+              ]
+            },
+            {
+              "text": "Caching, Middleware and Infrastructure",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Caching, Middleware and Infrastructure",
+                  "link": "/database/cache/"
+                },
+                {
+                  "text": "Redis, Leaderboards and Locks",
+                  "link": "/database/cache/01"
+                },
+                {
+                  "text": "singleflight, MQ and Event Streams",
+                  "link": "/database/cache/02"
+                },
+                {
+                  "text": "Service Registry, Load Balancing and Consistent Hashing",
+                  "link": "/database/cache/03"
+                },
+                {
+                  "text": "Object Storage, CDN and Asset Distribution",
+                  "link": "/database/cache/04"
+                }
+              ]
+            },
+            {
+              "text": "Common Game Services",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Common Game Services",
+                  "link": "/system/services/"
+                },
+                {
+                  "text": "Accounts, Characters and Base Systems",
+                  "link": "/system/services/01"
+                },
+                {
+                  "text": "Events, Leaderboards, Matchmaking and Social",
+                  "link": "/system/services/02"
+                },
+                {
+                  "text": "Trading, Payments and Economy Systems",
+                  "link": "/system/services/03"
+                },
+                {
+                  "text": "Risk Control, Auditing, GM and Customer Service",
+                  "link": "/system/services/04"
+                }
+              ]
+            },
+            {
+              "text": "Operations, Monetization and Data Analytics",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Operations, Monetization and Data Analytics",
+                  "link": "/operation/bi/"
+                },
+                {
+                  "text": "Operations and Monetization Basics",
+                  "link": "/operation/bi/01"
+                },
+                {
+                  "text": "Event Tracking, BI and Analytics Systems",
+                  "link": "/operation/bi/02"
+                },
+                {
+                  "text": "Economy, Balance and Risk Control Analytics",
+                  "link": "/operation/bi/03"
+                },
+                {
+                  "text": "Reach Systems and External Capability Integration",
+                  "link": "/operation/bi/04"
+                },
+                {
+                  "text": "AI in Operations, Analytics and Risk Control",
+                  "link": "/operation/bi/05"
+                }
+              ]
+            },
+            {
+              "text": "Platform Ecosystems, Channels and SDKs",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Platform Ecosystems, Channels and SDKs",
+                  "link": "/industry/platforms/"
+                },
+                {
+                  "text": "Platform and Channel Ecosystems",
+                  "link": "/industry/platforms/01"
+                },
+                {
+                  "text": "Mini-Game Platforms and Technical Constraints",
+                  "link": "/industry/platforms/02"
+                },
+                {
+                  "text": "Login, Payment, Social and Ad SDKs",
+                  "link": "/industry/platforms/03"
+                },
+                {
+                  "text": "Release, Versioning and Business Models",
+                  "link": "/industry/platforms/04"
+                }
+              ]
+            },
+            {
+              "text": "Observability, Performance, Capacity and Stability",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Observability and Stability",
+                  "link": "/operation/observability/"
+                },
+                {
+                  "text": "Logs, Metrics, Tracing and OTel",
+                  "link": "/operation/observability/01"
+                },
+                {
+                  "text": "Game-Specific Observability and Tick Metrics",
+                  "link": "/operation/observability/02"
+                },
+                {
+                  "text": "Profiling, Flame Graphs and Hotspot Analysis",
+                  "link": "/operation/observability/03"
+                },
+                {
+                  "text": "Debugging, Fault Localization and Retrospectives",
+                  "link": "/operation/observability/04"
+                },
+                {
+                  "text": "Load Testing, Capacity Planning and Autoscaling",
+                  "link": "/operation/observability/05"
+                },
+                {
+                  "text": "The Real Goal of Stability Governance",
+                  "link": "/operation/observability/06"
+                }
+              ]
+            },
+            {
+              "text": "Security, Risk Control and Compliance",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Security, Risk Control and Compliance",
+                  "link": "/server/security/"
+                },
+                {
+                  "text": "Security and Anti-Cheating",
+                  "link": "/server/security/01"
+                },
+                {
+                  "text": "Auditing, Privacy and Data Security",
+                  "link": "/server/security/02"
+                },
+                {
+                  "text": "Behavioral Risk Control and Governance",
+                  "link": "/server/security/03"
+                },
+                {
+                  "text": "Compliance, Game License and Platform Constraints",
+                  "link": "/server/security/04"
+                },
+                {
+                  "text": "Licensing Risks and Dependency Governance",
+                  "link": "/server/security/05"
+                }
+              ]
+            },
+            {
+              "text": "Selection, Practice, Retrospectives and Checklists",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Selection, Practice and Retrospectives",
+                  "link": "/production/retro/"
+                },
+                {
+                  "text": "Engine, Language and Tech Selection",
+                  "link": "/production/retro/01"
+                },
+                {
+                  "text": "Architecture Patterns and Selection Comparison",
+                  "link": "/production/retro/02"
+                },
+                {
+                  "text": "Key Question Checklist",
+                  "link": "/production/retro/03"
+                },
+                {
+                  "text": "Analysis Frameworks, Pitfalls and Failure Cases",
+                  "link": "/production/retro/04"
+                },
+                {
+                  "text": "Personal Gap-Filling Checklist",
+                  "link": "/production/retro/05"
+                }
+              ]
+            },
+            {
+              "text": "Web Game Frontend Systems",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Web Game Frontend Systems",
+                  "link": "/client/web/"
+                },
+                {
+                  "text": "H5 and Canvas 2D Rendering Basics",
+                  "link": "/client/web/01"
+                },
+                {
+                  "text": "WebGL and 3D Rendering Introduction",
+                  "link": "/client/web/02"
+                },
+                {
+                  "text": "Game Engines and Cocos Creator",
+                  "link": "/client/web/03"
+                },
+                {
+                  "text": "Game UI Systems",
+                  "link": "/client/web/04"
+                },
+                {
+                  "text": "Mini-Game Platforms and Browser Environments",
+                  "link": "/client/web/05"
+                },
+                {
+                  "text": "Client Internal Layers: Rendering, Logic and Assets",
+                  "link": "/client/web/06"
+                }
+              ]
+            },
+            {
+              "text": "Game Design and Numerical Systems",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Game Design and Numerical Systems",
+                  "link": "/numerical/"
+                },
+                {
+                  "text": "The Numerical Designer's Work and Conventions",
+                  "link": "/numerical/01"
+                },
+                {
+                  "text": "Combat Numbers and Damage Formula Families",
+                  "link": "/numerical/02"
+                },
+                {
+                  "text": "Progression Curve Models",
+                  "link": "/numerical/03"
+                },
+                {
+                  "text": "Economy Loops: Output and Consumption",
+                  "link": "/numerical/04"
+                },
+                {
+                  "text": "Drops and Probability Design",
+                  "link": "/numerical/05"
+                },
+                {
+                  "text": "Monetization Numerical Example Models",
+                  "link": "/numerical/06"
+                },
+                {
+                  "text": "Level Difficulty and New-Player Pacing",
+                  "link": "/numerical/07"
+                },
+                {
+                  "text": "Numerical Design Books and Resources",
+                  "link": "/numerical/08"
+                }
+              ]
+            },
+            {
+              "text": "Cross-Cutting Indexes",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Appendix and Cross-Cutting Indexes",
+                  "link": "/90-appendix/"
+                },
+                {
+                  "text": "Revisiting Problems by Genre",
+                  "link": "/90-appendix/01"
+                },
+                {
+                  "text": "Expanding the Mainline into Topics",
+                  "link": "/90-appendix/02"
+                },
+                {
+                  "text": "Cross-Cutting Selection and Quick Comparison",
+                  "link": "/90-appendix/03"
+                },
+                {
+                  "text": "About These Indexes",
+                  "link": "/90-appendix/04"
+                }
+              ]
+            },
+            {
+              "text": "Game Type Topics",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Game Type Topics",
+                  "link": "/industry/genres/"
+                },
+                {
+                  "text": "Room-Based and Lightweight Online",
+                  "link": "/industry/genres/01"
+                },
+                {
+                  "text": "Real-Time Competitive",
+                  "link": "/industry/genres/02"
+                },
+                {
+                  "text": "Persistent Online Worlds",
+                  "link": "/industry/genres/03"
+                },
+                {
+                  "text": "Long-Term Progression and Management",
+                  "link": "/industry/genres/04"
+                },
+                {
+                  "text": "Platform and Ecosystem Games",
+                  "link": "/industry/genres/05"
+                },
+                {
+                  "text": "How to Use This Page",
+                  "link": "/industry/genres/06"
+                }
+              ]
+            },
+            {
+              "text": "Games Organized by Problem Domain",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Design Overview",
+                  "link": "/design/"
+                },
+                {
+                  "text": "Games Organized by Problem Domain",
+                  "link": "/design/problem-domains/"
+                },
+                {
+                  "text": "Session-Room Architecture",
+                  "link": "/design/problem-domains/01"
+                },
+                {
+                  "text": "Real-Time Competitive Architecture",
+                  "link": "/design/problem-domains/02"
+                },
+                {
+                  "text": "Persistent Online World Architecture",
+                  "link": "/design/problem-domains/03"
+                },
+                {
+                  "text": "Long-Term Progression Architecture",
+                  "link": "/design/problem-domains/04"
+                },
+                {
+                  "text": "Economy Platform Architecture",
+                  "link": "/design/problem-domains/05"
+                },
+                {
+                  "text": "What This Page Is For",
+                  "link": "/design/problem-domains/06"
+                }
+              ]
+            },
+            {
+              "text": "Config Tables, Data-Driven Development and Dev Collaboration",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Config Pipeline and Dev Collaboration",
+                  "link": "/production/config/"
+                },
+                {
+                  "text": "Config-Table-Driven Development",
+                  "link": "/production/config/01"
+                },
+                {
+                  "text": "Table Schema Design and Splitting",
+                  "link": "/production/config/02"
+                },
+                {
+                  "text": "Validation, Export and Code Generation",
+                  "link": "/production/config/03"
+                },
+                {
+                  "text": "Workflows, Mistake-Proofing and Collaboration",
+                  "link": "/production/config/04"
+                }
+              ]
+            },
+            {
+              "text": "Load Testing, Capacity Planning and Autoscaling",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Capacity Scaling",
+                  "link": "/server/capacity/"
+                },
+                {
+                  "text": "Load Testing and Capacity Planning",
+                  "link": "/server/capacity/01"
+                },
+                {
+                  "text": "Scale-Up, Scale-Down and Dynamic Server Addition",
+                  "link": "/server/capacity/02"
+                },
+                {
+                  "text": "Partitioning, Migration, Server Merge and Decommissioning",
+                  "link": "/server/capacity/03"
+                },
+                {
+                  "text": "Platform-Based Ops and Multi-Region Architecture",
+                  "link": "/server/capacity/04"
+                }
+              ]
+            },
+            {
+              "text": "Engine Choice, Language Map and Tool Ecosystem",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Engines, Languages and Tool Ecosystem",
+                  "link": "/client/engines/"
+                },
+                {
+                  "text": "Engine Choice and Business Models",
+                  "link": "/client/engines/01"
+                },
+                {
+                  "text": "Programming Languages and Tech Stack Map",
+                  "link": "/client/engines/02"
+                },
+                {
+                  "text": "Team Capabilities, Project Types and Tool Ecosystem",
+                  "link": "/client/engines/03"
+                }
+              ]
+            },
+            {
+              "text": "Game Backend Engine Source Analysis",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Skynet: C Kernel + Lua Actor",
+                  "link": "/server/skynet"
+                }
+              ]
+            },
+            {
+              "text": "Research and Knowledge Points",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "Knowledge Points Overview",
+                  "link": "/knowledge"
+                },
+                {
+                  "text": "Research Overview",
+                  "link": "/research/"
+                },
+                {
+                  "text": "Authoritative Books Survey",
+                  "link": "/research/01-authoritative-books"
+                },
+                {
+                  "text": "Engine and Middleware Official Docs Survey",
+                  "link": "/research/02-engine-middleware-docs"
+                },
+                {
+                  "text": "Application Scenario Comparison",
+                  "link": "/research/03-application-scenarios"
+                },
+                {
+                  "text": "Coverage Difference Table",
+                  "link": "/research/04-coverage-diff"
+                }
+              ]
             }
           ]
-        }
+        },
+        "socialLinks": [
+          {
+            "icon": "github",
+            "link": "https://github.com/cuihairu/hello-game"
+          }
+        ],
+        "footer": {
+          "message": "Game Knowledge System",
+          "copyright": "© 2025 cuihairu"
+        },
+        "search": {
+          "provider": "local",
+          "options": {
+            "translations": {
+              "button": {
+                "buttonText": "Search docs",
+                "buttonAriaLabel": "Search"
+              },
+              "modal": {
+                "noResultsText": "No results",
+                "resetButtonTitle": "Clear the search query",
+                "footer": {
+                  "selectText": "Select",
+                  "navigateText": "Navigate",
+                  "closeText": "Close"
+                }
+              }
+            }
+          }
+        },
+        "outline": {
+          "label": "On this page",
+          "level": [
+            2,
+            3
+          ]
+        },
+        "docFooter": {
+          "prev": "Previous",
+          "next": "Next"
+        },
+        "lastUpdated": {
+          "text": "Last Updated"
+        },
+        "returnToTopLabel": "Return to top",
+        "sidebarMenuLabel": "Menu",
+        "darkModeSwitchLabel": "Appearance",
+        "lightModeSwitchTitle": "Switch to light mode",
+        "darkModeSwitchTitle": "Switch to dark mode"
       }
     },
     "zh": {

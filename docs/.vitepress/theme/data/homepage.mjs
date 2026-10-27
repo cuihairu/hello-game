@@ -12,10 +12,11 @@ export function allLinks(groups) {
 }
 
 // 编号专题目录：分组展示，组级链接（如选型对照总览）作为各组首行；
-// 组标题剥掉 emoji 前缀，与图纸标注的克制语言一致
+// 组标题剥掉 emoji 前缀，与图纸标注的克制语言一致。判定只认「首个字符不是字母/数字」的
+// 前缀（如 🔵）——英文分组标题以字母开头，剥掉首个空白分隔词会把标题读成残句
 export function buildTutorialGroups(tutorial) {
   return tutorial.map(g => ({
-    text: g.text.replace(/^\S+\s/, ''),
+    text: g.text.replace(/^\W+\s+/, ''),
     link: g.link ?? null,
     items: (g.items ?? []).map(it => ({
       num: (it.text.match(/(\d{2})/) ?? [])[1] ?? '+',
@@ -26,7 +27,14 @@ export function buildTutorialGroups(tutorial) {
 }
 
 // 知识库目录：每组取章主页；导读与附录按入口路径标记，其余专题用 + 展示。
-const KB_NUM_SPECIAL = { '/zh/00-reading-guide/': '00', '/zh/90-appendix/': 'A', 导读: '00', 附录与横向索引: 'A' }
+const KB_NUM_SPECIAL = {
+  '/zh/00-reading-guide/': '00',
+  '/zh/90-appendix/': 'A',
+  '/00-reading-guide/': '00',
+  '/90-appendix/': 'A',
+  导读: '00',
+  附录与横向索引: 'A'
+}
 export function buildKbChapters(kb) {
   return kb
     .filter(g => g.items?.length)
@@ -42,7 +50,7 @@ export function buildKbChapters(kb) {
 
 // 编号专题篇数统计——精确锚定目录前缀：裸 /\/\d{2}-/ 会误命中「24-game-types-architecture」的「24-」
 export function countLectures(groups) {
-  return allLinks(groups).filter(l => /^\/zh\/24-game-types-architecture\/\d{2}-/.test(l)).length
+  return allLinks(groups).filter(l => /^\/(?:zh\/)?24-game-types-architecture\/\d{2}-/.test(l)).length
 }
 
 // 列表均分 3 栏（知识库章级入口拆 3 栏用）；空列表返回三份空数组
