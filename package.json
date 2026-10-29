@@ -14,7 +14,7 @@
     "@vitejs/plugin-vue": "^6.0.9",
     "@vitest/coverage-v8": "^5.0.1",
     "@vue/test-utils": "^2.5.1",
-    "happy-dom": "^20.14.5",
+    "happy-dom": "^21.0.4",
     "mermaid": "^11.16.1",
     "vitepress": "^2.0.0-alpha.20",
     "vitest": "^5.0.1",
