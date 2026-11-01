@@ -1,23 +1,6 @@
 [English](README.md) | [中文](README.zh.md)
 
-<div align="center">
-
-<p align="center"><img src="docs/public/logo.svg" width="64" height="64" alt="logo" /> </p>
-
-# 游戏开发笔记
-
-<p align="center">
-  <img src="docs/public/badges/topic.svg" alt="topic" />
-  <img src="docs/public/badges/docs.svg" alt="docs" />
-  <img src="docs/public/badges/license.svg" alt="license" />
-  <img src="docs/public/badges/langs.svg" alt="langs" />
-</p>
-
-**面向个人开发者整理的游戏开发笔记与经验**——覆盖设计、客户端、服务器、数值、美术、工具与运营，并用成熟商业游戏和开源项目作为参照。
-
-[快速开始](#本地开发) · [目录结构](#目录结构) · [在线阅读](https://cuihairu.github.io/hello-game/)
-
-</div>
+<div align="center"><img src="docs/public/logo.svg" width="64" height="64" alt="logo" /> <img src="docs/public/badges/topic.svg" alt="topic" /> <img src="docs/public/badges/docs.svg" alt="docs" /> <img src="docs/public/badges/license.svg" alt="license" /> <img src="docs/public/badges/langs.svg" alt="langs" /> <a href="https://cuihairu.github.io/hello-game/zh/"><img src="https://img.shields.io/badge/docs-文档-blue" alt="docs"></a></div>
 
 ---
 
