@@ -4,7 +4,7 @@
 >
 > Reference books: *Online Game Core Technologies and Practice* (Kenji Nakajima), and the process perspective of *The Phoenix Project*.
 
-Game development is not only a technical problem but an organizational collaboration problem. Team collaboration efficiency, code quality control, project handoff norms — these "soft powers" often decide a project's fate. *Million Online* points out that many technically excellent teams ultimately fail not because the technology was weak but because management was chaotic.
+Game development fails on organization as often as on technology. Team collaboration efficiency, code quality control, project handoff norms — these "soft powers" often decide a project's fate. *Million Online* points out that many technically excellent teams ultimately fail not because the technology was weak but because management was chaotic.
 
 The management challenge of game R&D lies in its **special nature**: requirements change frequently (driven by player feedback), features are highly coupled (experience completeness), quality demands are extremely high (low player tolerance), and content and technology run as dual pipelines in parallel (designers produce designs, artists produce assets, programmers produce features — none can be missing). Traditional software project management methods cannot be applied directly; they must be adapted to the characteristics of game development.
 
