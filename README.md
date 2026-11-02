@@ -1,8 +1,17 @@
 [English](README.md) | [中文](README.zh.md)
 
 <div align="center">
-  <img src="docs/public/logo.svg" width="64" height="64" alt="logo" />
-  <a href="https://cuihairu.github.io/hello-game/"><img src="https://img.shields.io/badge/docs-blue" alt="docs"></a> <img src="docs/public/badges/topic.svg" alt="topic" /> <img src="docs/public/badges/docs.svg" alt="docs" /> <img src="docs/public/badges/license.svg" alt="license" /> <img src="docs/public/badges/langs.svg" alt="langs" />
+
+<p align="center"><img src="docs/public/logo.svg" width="64" height="64" alt="logo" /></p>
+
+# Game Development Notes
+
+<p align="center"><a href="https://cuihairu.github.io/hello-game/"><img src="https://img.shields.io/badge/docs-blue" alt="docs"></a> <img src="docs/public/badges/topic.svg" alt="topic" /> <img src="docs/public/badges/docs.svg" alt="docs" /> <img src="docs/public/badges/license.svg" alt="license" /> <img src="docs/public/badges/langs.svg" alt="langs" /></p>
+
+**Game development notes and experience gathered for individual developers** — covering design, client, server, numerical design, art, tooling, and operations, with mature commercial games and open-source projects as references.
+
+[Quick Start](#local-development) · [Directory Layout](#directory-layout) · [Read Online](https://cuihairu.github.io/hello-game/)
+
 </div>
 
 ---

@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<p align="center"><img src="docs/public/logo.svg" width="64" height="64" alt="logo" /> </p>
+<p align="center"><img src="docs/public/logo.svg" width="64" height="64" alt="logo" /></p>
 
 # 游戏知识体系
 
