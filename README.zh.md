@@ -6,16 +6,11 @@
 
 # 游戏知识体系
 
-<p align="center">
-  <img src="docs/public/badges/topic.svg" alt="topic" />
-  <img src="docs/public/badges/docs.svg" alt="docs" />
-  <img src="docs/public/badges/license.svg" alt="license" />
-  <img src="docs/public/badges/langs.svg" alt="langs" />
-</p>
+<p align="center"><a href="https://cuihairu.github.io/hello-game/zh/"><img src="https://img.shields.io/badge/%E6%96%87%E6%A1%A3-blue" alt="docs"></a> <img src="docs/public/badges/topic.svg" alt="topic" /> <img src="docs/public/badges/docs.svg" alt="docs" /> <img src="docs/public/badges/license.svg" alt="license" /> <img src="docs/public/badges/langs.svg" alt="langs" /></p>
 
 **开源的、面向个人开发者的游戏开发知识图谱**——覆盖设计、客户端、服务器、数值、美术、工具与运营，用成熟商业游戏与成熟开源项目连接知识节点。
 
-[快速开始](#本地开发) · [目录结构](#目录结构) · [在线阅读](https://cuihairu.github.io/hello-game/zh//) <a href="https://cuihairu.github.io/hello-game/zh/"><img src="https://img.shields.io/badge/%E6%96%87%E6%A1%A3-blue" alt="docs"></a>
+[快速开始](#本地开发) · [目录结构](#目录结构) · [在线阅读](https://cuihairu.github.io/hello-game/zh/)
 </div>
 
 ---
