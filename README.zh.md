@@ -125,11 +125,11 @@ docs/
 
 ## 测试与门禁
 
-- **源码覆盖**：`npm test`（vitest）+ 主题源码 11 个文件 100% 覆盖率门槛（`vitest.config.mjs` 的 `coverage.include`：config + theme 组件与数据层）
+- **源码覆盖**：`pnpm test`（vitest）+ 主题源码 11 个文件 100% 覆盖率门槛（`vitest.config.mjs` 的 `coverage.include`：config + theme 组件与数据层）
 - **内容回归**：`tests/site-links` 六项对账（站内链接、md 总数、教程讲数、案例覆盖与台账一致性）、`tests/code-blocks`、`tests/mermaid-syntax`
 - **实战案例冒烟**：教程讲次与知识库页各有配套用例（`tests/case-*.test.mjs` / `tests/kb-case-*.test.mjs`），校验结构、数字闭环、声称对账与引用闭合
 
-改内容先跑 `npm test` 与 `npm run docs:build`，全绿再提交推送。
+改内容先跑 `pnpm test` 与 `pnpm run docs:build`，全绿再提交推送。
 
 ## 参考书籍
 
@@ -144,11 +144,11 @@ docs/
 ## 本地开发
 
 ```bash
-npm install
-npm run docs:dev     # 开发服务器
-npm run docs:build   # 构建（站内死链检查）
-npm run docs:preview # 预览构建结果
-npm test             # 测试 + 覆盖率（见「测试与门禁」）
+pnpm install
+pnpm run docs:dev     # 开发服务器
+pnpm run docs:build   # 构建（站内死链检查）
+pnpm run docs:preview # 预览构建结果
+pnpm test             # 测试 + 覆盖率（见「测试与门禁」）
 ```
 
 ## 许可证

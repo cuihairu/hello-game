@@ -112,11 +112,11 @@ docs/
 
 ## Tests and Gates
 
-- **Source coverage**: `npm test` (vitest) with a 100% coverage gate over the 11 theme source files (`coverage.include` in `vitest.config.mjs`: config + theme components and data layer)
+- **Source coverage**: `pnpm test` (vitest) with a 100% coverage gate over the 11 theme source files (`coverage.include` in `vitest.config.mjs`: config + theme components and data layer)
 - **Content regression**: the six-way audit in `tests/site-links` (in-site links, Markdown totals, numbered topic-note count, case coverage, ledger consistency), plus `tests/code-blocks` and `tests/mermaid-syntax`
 - **Case checks**: numbered topic notes and topic pages have companion cases (`tests/case-*.test.mjs` / `tests/kb-case-*.test.mjs`) that check structure, numeric closure, claim cross-checks, and reference closure
 
-Run `npm test` and `npm run docs:build` before committing content changes; push only when both are green.
+Run `pnpm test` and `pnpm run docs:build` before committing content changes; push only when both are green.
 
 ## Reference Books
 
@@ -131,11 +131,11 @@ Run `npm test` and `npm run docs:build` before committing content changes; push 
 ## Local Development
 
 ```bash
-npm install
-npm run docs:dev     # dev server
-npm run docs:build   # build (in-site dead-link check)
-npm run docs:preview # preview the build
-npm test             # tests + coverage (see "Tests and Gates")
+pnpm install
+pnpm run docs:dev     # dev server
+pnpm run docs:build   # build (in-site dead-link check)
+pnpm run docs:preview # preview the build
+pnpm test             # tests + coverage (see "Tests and Gates")
 ```
 
 ## License
