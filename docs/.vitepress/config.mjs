@@ -7,6 +7,48 @@ export default {
   "cleanUrls": true,
   "head": [
     [
+      "script",
+      {},
+      /* 语言自动落位:①localStorage 有值按值(手动选择优先);②无值按浏览器
+         首选语言,zh 开头自动进 /zh/;③capture 阶段记录站内链接点击的目标
+         语言,手动切换即刻持久化。redirect 用 location.replace 不污染历史。 */
+      `(function () {
+  try {
+    var KEY = 'hg-locale';
+    var BASE = '/hello-game/';
+    var relOf = function (path) {
+      return path.indexOf(BASE) === 0 ? path.slice(BASE.length) : path;
+    };
+    var inZh = function (rel) {
+      return rel === 'zh' || rel.indexOf('zh/') === 0;
+    };
+    var readSaved = function () {
+      try { return localStorage.getItem(KEY); } catch (e) { return null; }
+    };
+    document.addEventListener('click', function (ev) {
+      var a = ev.target && ev.target.closest ? ev.target.closest('a[href]') : null;
+      if (!a) return;
+      var href = a.getAttribute('href');
+      if (!href || href.charAt(0) !== '/') return;
+      var rel = relOf(href);
+      try { localStorage.setItem(KEY, inZh(rel) ? 'zh' : 'en'); } catch (e) {}
+    }, true);
+    var saved = readSaved();
+    var nav = (navigator.language || 'en').toLowerCase();
+    var target = saved || (nav.indexOf('zh') === 0 ? 'zh' : 'en');
+    var rel = relOf(location.pathname);
+    var zh = inZh(rel);
+    if (target === 'zh' && !zh) {
+      location.replace(BASE + 'zh/' + rel + location.search + location.hash);
+    } else if (target === 'en' && zh && saved === 'en') {
+      location.replace(BASE + rel.slice(3) + location.search + location.hash);
+    } else if (!saved) {
+      try { localStorage.setItem(KEY, target); } catch (e) {}
+    }
+  } catch (e) {}
+})();`
+    ],
+    [
       "link",
       {
         "rel": "icon",

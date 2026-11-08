@@ -122,10 +122,19 @@ describe('site config', () => {
     ])
   })
 
-  it('head 声明 favicon', () => {
-    expect(config.head).toEqual([
+  it('head 声明 locale 自动落位脚本与 favicon', () => {
+    expect(config.head).toHaveLength(2)
+    const [scriptTag, scriptAttrs, scriptBody] = config.head[0]
+    expect(scriptTag).toBe('script')
+    expect(scriptAttrs).toEqual({})
+    // 三段语义:localStorage 有值按值;无值按浏览器语言(zh 开头进中文);
+    // capture 记录站内链接点击的目标语言。
+    expect(scriptBody).toContain("localStorage.getItem(KEY)")
+    expect(scriptBody).toContain("navigator.language")
+    expect(scriptBody).toContain("location.replace")
+    expect(config.head[1]).toEqual(
       ['link', { rel: 'icon', href: '/hello-game/logo.svg' }]
-    ])
+    )
   })
 
   it('导航含 10 项且无站外文字链接（GitHub 去重走 socialLinks 图标）', () => {
