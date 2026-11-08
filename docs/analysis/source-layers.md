@@ -1,7 +1,7 @@
 # Source Layer Analysis — hello-game
 
 > Date: 2026-11-08 · Analyzed at HEAD `fe3615aa81208d2495b2a010fc5e767d126673df`.
-> Follow-up (not done here): register this page in the VitePress sidebar — `docs/.vitepress/config.mjs` is being edited concurrently and is off-limits in this pass.
+> Chinese counterpart: [源码分层分析](/zh/analysis/source-layers).
 
 ## Scope and method
 
@@ -192,7 +192,8 @@ lines) is a generated-config artifact and is intentionally not split. `orleans/`
 
 - The analysis was done at HEAD `fe3615aa81208d2495b2a010fc5e767d126673df`; `orleans/` is a
   vendored snapshot (version `10.0.0` dev per `orleans/Directory.Build.props:61`).
-- Sidebar registration for this page is a follow-up (config.mjs was being edited concurrently).
+- This page is registered in the VitePress sidebar (EN "Game Backend Engine Source Analysis"
+  group and ZH "游戏后端引擎源码解析" group).
 - No classification issues were found in the tracked tree: the docs layout (industry/system/
   server/client/operation/design/numerical/glossary + zh mirror) is consistent with the
   content it holds; the only oddity is the untracked `orleans/` vendored fork, which is

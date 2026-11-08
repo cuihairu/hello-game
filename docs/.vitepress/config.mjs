@@ -1322,6 +1322,10 @@ export default {
                   "link": "/00-reading-guide/"
                 },
                 {
+                  "text": "Content Structure and Problem Index",
+                  "link": "/00-reading-guide/01"
+                },
+                {
                   "text": "Enter by Problem",
                   "link": "/00-reading-guide/02"
                 },
@@ -1377,6 +1381,24 @@ export default {
                   "text": "English Terms and Etymology",
                   "link": "/glossary/10"
                 },
+            {
+              "text": "History Timeline",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "History Line",
+                  "link": "/history/"
+                },
+                {
+                  "text": "Timeline Design Notes",
+                  "link": "/history/design"
+                },
+                {
+                  "text": "Timeline Node Entries",
+                  "link": "/history/nodes"
+                }
+              ]
+            },
                 {
                   "text": "Character, Entity and MMO Space Terms",
                   "link": "/glossary/11"
@@ -2238,6 +2260,10 @@ export default {
                 {
                   "text": "Skynet: C Kernel + Lua Actor",
                   "link": "/server/skynet"
+                },
+                {
+                  "text": "Source Layer Analysis: hello-game (Orleans)",
+                  "link": "/analysis/source-layers"
                 }
               ]
             },
@@ -3590,6 +3616,10 @@ export default {
                   "link": "/zh/00-reading-guide/"
                 },
                 {
+                  "text": "内容结构与问题索引",
+                  "link": "/zh/00-reading-guide/01"
+                },
+                {
                   "text": "按问题进入",
                   "link": "/zh/00-reading-guide/02"
                 },
@@ -3645,6 +3675,24 @@ export default {
                   "text": "英文术语与词源",
                   "link": "/zh/glossary/10"
                 },
+            {
+              "text": "历史时间线",
+              "collapsed": true,
+              "items": [
+                {
+                  "text": "历史时间线",
+                  "link": "/zh/history/"
+                },
+                {
+                  "text": "时间线设计稿",
+                  "link": "/zh/history/design"
+                },
+                {
+                  "text": "时间线条目集",
+                  "link": "/zh/history/nodes"
+                }
+              ]
+            },
                 {
                   "text": "角色、实体与 MMO 空间术语",
                   "link": "/zh/glossary/11"
@@ -4506,6 +4554,10 @@ export default {
                 {
                   "text": "Skynet：C 内核 + Lua Actor",
                   "link": "/zh/server/skynet"
+                },
+                {
+                  "text": "源码分层分析：hello-game（Orleans）",
+                  "link": "/zh/analysis/source-layers"
                 }
               ]
             },
