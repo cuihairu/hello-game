@@ -1018,6 +1018,18 @@ export default {
                 {
                   "text": "How to Use This Page",
                   "link": "/industry/genres/06"
+                },
+                {
+                  "text": "Gameplay Classification: The Genre Spectrum",
+                  "link": "/industry/genres/07"
+                },
+                {
+                  "text": "Addiction Mechanics",
+                  "link": "/industry/genres/08"
+                },
+                {
+                  "text": "Roguelike and Roguelite",
+                  "link": "/industry/genres/09"
                 }
               ]
             },
@@ -2050,6 +2062,18 @@ export default {
                 {
                   "text": "How to Use This Page",
                   "link": "/industry/genres/06"
+                },
+                {
+                  "text": "Gameplay Classification: The Genre Spectrum",
+                  "link": "/industry/genres/07"
+                },
+                {
+                  "text": "Addiction Mechanics",
+                  "link": "/industry/genres/08"
+                },
+                {
+                  "text": "Roguelike and Roguelite",
+                  "link": "/industry/genres/09"
                 }
               ]
             },
@@ -3262,6 +3286,18 @@ export default {
                 {
                   "text": "如何使用这页",
                   "link": "/zh/industry/genres/06"
+                },
+                {
+                  "text": "玩法分类：完整品类光谱",
+                  "link": "/zh/industry/genres/07"
+                },
+                {
+                  "text": "成瘾机制",
+                  "link": "/zh/industry/genres/08"
+                },
+                {
+                  "text": "Roguelike 与 Roguelite",
+                  "link": "/zh/industry/genres/09"
                 }
               ]
             },
@@ -4294,6 +4330,18 @@ export default {
                 {
                   "text": "如何使用这页",
                   "link": "/zh/industry/genres/06"
+                },
+                {
+                  "text": "玩法分类：完整品类光谱",
+                  "link": "/zh/industry/genres/07"
+                },
+                {
+                  "text": "成瘾机制",
+                  "link": "/zh/industry/genres/08"
+                },
+                {
+                  "text": "Roguelike 与 Roguelite",
+                  "link": "/zh/industry/genres/09"
                 }
               ]
             },

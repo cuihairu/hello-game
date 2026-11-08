@@ -2,7 +2,7 @@
 
 ## Category
 
-Overview of the industry / genres subtree. Coverage: room-based and lightweight online (01), hard-real-time competitive (02), persistent online world (03), long-cycle progression and management (04), platform and ecosystem (05), usage instructions (06).
+Overview of the industry / genres subtree. Coverage: room-based and lightweight online (01), hard-real-time competitive (02), persistent online world (03), long-cycle progression and management (04), platform and ecosystem (05), usage instructions (06), full genre spectrum (07), addiction mechanics (08), roguelike/roguelite (09).
 
 ## Definition
 
@@ -34,6 +34,9 @@ See the node list in the next section.
 - [Long-Cycle Progression and Management](./04.md): see why account-long-accumulation products behave more like a continuously operated data system.
 - [Platform and Ecosystem Games](./05.md): see how UGC, creator ecosystem, and multi-platform distribution change the system boundary.
 - [How to Use This Page](./06.md): explains how to use this set of appendices so that "genre" is not mistaken for "answer."
+- [Gameplay Classification: The Full Genre Spectrum](./07.md): the collected market genre spectrum with subgenre breakdowns and cross-genre hybrids — a taxonomy, not an architecture answer.
+- [Addiction Mechanics](./08.md): the behavioral engineering behind retention and monetization, and where the ethical line sits.
+- [Roguelike and Roguelite](./09.md): the Berlin Interpretation, the roguelite split, and what run-based design demands from a server.
 
 ## References
 
